@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class InputHandler : MonoBehaviour
@@ -46,7 +47,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseClickInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
         {
             mouseClickPressed?.Invoke();
         }
@@ -58,7 +59,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseRightClickInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
         {
             mouseRightClickPressed?.Invoke();
         }
@@ -70,7 +71,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseMiddleClickInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
         {
             mouseMiddleClickPressed?.Invoke();
         }

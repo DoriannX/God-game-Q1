@@ -3,23 +3,52 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+
 public class PaintComponent : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
+    [SerializeField] private Tilemap waterTilemap;
+    [SerializeField] private TileBase waterTile;
     [field: SerializeField] public Tile[] tiles { get; private set; }
+    //Create objects and put them here
     public int tileIndex { get; private set; }
     private Vector2 lastPos;
     private Vector2 lastHitPos;
+    public event Action<Vector3Int> paintedWater;
 
     public void Add(Vector2 pos, float brushSize)
     {
-        foreach (Vector3Int cell in tilemap.cellBounds.allPositionsWithin)
-        {
-            Vector3 cellWorldPos = tilemap.GetCellCenterWorld(cell);
+        Add(pos, brushSize, tiles[tileIndex]);
+    }
 
-            if (Vector2.Distance(pos, cellWorldPos) <= brushSize)
+    public void Add(Vector2 pos, float brushSize, TileBase tile)
+    {
+        Vector3Int centerCell = tilemap.WorldToCell(pos);
+        
+        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / tilemap.cellSize.x);
+        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / tilemap.cellSize.y);
+        
+        int maxRadius = Mathf.Max(cellRadiusX, cellRadiusY);
+        
+        for (int x = -maxRadius; x <= maxRadius; x++)
+        {
+            for (int y = -maxRadius; y <= maxRadius; y++)
             {
-                tilemap.SetTile(cell, tiles[tileIndex]);
+                Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
+                Vector3 cellWorldPos = tilemap.GetCellCenterWorld(cell);
+        
+                if (Vector2.Distance(pos, cellWorldPos) <= brushSize)
+                {
+                    if (tile == waterTile)
+                    {
+                        paintedWater?.Invoke(cell);
+                        waterTilemap.SetTile(cell, tile);
+                    }
+                    else
+                    {
+                        tilemap.SetTile(cell, tile);
+                    }
+                }
             }
         }
     }
