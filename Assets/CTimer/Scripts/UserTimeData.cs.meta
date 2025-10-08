@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ee2b8ba2e88c6bf43ae9a2e784667bcc
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 280827
+  packageName: Easy Timer - CTools Timer Tools
+  packageVersion: 1.0.1
+  assetPath: Assets/CTimer/Scripts/UserTimeData.cs
+  uploadId: 695828

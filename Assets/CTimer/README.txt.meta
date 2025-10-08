@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ed24bbbeb9b5d6f4ba4cf0e2f462222d
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 280827
+  packageName: Easy Timer - CTools Timer Tools
+  packageVersion: 1.0.1
+  assetPath: Assets/CTimer/README.txt
+  uploadId: 695828

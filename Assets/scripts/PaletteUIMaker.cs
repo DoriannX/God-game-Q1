@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class PaletteUIMaker : MonoBehaviour
 {
     [SerializeField] private PaintComponent paintComponent;
+    [SerializeField] private Painter painter;
     [SerializeField] private Image prefabImage;
     [SerializeField] private RectTransform parentTransform;
     [SerializeField] private Image selectedBorder;

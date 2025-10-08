@@ -4,17 +4,22 @@ public enum PainterMode
 {
     Paint,
     Shovel,
-    Bucket
+    Bucket,
+    Object,
+    Destruction
 }
 [RequireComponent(typeof(PaintComponent))]
 [RequireComponent(typeof(ShovelComponent))]
 [RequireComponent(typeof(BucketComponent))]
+[RequireComponent(typeof(ObjectPoserComponent))]
 public class Painter : MonoBehaviour
 {
     private PaintComponent paintComponent;
+    private ObjectPoserComponent poserComponent;
     private ShovelComponent shovelComponent;
     private BucketComponent bucketComponent;
-    private PainterMode currentMode = PainterMode.Paint;
+    private DestructionComponent destructionComponent;
+    public PainterMode currentMode { get; private set; } = PainterMode.Paint;
     [SerializeField] private InputHandler inputHandler;
     private bool isPainting;
     private Vector2 mousePos;
@@ -25,6 +30,8 @@ public class Painter : MonoBehaviour
         paintComponent = GetComponent<PaintComponent>();
         shovelComponent = GetComponent<ShovelComponent>();
         bucketComponent = GetComponent<BucketComponent>();
+        poserComponent = GetComponent<ObjectPoserComponent>();
+        destructionComponent = GetComponent<DestructionComponent>();
     }
     
     public void SetBrushSize(float size)
@@ -54,14 +61,27 @@ public class Painter : MonoBehaviour
         if (isPainting)
         {
             if (currentMode == PainterMode.Shovel)
+            {
                 shovelComponent.Add(mousePos, brushSize);
+                poserComponent.Remove(mousePos, brushSize);
+            }
             else if( currentMode == PainterMode.Paint)
             {
                 bucketComponent.Remove(mousePos, brushSize);
                 paintComponent.Add(mousePos, brushSize);
             }
             else if (currentMode == PainterMode.Bucket)
+            {
                 bucketComponent.Remove(mousePos, brushSize);
+            }
+            else if (currentMode == PainterMode.Object)
+            {
+                poserComponent.Add(mousePos, brushSize);
+            }
+            else if (currentMode == PainterMode.Destruction)
+            {
+                destructionComponent.Add(mousePos, brushSize);
+            }
             
         }
     }
@@ -74,7 +94,6 @@ public class Painter : MonoBehaviour
     private void OnMouseClickPressed()
     {
         isPainting = true;
-        print("painting");
     }
     
     private void OnDisable()

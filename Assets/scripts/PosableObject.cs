@@ -1,16 +1,21 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PosableObject : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+   private Sprite cachedSprite;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   public Sprite sprite
+   {
+      get
+      {
+         if (cachedSprite == null)
+            cachedSprite = GetComponent<SpriteRenderer>().sprite;
+         return cachedSprite;
+      }
+   }
+
+
+   [field:SerializeField] public List<TileBase> allowedTiles { get; private set; } = new();
 }
