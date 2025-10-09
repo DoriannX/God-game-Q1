@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,6 +10,7 @@ public class Meteore : DestructionObject
     [SerializeField] private float minDelay = 1f;
     [SerializeField] private float maxDelay = 3f;
     [SerializeField] private GameObject meteoriteAnimationPrefab;
+    private Collider2D[] results = new Collider2D[100];
 
     public override void Destroy(WaterSystem waterSystem, HeightManager heightManager, Vector2 pos)
     {
@@ -19,13 +19,11 @@ public class Meteore : DestructionObject
 
     private IEnumerator DestroyAfterDelay(WaterSystem waterSystem, HeightManager heightManager, Vector2 pos)
     {
-        // Attente avant impact
         float waitTime = Random.Range(minDelay, maxDelay);
         Instantiate(meteoriteAnimationPrefab, transform.position, Quaternion.identity).GetComponent<MeteoriteAnimation>().SetDuration(waitTime);
         yield return new WaitForSeconds(waitTime);
 
         // Impact visuel
-        Vector3 worldPos = new(pos.x, pos.y, 0);
         Vector3Int centerCell = TilemapManager.instance.WorldToCell(pos);
         float meteoriteSize = Random.Range(minSize, maxSize);
 
@@ -58,12 +56,21 @@ public class Meteore : DestructionObject
         }
 
         // Destruction des objets touchés
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPos, meteoriteSize);
-        foreach (Collider2D collider in colliders)
+        ContactFilter2D contactFilter = new()
         {
-            var posableObject = collider.GetComponent<PosableObject>();
-            if (posableObject != null)
-                Destroy(collider.gameObject);
+            useTriggers = false,
+            useLayerMask = false,
+            useDepth = false,
+            useOutsideDepth = false,
+            useNormalAngle = false,
+            useOutsideNormalAngle = false
+        };
+        int hitCount = Physics2D.OverlapCircle(transform.position, meteoriteSize, contactFilter, results);
+        for (int i = 0; i < hitCount; i++)
+        {
+            var destructible = results[i].GetComponent<DestructionObject>();
+            if (destructible != null && destructible != this)
+                Destroy(destructible.gameObject);
         }
 
         // Destruction du météore lui-même

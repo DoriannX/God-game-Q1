@@ -10,12 +10,29 @@ public class TilemapManager : MonoBehaviour
     public BoundsInt waterCellBounds => waterTilemap.cellBounds;
     public static TilemapManager instance { get; private set; }
     
+    private readonly Dictionary<Vector3Int, TileBase> tileCache = new();
+    
+    public TileBase GetTile(Vector3Int cell)
+    {
+        if (tileCache.TryGetValue(cell, out TileBase cached))
+            return cached;
+
+        var t = tilemap.GetTile(cell);
+        tileCache[cell] = t;
+        return t;
+    }
+
+    private void UpdateTileCache(Vector3Int cell)
+    {
+        tileCache[cell] = tilemap.GetTile(cell);
+    }
+    
     public Vector3 cellSize => tilemap.cellSize;
     private void Awake()
     {
         if (instance != null && instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
         else
         {
@@ -32,12 +49,6 @@ public class TilemapManager : MonoBehaviour
         return tilemap.WorldToCell(startWorld);
     }
 
-
-    public TileBase GetTile(Vector3Int cell)
-    {
-        return tilemap.GetTile(cell);
-    }
-
     public TileBase GetWaterTile(Vector3Int cell)
     {
         return waterTilemap.GetTile(cell);
@@ -47,6 +58,7 @@ public class TilemapManager : MonoBehaviour
     {
         tilemap.SetTile(cell, tile);
         cellChanged?.Invoke(cell);
+        UpdateTileCache(cell);
     }
 
     public void SetWaterTile(Vector3Int cell, TileBase tile)

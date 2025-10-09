@@ -9,6 +9,26 @@ public class HexPathfinding2D : MonoBehaviour
     private HashSet<Vector3Int> walkableCells = new();
     private TilemapManager tilemapManager;
     [SerializeField] private TileBase[] walkableTiles;
+    private readonly Queue<Vector3Int> pendingUpdates = new();
+
+    public void OnTileChanged(Vector3Int cell)
+    {
+        pendingUpdates.Enqueue(cell);
+    }
+
+    private void Update()
+    {
+        int batchSize = 50;
+        int count = Mathf.Min(batchSize, pendingUpdates.Count);
+        for (int i = 0; i < count; i++)
+        {
+            var cell = pendingUpdates.Dequeue();
+            var tile = tilemapManager.GetTile(cell);
+            bool isWalkable = tile != null && walkableSet.Contains(tile) && tilemapManager.GetWaterTile(cell) == null;
+            if (isWalkable) walkableCells.Add(cell);
+            else walkableCells.Remove(cell);
+        }
+    }
 
     static readonly Vector2Int[] evenRowNeighbors =
     {
@@ -21,10 +41,10 @@ public class HexPathfinding2D : MonoBehaviour
         new(+1, 0), new(+1, +1), new(0, +1),
         new(-1, 0), new(0, -1), new(+1, -1),
     };
-    
+
     public Vector3Int? GetRandomWalkableCell(float radius)
     {
-        if (walkableCells.Count == 0)return null;
+        if (walkableCells.Count == 0) return null;
         var list = new List<Vector3Int>(walkableCells);
         int attempts = 100;
         while (attempts-- > 0)
@@ -33,7 +53,8 @@ public class HexPathfinding2D : MonoBehaviour
             if (Vector2.Distance(Vector2.zero, tilemapManager.GetCellCenterWorld(cell)) <= radius)
                 return cell;
         }
-        return null; 
+
+        return null;
     }
 
     private void Start()
@@ -42,9 +63,9 @@ public class HexPathfinding2D : MonoBehaviour
         tilemapManager = TilemapManager.instance;
         walkableSet = new HashSet<TileBase>(walkableTiles);
         ComputeWalkableCells();
-        TilemapManager.instance.cellChanged += UpdateWalkableCells;
+        TilemapManager.instance.cellChanged += OnTileChanged;
     }
-    
+
     private void ComputeWalkableCells()
     {
         walkableCells.Clear();
@@ -59,15 +80,6 @@ public class HexPathfinding2D : MonoBehaviour
                     walkableCells.Add(cell);
             }
         }
-    }
-    
-    private void UpdateWalkableCells(Vector3Int changedCell)
-    {
-        TileBase tile = tilemapManager.GetTile(changedCell);
-        if (tile != null && walkableSet.Contains(tile) && tilemapManager.GetWaterTile(changedCell) == null)
-            walkableCells.Add(changedCell);
-        else
-            walkableCells.Remove(changedCell);
     }
 
     public List<Vector2> GetWorldPath(List<Vector3Int> path)
@@ -162,6 +174,7 @@ public class HexPathfinding2D : MonoBehaviour
             path.Add(current);
             current = prev;
         }
+
         path.Add(current);
         path.Reverse();
         return path;

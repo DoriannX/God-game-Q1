@@ -23,7 +23,7 @@ public class GhostMovement : MonoBehaviour
         float time = TickSystem.instance.tickInterval;
         float distance = Vector2.Distance(startPosition, currentTarget);
         float speed = distance / time;
-        transform.position = Vector2.MoveTowards(currentPosition, currentTarget, 2f * speed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(currentPosition, currentTarget, speed * Time.deltaTime);
     }
 
     public bool isMoving =>
