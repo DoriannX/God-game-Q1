@@ -6,18 +6,22 @@ using UnityEngine.Tilemaps;
 
 public class ShovelComponent : MonoBehaviour
 {
-    [SerializeField] private Tilemap tilemap;
-    [SerializeField] private HeightManager heightManager;
+    private HeightManager heightManager;
     private List<Vector3Int> modifiedCells = new();
     private List<float> modificationTimes = new();
     [SerializeField] private float shovelDelay = 1f;
 
+    private void Start()
+    {
+        heightManager = HeightManager.instance;
+    }
+
     public void Add(Vector2 pos, float brushSize)
     {
-        Vector3Int centerCell = tilemap.WorldToCell(pos);
+        Vector3Int centerCell = TilemapManager.instance.WorldToCell(pos);
 
-        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / tilemap.cellSize.x);
-        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / tilemap.cellSize.y);
+        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
+        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
 
         int maxRadius = Mathf.Max(cellRadiusX, cellRadiusY);
 
@@ -26,15 +30,15 @@ public class ShovelComponent : MonoBehaviour
             for (int y = -maxRadius; y <= maxRadius; y++)
             {
                 Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = tilemap.GetCellCenterWorld(cell);
+                Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
 
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize && !modifiedCells.Contains(cell))
                 {
                     modifiedCells.Add(cell);
                     modificationTimes.Add(Time.time);
-                    TileBase previousTile = heightManager.GetUnderHeightTile(tilemap.GetTile(cell));
+                    TileBase previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
                     if (previousTile == null) continue;
-                    tilemap.SetTile(cell, previousTile);
+                    TilemapManager.instance.SetTile(cell, previousTile);
                 }
             }
         }

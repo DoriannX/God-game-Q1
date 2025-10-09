@@ -1,10 +1,11 @@
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class HeightCalculator : MonoBehaviour
 {
     [SerializeField] private TileBase tileToCheck;
-    [SerializeField] private HeightManager heightManager;
+    private HeightManager heightManager;
     #if UNITY_EDITOR
         [UnityEditor.CustomEditor(typeof(HeightCalculator))]
         public class HeightCalculatorEditor : UnityEditor.Editor
@@ -20,7 +21,12 @@ public class HeightCalculator : MonoBehaviour
             }
         }
     #endif
-    
+
+    private void Start()
+    {
+        heightManager = HeightManager.instance;
+    }
+
     public void CalculateHeight()
     {
         print(heightManager.GetHeightIndex(tileToCheck));

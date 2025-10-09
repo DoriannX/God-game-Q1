@@ -7,8 +7,6 @@ using Random = UnityEngine.Random;
 public class ObjectPoserComponent : MonoBehaviour
 {
     [field: SerializeField] public PosableObject[] posableObjects { get; private set; }
-    [SerializeField] private Tilemap tilemap;
-    [SerializeField] private Tilemap waterTilemap;
     public int objectIndex { get; private set; }
     private Vector2 lastPos;
     private Vector2 lastHitPos;
@@ -33,10 +31,10 @@ public class ObjectPoserComponent : MonoBehaviour
         {
             Vector3 worldPos = new(pos.x, pos.y, 0);
             var offset = new Vector3(Random.Range(-brushSize, brushSize), Random.Range(-brushSize, brushSize), 0);
-            Vector3Int cellPos = tilemap.WorldToCell(worldPos + offset);
-            if (tilemap.GetTile(cellPos) == null ||
-                !posableObject.allowedTiles.Contains(tilemap.GetTile(cellPos)) ||
-                (waterTilemap.GetTile(cellPos) != null && !posableObject.allowedTiles.Contains(waterTilemap.GetTile(cellPos))))
+            Vector3Int cellPos = TilemapManager.instance.WorldToCell(worldPos + offset);
+            if (TilemapManager.instance.GetTile(cellPos) == null ||
+                !posableObject.allowedTiles.Contains(TilemapManager.instance.GetTile(cellPos)) ||
+                (TilemapManager.instance.GetWaterTile(cellPos) != null && !posableObject.allowedTiles.Contains(TilemapManager.instance.GetWaterTile(cellPos))))
             {
                 continue;
             }

@@ -11,7 +11,13 @@ public class PosableObject : MonoBehaviour
       get
       {
          if (cachedSprite == null)
-            cachedSprite = GetComponent<SpriteRenderer>().sprite;
+         {
+            SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
+               spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            
+            cachedSprite = spriteRenderer.sprite;
+         }
          return cachedSprite;
       }
    }

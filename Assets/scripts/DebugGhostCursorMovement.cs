@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,3 +33,4 @@ public class DebugGhostCursorMovement : MonoBehaviour
         ghostMovement.GoTo(worldPositions);
     }
 }
+*/

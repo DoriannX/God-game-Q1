@@ -4,8 +4,6 @@ using UnityEngine.Tilemaps;
 
 public class WaterSystem : MonoBehaviour
 {
-    [SerializeField] private Tilemap tilemap;
-    [SerializeField] private Tilemap waterTilemap;
     [SerializeField] private PaintComponent paintComponent;
     [SerializeField] private TileBase waterTile;
     [SerializeField] private HeightManager heightManager;
@@ -31,12 +29,10 @@ public class WaterSystem : MonoBehaviour
 
     private void Start()
     {
-        if (waterTilemap == null || waterTilemap.cellBounds.size == Vector3Int.zero)
-            return;
 
-        foreach (var pos in waterTilemap.cellBounds.allPositionsWithin)
+        foreach (var pos in TilemapManager.instance.waterCellBounds.allPositionsWithin)
         {
-            if (waterTilemap.GetTile(pos) == waterTile)
+            if (TilemapManager.instance.GetWaterTile(pos) == waterTile)
                 waterTiles.Add(pos);
         }
     }
@@ -47,8 +43,8 @@ public class WaterSystem : MonoBehaviour
             completedWaterTiles.Add(position);
         waterTiles.Remove(position);
 
-        if (waterTilemap.GetTile(position) != waterTile)
-            waterTilemap.SetTile(position, waterTile);
+        if (TilemapManager.instance.GetWaterTile(position) != waterTile)
+            TilemapManager.instance.SetWaterTile(position, waterTile);
     }
 
     private void Tick()
@@ -68,7 +64,7 @@ public class WaterSystem : MonoBehaviour
 
     private void ExpandFrom(Vector3Int position)
     {
-        int currentHeight = heightManager.GetHeightIndex(tilemap.GetTile(position));
+        int currentHeight = heightManager.GetHeightIndex(TilemapManager.instance.GetTile(position));
         var offsets = ((position.y & 1) == 0) ? evenNeighborOffsets : oddNeighborOffsets;
 
         foreach (var off in offsets)
@@ -78,12 +74,12 @@ public class WaterSystem : MonoBehaviour
             if (waterTiles.Contains(neighbor) || completedWaterTiles.Contains(neighbor))
                 continue;
 
-            var neighborTile = tilemap.GetTile(neighbor);
+            var neighborTile = TilemapManager.instance.GetTile(neighbor);
             if (heightManager.GetHeightIndex(neighborTile) > currentHeight)
                 continue;
 
             AddWaterTile(neighbor);
-            waterTilemap.SetTile(neighbor, waterTile);
+            TilemapManager.instance.SetWaterTile(neighbor, waterTile);
         }
     }
 
@@ -108,7 +104,7 @@ public class WaterSystem : MonoBehaviour
     public void RemoveWaterTile(Vector3Int position)
     {
         if (waterTiles.Remove(position) || completedWaterTiles.Remove(position))
-            waterTilemap.SetTile(position, null);
+            TilemapManager.instance.SetWaterTile(position, null);
     }
 
     public void ReactivateAdjacentWater(Vector3Int position)
@@ -119,7 +115,7 @@ public class WaterSystem : MonoBehaviour
             {
                 waterTiles.Add(p);
             }
-            else if (waterTilemap.GetTile(p) == waterTile && !waterTiles.Contains(p))
+            else if (TilemapManager.instance.GetWaterTile(p) == waterTile && !waterTiles.Contains(p))
             {
                 waterTiles.Add(p);
             }

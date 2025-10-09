@@ -1,10 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class HeightManager : MonoBehaviour
 {
+    public static HeightManager instance;
+    
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else
+            Destroy(gameObject);
+    }
     [SerializeField] private List<HeightCell> heightCells;
     
     public TileBase GetUnderHeightTile(TileBase tile)

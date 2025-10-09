@@ -1,56 +1,96 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class HexPathfinding2D : MonoBehaviour
 {
-    public Tilemap tilemap;
-    //Water tilemap
-    public TileBase[] walkableTiles;
-    [SerializeField] private HeightManager heightManager;
+    private HeightManager heightManager;
+    private HashSet<TileBase> walkableSet;
+    private HashSet<Vector3Int> walkableCells = new();
+    private TilemapManager tilemapManager;
+    [SerializeField] private TileBase[] walkableTiles;
 
-    static readonly Vector2Int[] evenRowNeighbors = new Vector2Int[]
+    static readonly Vector2Int[] evenRowNeighbors =
     {
-        new Vector2Int(+1, 0),
-        new Vector2Int(0, +1),
-        new Vector2Int(-1, +1),
-        new Vector2Int(-1, 0),
-        new Vector2Int(-1, -1),
-        new Vector2Int(0, -1),
+        new(+1, 0), new(0, +1), new(-1, +1),
+        new(-1, 0), new(-1, -1), new(0, -1),
     };
 
-    static readonly Vector2Int[] oddRowNeighbors = new Vector2Int[]
+    static readonly Vector2Int[] oddRowNeighbors =
     {
-        new Vector2Int(+1, 0),
-        new Vector2Int(+1, +1),
-        new Vector2Int(0, +1),
-        new Vector2Int(-1, 0),
-        new Vector2Int(0, -1),
-        new Vector2Int(+1, -1),
+        new(+1, 0), new(+1, +1), new(0, +1),
+        new(-1, 0), new(0, -1), new(+1, -1),
     };
     
+    public Vector3Int? GetRandomWalkableCell(float radius)
+    {
+        if (walkableCells.Count == 0)return null;
+        var list = new List<Vector3Int>(walkableCells);
+        int attempts = 100;
+        while (attempts-- > 0)
+        {
+            var cell = list[Random.Range(0, list.Count)];
+            if (Vector2.Distance(Vector2.zero, tilemapManager.GetCellCenterWorld(cell)) <= radius)
+                return cell;
+        }
+        return null; 
+    }
+
+    private void Start()
+    {
+        heightManager = HeightManager.instance;
+        tilemapManager = TilemapManager.instance;
+        walkableSet = new HashSet<TileBase>(walkableTiles);
+        ComputeWalkableCells();
+        TilemapManager.instance.cellChanged += UpdateWalkableCells;
+    }
+    
+    private void ComputeWalkableCells()
+    {
+        walkableCells.Clear();
+        BoundsInt bounds = tilemapManager.tilemap.cellBounds;
+        for (int x = bounds.xMin; x < bounds.xMax; x++)
+        {
+            for (int y = bounds.yMin; y < bounds.yMax; y++)
+            {
+                var cell = new Vector3Int(x, y, 0);
+                TileBase tile = tilemapManager.GetTile(cell);
+                if (tile != null && walkableSet.Contains(tile) && tilemapManager.GetWaterTile(cell) == null)
+                    walkableCells.Add(cell);
+            }
+        }
+    }
+    
+    private void UpdateWalkableCells(Vector3Int changedCell)
+    {
+        TileBase tile = tilemapManager.GetTile(changedCell);
+        if (tile != null && walkableSet.Contains(tile) && tilemapManager.GetWaterTile(changedCell) == null)
+            walkableCells.Add(changedCell);
+        else
+            walkableCells.Remove(changedCell);
+    }
+
     public List<Vector2> GetWorldPath(List<Vector3Int> path)
     {
         if (path == null) return null;
-
-        var worldPath = new List<Vector2>();
-        foreach (var cell in path)
-        {
-            worldPath.Add(tilemap.GetCellCenterWorld(cell));
-        }
+        int count = path.Count;
+        var worldPath = new List<Vector2>(count);
+        for (int i = 0; i < count; i++)
+            worldPath.Add(tilemapManager.GetCellCenterWorld(path[i]));
         return worldPath;
     }
-    
+
     public List<Vector3Int> FindPath(Vector2 startWorld, Vector2 goalWorld)
     {
-        Vector3Int start = tilemap.WorldToCell(startWorld);
-        Vector3Int goal = tilemap.WorldToCell(goalWorld);
-        return FindPath(start, goal);
+        return FindPath(tilemapManager.WorldToCell(startWorld), tilemapManager.WorldToCell(goalWorld));
     }
 
     public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal)
     {
+        // Vérifie que start et goal sont dans les cases marchables
+        if (!walkableCells.Contains(start) || !walkableCells.Contains(goal))
+            return null;
+
         var openSet = new PriorityQueue<Vector3Int>();
         var cameFrom = new Dictionary<Vector3Int, Vector3Int>();
         var gScore = new Dictionary<Vector3Int, float>();
@@ -58,75 +98,72 @@ public class HexPathfinding2D : MonoBehaviour
         openSet.Enqueue(start, 0);
         gScore[start] = 0;
 
+        var neighborBuffer = new Vector3Int[6];
+
         while (openSet.Count > 0)
         {
             var current = openSet.Dequeue();
+
             if (current == goal)
                 return Reconstruct(cameFrom, current);
 
-            foreach (var neighbor in GetNeighbors(current))
-            {
-                if (!IsWalkable(neighbor) || !IsHeightWalkable(current, neighbor))
-                {
-                    continue;
-                }
+            int nCount = GetNeighbors(current, neighborBuffer);
+            float currentG = gScore[current];
 
-                float tentative = gScore[current] + 1;
-                if (!gScore.ContainsKey(neighbor) || tentative < gScore[neighbor])
-                {
-                    cameFrom[neighbor] = current;
-                    gScore[neighbor] = tentative;
-                    float f = tentative + Heuristic(neighbor, goal);
-                    openSet.Enqueue(neighbor, f);
-                }
+            for (int i = 0; i < nCount; i++)
+            {
+                var neighbor = neighborBuffer[i];
+
+                if (!walkableCells.Contains(neighbor))
+                    continue;
+                if (!IsHeightWalkable(tilemapManager.GetTile(current), tilemapManager.GetTile(neighbor)))
+                    continue;
+
+                float tentative = currentG + 1f;
+                if (gScore.TryGetValue(neighbor, out float existingG) && tentative >= existingG)
+                    continue;
+
+                cameFrom[neighbor] = current;
+                gScore[neighbor] = tentative;
+                float f = tentative + Heuristic(neighbor, goal);
+                openSet.Enqueue(neighbor, f);
             }
         }
+
         return null;
     }
 
-    List<Vector3Int> GetNeighbors(Vector3Int pos)
-    {
-        var list = new List<Vector3Int>();
-        var rowParity = pos.y & 1;
-        var offsets = rowParity == 0 ? evenRowNeighbors : oddRowNeighbors;
 
-        foreach (var o in offsets)
-        {
-            var neighbor = new Vector3Int(pos.x + o.x, pos.y + o.y, 0);
-            list.Add(neighbor);
-        }
-        return list;
+    int GetNeighbors(Vector3Int pos, Vector3Int[] buffer)
+    {
+        var offsets = (pos.y & 1) == 0 ? evenRowNeighbors : oddRowNeighbors;
+        for (int i = 0; i < 6; i++)
+            buffer[i] = new Vector3Int(pos.x + offsets[i].x, pos.y + offsets[i].y, 0);
+        return 6;
     }
 
-    bool IsWalkable(Vector3Int pos)
+    bool IsHeightWalkable(TileBase fromTile, TileBase toTile)
     {
-        var tile = tilemap.GetTile(pos);
-        return tile != null && walkableTiles.Contains(tile);
-    }
-    
-    private bool IsHeightWalkable(Vector3Int from, Vector3Int to)
-    {
-        int fromHeight = heightManager.GetHeightIndex(tilemap.GetTile(from));
-        int toHeight = heightManager.GetHeightIndex(tilemap.GetTile(to));
-        return Mathf.Abs(fromHeight - toHeight) <= 1;
+        int fromH = heightManager.GetHeightIndex(fromTile);
+        int toH = heightManager.GetHeightIndex(toTile);
+        return Mathf.Abs(fromH - toH) <= 1;
     }
 
     float Heuristic(Vector3Int a, Vector3Int b)
     {
-        // distance hex approx
-        float dx = a.x - b.x;
-        float dy = a.y - b.y;
-        return Mathf.Abs(dx) + Mathf.Abs(dy);
+        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
     }
 
     List<Vector3Int> Reconstruct(Dictionary<Vector3Int, Vector3Int> cameFrom, Vector3Int current)
     {
-        var path = new List<Vector3Int> { current };
-        while (cameFrom.ContainsKey(current))
+        var path = new List<Vector3Int>();
+        while (cameFrom.TryGetValue(current, out var prev))
         {
-            current = cameFrom[current];
-            path.Insert(0, current);
+            path.Add(current);
+            current = prev;
         }
+        path.Add(current);
+        path.Reverse();
         return path;
     }
 }

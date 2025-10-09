@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -6,13 +7,17 @@ using Random = UnityEngine.Random;
 public class DestructionComponent : MonoBehaviour
 {
     [field:SerializeField] public List<DestructionObject> destructionObjects { get; private set; }
-    [SerializeField] private Tilemap tilemap;
     [SerializeField] private WaterSystem waterSystem;
-    [SerializeField] private HeightManager heightManager;
+    private HeightManager heightManager;
     public int objectIndex { get; private set; }
     private Vector2 lastPos;
     private Vector2 lastHitPos;
     private bool canPlace = true;
+
+    private void Start()
+    {
+        heightManager = HeightManager.instance;
+    }
 
     private void OnEnable()
     {
@@ -34,7 +39,7 @@ public class DestructionComponent : MonoBehaviour
             var offset = new Vector3(Random.Range(-brushSize * 5, brushSize * 5), Random.Range(-brushSize * 5, brushSize * 5), 0);
             Vector3 spawnPos = worldPos + offset;
             DestructionObject instancedDestructionObject = Instantiate(destructionObject, spawnPos, Quaternion.identity);
-            instancedDestructionObject.Destroy(tilemap, waterSystem, heightManager, spawnPos);
+            instancedDestructionObject.Destroy(waterSystem, heightManager, spawnPos);
             canPlace = false;
         }
     }

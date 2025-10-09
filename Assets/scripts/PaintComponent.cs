@@ -6,8 +6,6 @@ using UnityEngine.Tilemaps;
 
 public class PaintComponent : MonoBehaviour
 {
-    [SerializeField] private Tilemap tilemap;
-    [SerializeField] private Tilemap waterTilemap;
     [SerializeField] private TileBase waterTile;
     [field: SerializeField] public Tile[] tiles { get; private set; }
     //Create objects and put them here
@@ -23,10 +21,10 @@ public class PaintComponent : MonoBehaviour
 
     public void Add(Vector2 pos, float brushSize, TileBase tile)
     {
-        Vector3Int centerCell = tilemap.WorldToCell(pos);
+        Vector3Int centerCell = TilemapManager.instance.WorldToCell(pos);
         
-        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / tilemap.cellSize.x);
-        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / tilemap.cellSize.y);
+        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
+        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
         
         int maxRadius = Mathf.Max(cellRadiusX, cellRadiusY);
         
@@ -35,18 +33,18 @@ public class PaintComponent : MonoBehaviour
             for (int y = -maxRadius; y <= maxRadius; y++)
             {
                 Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = tilemap.GetCellCenterWorld(cell);
+                Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
         
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize)
                 {
                     if (tile == waterTile)
                     {
                         paintedWater?.Invoke(cell);
-                        waterTilemap.SetTile(cell, tile);
+                        TilemapManager.instance.SetWaterTile(cell, tile);
                     }
                     else
                     {
-                        tilemap.SetTile(cell, tile);
+                        TilemapManager.instance.SetTile(cell, tile);
                     }
                 }
             }
