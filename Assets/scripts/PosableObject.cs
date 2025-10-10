@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -22,6 +23,23 @@ public class PosableObject : MonoBehaviour
       }
    }
 
+   private void OnEnable()
+   {
+      TickSystem.ticked += OnTick;
+   }
+
+   private void OnTick()
+   {
+      if(WaterSystem.instance.IsOnWater(transform.position))
+      {
+         Destroy(gameObject);
+      }
+   }
 
    [field:SerializeField] public List<TileBase> allowedTiles { get; private set; } = new();
+   
+   private void OnDisable()
+   {
+      TickSystem.ticked -= OnTick;
+   }
 }

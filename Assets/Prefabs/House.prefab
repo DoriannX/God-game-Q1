@@ -48,11 +48,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::House
   <progressIncrement>k__BackingField: 0.1
-  houseSprites:
-  - {fileID: -1923994175756728024, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
-  - {fileID: -3211844383458338046, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
-  - {fileID: 575601758146719918, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
-  - {fileID: 8131065375128214768, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
+  fuckIncrement: 0.1
+  ghostPrefab: {fileID: 7957398275529141594, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+  tickToExitAlone: 5
+  minBabies: 1
+  maxBabies: 3
 --- !u!114 &-5617122581320332499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,6 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4432211622722948107}
   - component: {fileID: 3863063918988673353}
+  - component: {fileID: 2879936682852551064}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -197,3 +198,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2879936682852551064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 926223728100586299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9ec7685b3e06c2c49c6b5b5638b2f32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GrowComponent
+  growthRate: 0.1
+  growthStages:
+  - {fileID: -1923994175756728024, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
+  - {fileID: -3211844383458338046, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
+  - {fileID: 575601758146719918, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}
+  - {fileID: 8131065375128214768, guid: f28ebcef2174b97998783bd07cb920a3, type: 3}

@@ -1,14 +1,14 @@
-using System;
 using UnityEngine;
 using UnityHFSM;
 using Random = UnityEngine.Random;
-
 
 public class StateMachineController : MonoBehaviour
 {
     [SerializeField] private WanderComponent wanderComponent;
     [SerializeField] private WorkComponent workComponent;
-    [SerializeField] private GhostIA ghostIA;
+    [SerializeField] private HouseRetriever houseRetriever;
+    [SerializeField] private GrowComponent growComponent;
+    [SerializeField] private GhostIa ghostIA;
     private StateMachine stateMachine;
 
     private void OnEnable()
@@ -23,15 +23,26 @@ public class StateMachineController : MonoBehaviour
 
     private void Awake()
     {
+        growComponent.onFullyGrown += SetupStateMachine;
         stateMachine = new StateMachine();
         State wanderState = new WanderState(wanderComponent);
-        State workState = new WorkState( ghostIA, workComponent);
-        workComponent.onWork += () => stateMachine.Trigger("OnWork");
         stateMachine.AddState("Wander", wanderState);
-        stateMachine.AddState("Work", workState);
-        stateMachine.AddTransition("Wander", "Work", _ => Random.Range(0f, 1f) < 0.1f);
-        stateMachine.AddTriggerTransition("OnWork", "Work", "Wander");
         stateMachine.SetStartState("Wander");
+        stateMachine.Init();
+    }   
+    private void SetupStateMachine()
+    {
+        print("SetupStateMachine");
+        State workState = new WorkState( ghostIA, workComponent);
+        State fuckState = new FuckState(ghostIA, houseRetriever);
+        ((FuckState) fuckState).onFuckFinished += () => stateMachine.Trigger("OnFuckFinished");
+        workComponent.onWork += () => stateMachine.Trigger("OnWork");
+        stateMachine.AddState("Work", workState);
+        stateMachine.AddState("Fuck", fuckState);
+        stateMachine.AddTransition("Wander", "Work", _ => Random.Range(0f, 1f) < 0.1f);
+        stateMachine.AddTransition("Wander", "Fuck", _ => Random.Range(0f, 1f) < 0.05f);
+        stateMachine.AddTriggerTransition("OnWork", "Work", "Wander");
+        stateMachine.AddTriggerTransition("OnFuckFinished", "Fuck", "Wander");
         stateMachine.Init();
     }
 

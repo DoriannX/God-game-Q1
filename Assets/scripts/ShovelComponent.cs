@@ -8,8 +8,11 @@ public class ShovelComponent : MonoBehaviour
 {
     private HeightManager heightManager;
     private List<Vector3Int> modifiedCells = new();
-    private List<float> modificationTimes = new();
-    [SerializeField] private float shovelDelay = 1f;
+
+    private void OnEnable()
+    {
+        TickSystem.ticked += OnTick;
+    }
 
     private void Start()
     {
@@ -35,7 +38,6 @@ public class ShovelComponent : MonoBehaviour
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize && !modifiedCells.Contains(cell))
                 {
                     modifiedCells.Add(cell);
-                    modificationTimes.Add(Time.time);
                     TileBase previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
                     if (previousTile == null) continue;
                     TilemapManager.instance.SetTile(cell, previousTile);
@@ -44,15 +46,16 @@ public class ShovelComponent : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void OnTick()
     {
         for (int i = 0; i < modifiedCells.ToList().Count; i++)
         {
-            if (modificationTimes[i] + shovelDelay < Time.time)
-            {
-                modifiedCells.Remove(modifiedCells[i]);
-                modificationTimes.Remove(modificationTimes[i]);
-            }
+            modifiedCells.Remove(modifiedCells[i]);
         }
+    }
+    
+    private void OnDisable()
+    {
+        TickSystem.ticked -= OnTick;
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CTools.CTimer;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,6 +12,12 @@ public class ObjectPoserComponent : MonoBehaviour
     private Vector2 lastPos;
     private Vector2 lastHitPos;
     private bool canPlace = true;
+    private Camera camera1;
+
+    private void Start()
+    {
+        camera1 = Camera.main;
+    }
 
     private void OnEnable()
     {
@@ -24,38 +31,66 @@ public class ObjectPoserComponent : MonoBehaviour
 
     private void Add(Vector2 pos, float brushSize, PosableObject posableObject)
     {
-        if(!canPlace) return;
-        print(brushSize * 10 + " objects to place");
-        int randomCount = Random.Range(1, (int)(brushSize * 10));
-        for (var i = 0; i < randomCount; i++)
+        if (!canPlace) return;
+
+        var tilemap = TilemapManager.instance;
+        var worldPos = new Vector3(pos.x, pos.y, 0);
+        var allowedTiles = posableObject.allowedTiles;
+
+        if (Mathf.Approximately(brushSize, 0.1f))
         {
-            Vector3 worldPos = new(pos.x, pos.y, 0);
+            TryPlace(tilemap, worldPos, allowedTiles, posableObject);
+            return;
+        }
+
+        int randomCount = Random.Range(1, (int)(brushSize * 10));
+        for (int i = 0; i < randomCount; i++)
+        {
             var offset = new Vector3(Random.Range(-brushSize, brushSize), Random.Range(-brushSize, brushSize), 0);
-            Vector3Int cellPos = TilemapManager.instance.WorldToCell(worldPos + offset);
-            if (TilemapManager.instance.GetTile(cellPos) == null ||
-                !posableObject.allowedTiles.Contains(TilemapManager.instance.GetTile(cellPos)) ||
-                (TilemapManager.instance.GetWaterTile(cellPos) != null && !posableObject.allowedTiles.Contains(TilemapManager.instance.GetWaterTile(cellPos))))
-            {
-                continue;
-            }
-            Vector3 spawnPos = worldPos + offset;
-            Instantiate(posableObject, spawnPos, Quaternion.identity);
-            canPlace = false;
+            TryPlace(tilemap, worldPos + offset, allowedTiles, posableObject);
         }
     }
-    
+
+    private void TryPlace(TilemapManager tilemap, Vector3 worldPos, List<TileBase> allowedTiles,
+        PosableObject prefab)
+    {
+        var cellPos = tilemap.WorldToCell(worldPos);
+        var baseTile = tilemap.GetTile(cellPos);
+        if (baseTile == null || !allowedTiles.Contains(baseTile)) return;
+
+        var waterTile = tilemap.GetWaterTile(cellPos);
+        if (waterTile != null && !allowedTiles.Contains(waterTile)) return;
+
+        Instantiate(prefab, tilemap.GetCellCenterWorld(cellPos), Quaternion.identity);
+        canPlace = false;
+    }
+
     public void Remove(Vector2 pos, float brushSize)
     {
-        print(brushSize * 10 + " objects to remove");
-        Vector3 worldPos = new(pos.x, pos.y, 0);
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(worldPos, brushSize);
-        foreach (var collider in colliders)
+        lastPos = pos;
+        var worldPos = new Vector3(pos.x, pos.y, 0);
+
+        if (Mathf.Approximately(brushSize, 0.1f))
         {
-            PosableObject posableObject = collider.GetComponent<PosableObject>();
-            if (posableObject != null)
-            {
-                Destroy(collider.gameObject);
-            }
+            var ray = camera1.ScreenPointToRay(camera1.WorldToScreenPoint(worldPos));
+            var hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+            if (hit.collider == null) return;
+
+            var obj = hit.collider.GetComponent<PosableObject>();
+            if (obj == null) return;
+
+            Destroy(hit.collider.gameObject);
+            print("Destroyed object at " + hit.point);
+            lastHitPos = hit.point;
+            return;
+        }
+
+        var colliders = Physics2D.OverlapCircleAll(worldPos, brushSize);
+        foreach (var col in colliders)
+        {
+            var obj = col.GetComponent<PosableObject>();
+            if (obj != null) Destroy(col.gameObject);
         }
     }
 
@@ -71,7 +106,7 @@ public class ObjectPoserComponent : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(lastHitPos, 0.5f);
     }
-    
+
     private void OnDisable()
     {
         TickSystem.ticked -= ResetAdd;

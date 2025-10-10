@@ -7,7 +7,6 @@ using Random = UnityEngine.Random;
 public class DestructionComponent : MonoBehaviour
 {
     [field:SerializeField] public List<DestructionObject> destructionObjects { get; private set; }
-    [SerializeField] private WaterSystem waterSystem;
     private HeightManager heightManager;
     public int objectIndex { get; private set; }
     private Vector2 lastPos;
@@ -39,7 +38,7 @@ public class DestructionComponent : MonoBehaviour
             var offset = new Vector3(Random.Range(-brushSize * 5, brushSize * 5), Random.Range(-brushSize * 5, brushSize * 5), 0);
             Vector3 spawnPos = worldPos + offset;
             DestructionObject instancedDestructionObject = Instantiate(destructionObject, spawnPos, Quaternion.identity);
-            instancedDestructionObject.Destroy(waterSystem, heightManager, spawnPos);
+            instancedDestructionObject.Destroy(heightManager, spawnPos);
             canPlace = false;
         }
     }

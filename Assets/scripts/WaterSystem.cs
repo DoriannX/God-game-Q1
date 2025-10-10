@@ -4,6 +4,7 @@ using UnityEngine.Tilemaps;
 
 public class WaterSystem : MonoBehaviour
 {
+    public static WaterSystem instance { get; private set; }
     [SerializeField] private PaintComponent paintComponent;
     [SerializeField] private TileBase waterTile;
     [SerializeField] private HeightManager heightManager;
@@ -25,6 +26,15 @@ public class WaterSystem : MonoBehaviour
     {
         paintComponent.paintedWater += AddWaterTile;
         TickSystem.ticked += Tick;
+        
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
     }
 
     private void Start()
@@ -60,6 +70,12 @@ public class WaterSystem : MonoBehaviour
             if (IsTileCompleted(pos))
                 MarkTileCompleted(pos);
         }
+    }
+    
+    public bool IsOnWater(Vector2 position)
+    {
+        var cell = TilemapManager.instance.WorldToCell(position);
+        return TilemapManager.instance.GetWaterTile(cell) == waterTile;
     }
 
     private void ExpandFrom(Vector3Int position)

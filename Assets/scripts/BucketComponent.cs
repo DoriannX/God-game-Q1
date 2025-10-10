@@ -5,7 +5,6 @@ using UnityEngine.Tilemaps;
 
 public class BucketComponent : MonoBehaviour
 {
-    [SerializeField] private WaterSystem waterSystem;
 
     public void Remove(Vector2 pos, float brushSize)
     {
@@ -25,8 +24,8 @@ public class BucketComponent : MonoBehaviour
 
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize)
                 {
-                    waterSystem.RemoveWaterTile(cell);
-                    waterSystem.ReactivateAdjacentWater(cell);
+                    WaterSystem.instance.RemoveWaterTile(cell);
+                    WaterSystem.instance.ReactivateAdjacentWater(cell);
                 }
             }
         }

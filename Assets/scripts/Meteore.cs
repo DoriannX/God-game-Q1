@@ -10,14 +10,14 @@ public class Meteore : DestructionObject
     [SerializeField] private float minDelay = 1f;
     [SerializeField] private float maxDelay = 3f;
     [SerializeField] private GameObject meteoriteAnimationPrefab;
-    private Collider2D[] results = new Collider2D[100];
+    private Collider2D[] results = new Collider2D[1000];
 
-    public override void Destroy(WaterSystem waterSystem, HeightManager heightManager, Vector2 pos)
+    public override void Destroy(HeightManager heightManager, Vector2 pos)
     {
-        StartCoroutine(DestroyAfterDelay(waterSystem, heightManager, pos));
+        StartCoroutine(DestroyAfterDelay(heightManager, pos));
     }
 
-    private IEnumerator DestroyAfterDelay(WaterSystem waterSystem, HeightManager heightManager, Vector2 pos)
+    private IEnumerator DestroyAfterDelay(HeightManager heightManager, Vector2 pos)
     {
         float waitTime = Random.Range(minDelay, maxDelay);
         Instantiate(meteoriteAnimationPrefab, transform.position, Quaternion.identity).GetComponent<MeteoriteAnimation>().SetDuration(waitTime);
@@ -49,8 +49,8 @@ public class Meteore : DestructionObject
 
                     if (previousTile == null) continue;
                     TilemapManager.instance.SetTile(cell, previousTile);
-                    waterSystem.RemoveWaterTile(cell);
-                    waterSystem.ReactivateAdjacentWater(cell);
+                    WaterSystem.instance.RemoveWaterTile(cell);
+                    WaterSystem.instance.ReactivateAdjacentWater(cell);
                 }
             }
         }
@@ -58,7 +58,7 @@ public class Meteore : DestructionObject
         // Destruction des objets touchés
         ContactFilter2D contactFilter = new()
         {
-            useTriggers = false,
+            useTriggers = true,
             useLayerMask = false,
             useDepth = false,
             useOutsideDepth = false,
@@ -66,10 +66,11 @@ public class Meteore : DestructionObject
             useOutsideNormalAngle = false
         };
         int hitCount = Physics2D.OverlapCircle(transform.position, meteoriteSize, contactFilter, results);
+        print(hitCount);
         for (int i = 0; i < hitCount; i++)
         {
-            var destructible = results[i].GetComponent<DestructionObject>();
-            if (destructible != null && destructible != this)
+            var destructible = results[i].GetComponent<PosableObject>();
+            if (destructible != null)
                 Destroy(destructible.gameObject);
         }
 

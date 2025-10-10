@@ -5,7 +5,7 @@ using UnityEngine;
 public class WanderComponent : MonoBehaviour
 {
     [SerializeField] private float wanderRadius = 5f;
-    [SerializeField] private GhostIA ghostMovement;
+    [SerializeField] private GhostIa ghostMovement;
     private bool canWander = true;
     private Vector2 targetPosition;
 

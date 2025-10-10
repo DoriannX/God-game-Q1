@@ -4,6 +4,18 @@ using UnityEngine.Tilemaps;
 
 public class HexPathfinding2D : MonoBehaviour
 {
+    public static HexPathfinding2D instance;
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+
+        instance = this;
+    }
     private HeightManager heightManager;
     private HashSet<TileBase> walkableSet;
     private HashSet<Vector3Int> walkableCells = new();
@@ -99,7 +111,6 @@ public class HexPathfinding2D : MonoBehaviour
 
     public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal)
     {
-        // Vérifie que start et goal sont dans les cases marchables
         if (!walkableCells.Contains(start) || !walkableCells.Contains(goal))
             return null;
 

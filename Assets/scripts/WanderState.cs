@@ -11,7 +11,6 @@ public class WanderState : State
     public override void OnEnter()
     {
         base.OnEnter();
-        Debug.Log("Entering Wander State");
     }
         
     public override void OnLogic()
@@ -23,6 +22,5 @@ public class WanderState : State
     public override void OnExit()
     {
         base.OnExit();
-        Debug.Log("Exiting Wander State");
     }
 }

@@ -3,9 +3,9 @@ using UnityHFSM;
 
 public class WorkState : State
 {
-    private GhostIA ghostIA;
+    private GhostIa ghostIA;
     private WorkComponent workComponent;
-    public WorkState(GhostIA ghostIA, WorkComponent workComponent)
+    public WorkState(GhostIa ghostIA, WorkComponent workComponent)
     {
         this.workComponent = workComponent;
         this.ghostIA = ghostIA;

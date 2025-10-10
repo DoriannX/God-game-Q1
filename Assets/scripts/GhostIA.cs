@@ -2,16 +2,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GhostIA : MonoBehaviour
+public class GhostIa : MonoBehaviour
 {
     [SerializeField] private GhostMovement ghostMovement;
-    [SerializeField] private HexPathfinding2D pathFinding;
+    [SerializeField] private GrowComponent growComponent;
 
     private Vector2 targetPosition;
     private List<Vector2> currentPath;
-    private Vector3Int lastStart;
-    private Vector3Int lastGoal;
-
     private void OnEnable()
     {
         TickSystem.ticked += Tick;
@@ -30,6 +27,7 @@ public class GhostIA : MonoBehaviour
 
     private void Tick()
     {
+        growComponent.Grow();
         if (ghostMovement.isMoving)
             return;
         ComputePath();
@@ -52,16 +50,13 @@ public class GhostIA : MonoBehaviour
         Vector3Int startCell = TilemapManager.instance.tilemap.WorldToCell(transform.position);
         Vector3Int goalCell = TilemapManager.instance.tilemap.WorldToCell(targetPosition);
 
-        List<Vector3Int> tilePath = pathFinding.FindPath(startCell, goalCell);
-        currentPath = pathFinding.GetWorldPath(tilePath);
-
-        lastStart = startCell;
-        lastGoal = goalCell;
+        List<Vector3Int> tilePath = HexPathfinding2D.instance.FindPath(startCell, goalCell);
+        currentPath = HexPathfinding2D.instance.GetWorldPath(tilePath);
     }
     
     public Vector2? GetRandomWalkablePosition(float radius)
     {
-        var cell = pathFinding.GetRandomWalkableCell(radius);
+        Vector3Int? cell = HexPathfinding2D.instance.GetRandomWalkableCell(radius);
         if (cell == null) return null;
         return TilemapManager.instance.GetCellCenterWorld(cell.Value);
     }
