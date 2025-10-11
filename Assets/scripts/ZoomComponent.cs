@@ -1,20 +1,22 @@
+using System;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 [RequireComponent(typeof(Camera))]
 public class ZoomComponent : MonoBehaviour
 {
     [SerializeField] private float minY = 5f;
     [SerializeField] private float maxY = 20f;
-    private Camera cam;
+    private PixelPerfectCamera cam;
 
     private void Awake()
     {
-        cam = GetComponent<Camera>();
+        cam = GetComponent<PixelPerfectCamera>();
     }
 
     public void Zoom(float delta, float zoomSpeed)
     {
-        cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - delta * zoomSpeed, minY, maxY);
+        cam.assetsPPU = (int)Mathf.Clamp(cam.assetsPPU + delta * zoomSpeed, minY, maxY);
     }
 
     public float GetZoom()

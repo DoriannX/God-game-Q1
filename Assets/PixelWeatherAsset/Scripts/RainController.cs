@@ -17,13 +17,13 @@ public class RainController : MonoBehaviour
     public float lightningIntensity = 1f;
     public bool autoUpdate;
 
-    public ParticleSystem rainPart;
+    public ParticleSystem rainParts;
     public ParticleSystem windPart;
     public ParticleSystem lightningPart;
     public ParticleSystem fogPart;
 
-    private ParticleSystem.EmissionModule rainEmission;
-    private ParticleSystem.ForceOverLifetimeModule rainForce;
+    private ParticleSystem.EmissionModule rainEmissions;
+    private ParticleSystem.ForceOverLifetimeModule rainForces;
     private ParticleSystem.EmissionModule windEmission;
     private ParticleSystem.MainModule windMain;
     private ParticleSystem.EmissionModule lightningEmission;
@@ -32,8 +32,8 @@ public class RainController : MonoBehaviour
 
     void Awake()
     {
-        rainEmission = rainPart.emission;
-        rainForce = rainPart.forceOverLifetime;
+        rainEmissions = rainParts.emission;
+        rainForces = rainParts.forceOverLifetime;
         windEmission = windPart.emission;
         windMain = windPart.main;
         lightningEmission = lightningPart.emission;
@@ -49,8 +49,8 @@ public class RainController : MonoBehaviour
     }
 
     void UpdateAll(){
-        rainEmission.rate = 200f * masterIntensity * rainIntensity;
-        rainForce.x = new ParticleSystem.MinMaxCurve(-25f * windIntensity * masterIntensity, (-3-30f * windIntensity) * masterIntensity);
+        rainEmissions.rate = 500f * masterIntensity * rainIntensity;
+        rainForces.x = new ParticleSystem.MinMaxCurve(-25f * windIntensity * masterIntensity, (-3 - 30f * windIntensity) * masterIntensity);
         windEmission.rate = 5f * masterIntensity * (windIntensity + fogIntensity);
         windMain.startLifetime = 2f + 5f * (1f - windIntensity);
         windMain.startSpeed = new ParticleSystem.MinMaxCurve(15f * windIntensity, 25 * windIntensity);

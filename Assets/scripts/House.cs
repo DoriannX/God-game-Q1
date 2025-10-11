@@ -13,6 +13,7 @@ public class House : WorkTask
     [SerializeField] private int tickToExitAlone = 5;
     [SerializeField] private int minBabies = 1;
     [SerializeField] private int maxBabies = 3;
+    private Animator animator;
     private int ticksAlone = 0;
     private bool isFucking = false;
     public bool isFull => fuckingGhosts.Count >= 2;
@@ -22,6 +23,7 @@ public class House : WorkTask
     private void Awake()
     {
         growComponent = GetComponentInChildren<GrowComponent>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void OnEnable()
@@ -51,6 +53,7 @@ public class House : WorkTask
     private void StartFucking()
     {
         if (fuckingGhosts.Count < 2) return;
+        animator.Play("HouseSexAnimation");
         isFucking = true;
     }
 
@@ -91,6 +94,8 @@ public class House : WorkTask
 
         fuckProgress = 0f;
         isFucking = false;
+
+        animator.Play("Idle");
         foreach (GhostIa ghost in fuckingGhosts.ToList())
         {
             Exit(ghost);
@@ -111,9 +116,10 @@ public class House : WorkTask
 
     private void OnDestroy()
     {
-        
         foreach (var ghost in fuckingGhosts)
         {
+            if (ghost == null)
+                return;
             Destroy(ghost.gameObject);
         }
     }
