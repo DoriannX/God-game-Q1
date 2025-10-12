@@ -10,6 +10,8 @@ public class CameraController : MonoBehaviour
     private bool mouseClicked;
     [SerializeField] private float speed;
     [SerializeField] private float zoomSpeed;
+    [SerializeField] private float moveXLimit;
+    [SerializeField] private float moveYLimit;
 
     private void Awake()
     {
@@ -57,6 +59,14 @@ public class CameraController : MonoBehaviour
         if (!mouseClicked)
         {
             return;
+        }
+        if ((transform.position.x <= -moveXLimit && delta.x > 0) || (transform.position.x >= moveXLimit && delta.x < 0))
+        {
+            delta.x = 0;
+        }
+        if ((transform.position.y <= -moveYLimit && delta.y > 0) || (transform.position.y >= moveYLimit && delta.y < 0))
+        {
+            delta.y = 0;
         }
         movementComponent.Move(-delta, speed * zoomComponent.GetZoom() / 10);
     }

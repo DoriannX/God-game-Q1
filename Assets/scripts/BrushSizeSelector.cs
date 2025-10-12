@@ -8,23 +8,20 @@ public class BrushSizeSelector : MonoBehaviour
     [SerializeField] private float sizeOption1 = 0.1f;
     [SerializeField] private float sizeOption2 = 0.75f;
     [SerializeField] private float sizeOption3 = 1.5f;
-    [SerializeField] private Image selectedIndicator;
     [SerializeField] private Button size1;
     [SerializeField] private Button size2;
     [SerializeField] private Button size3;
+    private Selector selector;
 
     private void Awake()
     {
+        selector = GetComponentInChildren<Selector>();
         void SetupButton(Button button, float size)
         {
             button.onClick.AddListener(() =>
             {
                 OnButtonClicked(size);
-                selectedIndicator.transform.position = button.transform.position;
-                selectedIndicator.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
-                    button.GetComponent<RectTransform>().rect.width);
-                selectedIndicator.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-                    button.GetComponent<RectTransform>().rect.height);
+                selector.Select(button);
             });
         }
         

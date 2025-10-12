@@ -9926,7 +9926,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -14775,7 +14775,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 30
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -24472,7 +24472,7 @@ MonoBehaviour:
   fogIntensity: 0
   lightningIntensity: 0
   autoUpdate: 0
-  rainPart: {fileID: 5520605116634314042}
+  rainParts: {fileID: 0}
   windPart: {fileID: 5520605116980315705}
   lightningPart: {fileID: 5520605117208042691}
   fogPart: {fileID: 5520605117174259814}

@@ -4,10 +4,12 @@ using Random = UnityEngine.Random;
 
 public class StateMachineController : MonoBehaviour
 {
+    //TODO: Save
     [SerializeField] private WanderComponent wanderComponent;
     [SerializeField] private WorkComponent workComponent;
     [SerializeField] private HouseRetriever houseRetriever;
     [SerializeField] private GrowComponent growComponent;
+    [SerializeField] private ScareComponent scareComponent;
     [SerializeField] private GhostIa ghostIA;
     private StateMachine stateMachine;
 
@@ -26,6 +28,13 @@ public class StateMachineController : MonoBehaviour
         growComponent.onFullyGrown += SetupStateMachine;
         stateMachine = new StateMachine();
         State wanderState = new WanderState(wanderComponent);
+        State scareState = new ScareState(scareComponent, ghostIA);
+        stateMachine.AddTriggerTransitionFromAny("OnScare", "Scare");
+        stateMachine.AddState("Scare", scareState);
+        scareComponent.onScare += () =>
+        {
+            stateMachine.Trigger("OnScare"); 
+        };
         stateMachine.AddState("Wander", wanderState);
         stateMachine.SetStartState("Wander");
         stateMachine.Init();

@@ -40,7 +40,7 @@ public class PaintComponent : MonoBehaviour
                     if (tile == waterTile)
                     {
                         paintedWater?.Invoke(cell);
-                        TilemapManager.instance.SetWaterTile(cell, tile);
+                        WaterSystem.instance.AddWaterTile(cell);
                     }
                     else
                     {

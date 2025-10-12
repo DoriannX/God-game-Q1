@@ -1,10 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SaveLoadSystem;
 using UnityEngine;
 
 public class House : WorkTask
 {
+    [Serializable]
+    private struct HouseData
+    {
+        public float growthStage;
+        public float fuckProgress;
+        public int ticksAlone;
+        public bool isFucking;
+        public List<GhostIa.GhostData> fuckingGhosts;
+        //TODO: save ghosts inside
+        
+    }
     private HashSet<GhostIa> fuckingGhosts = new();
     private GrowComponent growComponent;
     private float fuckProgress = 0;

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fae340a6b94d1a8429bd30fac208fe35
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 225017
+  packageName: Flexible save system
+  packageVersion: 01.02.05
+  assetPath: Assets/Flexible save system/Resources/SaveablePrefabs.asset
+  uploadId: 732964

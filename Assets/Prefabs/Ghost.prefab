@@ -17,6 +17,9 @@ GameObject:
   - component: {fileID: 4077641912464904975}
   - component: {fileID: 4552284087110041515}
   - component: {fileID: 1857299742354842865}
+  - component: {fileID: 303491999226953158}
+  - component: {fileID: 5805087815445507371}
+  - component: {fileID: 6701740305892963349}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
@@ -86,6 +89,7 @@ MonoBehaviour:
   workComponent: {fileID: 4077641912464904975}
   houseRetriever: {fileID: 1857299742354842865}
   growComponent: {fileID: 2022015165024604261}
+  scareComponent: {fileID: 5805087815445507371}
   ghostIA: {fileID: 7957398275529141594}
 --- !u!114 &3234770281780568274
 MonoBehaviour:
@@ -177,6 +181,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   range: 10
+--- !u!114 &303491999226953158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c91a1ad27e348dc0282c799117690fd7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  checkRadius: 1
+--- !u!114 &5805087815445507371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f21de9c1b79a6ffa94737036e59770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScareComponent
+--- !u!114 &6701740305892963349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309f5c2845053874aaf028be2f5c7630, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveLoadSystem.SaveableEntity
+  m_ID: 
+  m_childID: 
+  m_prefabID: Ghost
+  m_saveTransform: 1
 --- !u!1 &8484147219461251418
 GameObject:
   m_ObjectHideFlags: 0

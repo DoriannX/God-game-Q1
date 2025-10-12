@@ -7,12 +7,12 @@ public class ObjectUIMaker : MonoBehaviour
     [SerializeField] private ObjectPoserComponent poserComponent;
     [SerializeField] private Image prefabImage;
     [SerializeField] private Transform parentTransform;
-    [SerializeField] private Image selectedBorder;
+    private Selector selector;
     private List<Image> images = new();
 
     private void Awake()
     {
-        
+        selector = GetComponentInChildren<Selector>();
         for(var i = 0; i < poserComponent.posableObjects.Length; i++)
         {
             Image img = Instantiate(prefabImage, parentTransform);
@@ -22,14 +22,9 @@ public class ObjectUIMaker : MonoBehaviour
             img.GetComponent<Button>().onClick.AddListener(() =>
             {
                 poserComponent.SetCurrentObject(index);
-                selectedBorder.enabled = true;
-                selectedBorder.transform.position = img.transform.position;
+                selector.Select(img);
             });
         }
-    }
-    
-    private void Update()
-    {
-        selectedBorder.transform.position = images[poserComponent.objectIndex].transform.position;
+        images[0].GetComponent<Button>().onClick?.Invoke();
     }
 }

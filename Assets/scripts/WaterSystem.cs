@@ -39,7 +39,6 @@ public class WaterSystem : MonoBehaviour
 
     private void Start()
     {
-
         foreach (var pos in TilemapManager.instance.waterCellBounds.allPositionsWithin)
         {
             if (TilemapManager.instance.GetWaterTile(pos) == waterTile)
@@ -111,16 +110,28 @@ public class WaterSystem : MonoBehaviour
         return true;
     }
 
-    private void AddWaterTile(Vector3Int position)
+    public void AddWaterTile(Vector3Int position)
     {
         if (waterTiles.Contains(position) || completedWaterTiles.Contains(position)) return;
         waterTiles.Add(position);
+        TilemapManager.instance.SetWaterTile(position, waterTile);
     }
 
     public void RemoveWaterTile(Vector3Int position)
     {
         if (waterTiles.Remove(position) || completedWaterTiles.Remove(position))
             TilemapManager.instance.SetWaterTile(position, null);
+    }
+    
+    public void ClearAllWater()
+    {
+        foreach (var pos in waterTiles)
+            TilemapManager.instance.SetWaterTile(pos, null);
+        foreach (var pos in completedWaterTiles)
+            TilemapManager.instance.SetWaterTile(pos, null);
+        
+        waterTiles.Clear();
+        completedWaterTiles.Clear();
     }
 
     public void ReactivateAdjacentWater(Vector3Int position)

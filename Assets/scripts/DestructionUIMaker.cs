@@ -8,12 +8,13 @@ public class DestructionUIMaker : MonoBehaviour
     [SerializeField] private Painter painter;
     [SerializeField] private Image prefabImage;
     [SerializeField] private RectTransform parentTransform;
-    [SerializeField] private Image selectedBorder;
+    private Selector selector;
     private List<Image> images = new();
 
     private void Awake()
     {
-        for(int i = 0; i < destructionComponent.destructionObjects.Count; i++)
+        selector = GetComponentInChildren<Selector>();
+        for (int i = 0; i < destructionComponent.destructionObjects.Count; i++)
         {
             Image img = Instantiate(prefabImage, parentTransform);
             images.Add(img);
@@ -22,14 +23,9 @@ public class DestructionUIMaker : MonoBehaviour
             img.GetComponent<Button>().onClick.AddListener(() =>
             {
                 destructionComponent.SetCurrentObject(index);
-                selectedBorder.enabled = true;
-                selectedBorder.transform.position = img.transform.position;
+                selector.Select(img);
             });
         }
-    }
-
-    private void Update()
-    {
-        selectedBorder.transform.position = images[destructionComponent.objectIndex].transform.position;
-    }
+        images[0].GetComponent<Button>().onClick?.Invoke();
+    } 
 }

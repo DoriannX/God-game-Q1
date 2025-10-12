@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 309f5c2845053874aaf028be2f5c7630
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 225017
+  packageName: Flexible save system
+  packageVersion: 01.02.05
+  assetPath: Assets/Flexible save system/Scripts/Runtime/SaveableEntity.cs
+  uploadId: 732964

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GrowComponent : MonoBehaviour
 {
-    private float growthProgressPercent = 0f;
+    public float growthProgressPercent { get; private set; } = 0f;
     [SerializeField] private float growthRate = 0.1f;
     [SerializeField] private Sprite[] growthStages;
     private SpriteRenderer spriteRenderer;

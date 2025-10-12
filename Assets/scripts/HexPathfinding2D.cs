@@ -76,6 +76,7 @@ public class HexPathfinding2D : MonoBehaviour
         walkableSet = new HashSet<TileBase>(walkableTiles);
         ComputeWalkableCells();
         TilemapManager.instance.cellChanged += OnTileChanged;
+        TilemapManager.instance.onWaterCellChanged += OnTileChanged;
     }
 
     private void ComputeWalkableCells()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,33 +10,39 @@ public class ToolSelector : MonoBehaviour
     [SerializeField] private Button bucketButton;
     [SerializeField] private Button objectButton;
     [SerializeField] private Button destructionButton;
-    [SerializeField] private Image selectedIndicator;
+    private Selector selector;
+
+    private void Awake()
+    {
+        selector = GetComponentInChildren<Selector>();
+    }
+
     private void Start()
     {
         brushButton.onClick.AddListener(() =>
         {
             painter.SetMode(PainterMode.Paint);
-            selectedIndicator.transform.position = brushButton.transform.position;
+            selector.Select(brushButton);
         });
         shovelButton.onClick.AddListener(() =>
         {
             painter.SetMode(PainterMode.Shovel);
-            selectedIndicator.transform.position = shovelButton.transform.position;
+            selector.Select(shovelButton);
         });
         bucketButton.onClick.AddListener(() =>
         {
             painter.SetMode(PainterMode.Bucket);
-            selectedIndicator.transform.position = bucketButton.transform.position;
+            selector.Select(bucketButton);
         });
         objectButton.onClick.AddListener(() =>
         {
             painter.SetMode(PainterMode.Object);
-            selectedIndicator.transform.position = objectButton.transform.position;
+            selector.Select(objectButton);
         });
         destructionButton.onClick.AddListener(() =>
         {
             painter.SetMode(PainterMode.Destruction);
-            selectedIndicator.transform.position = destructionButton.transform.position;
+            selector.Select(destructionButton);
         });
         brushButton.onClick?.Invoke();
     }

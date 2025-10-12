@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a00e5ac0b5e372d4fb6afa1aadd0696f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 225017
+  packageName: Flexible save system
+  packageVersion: 01.02.05
+  assetPath: Assets/Flexible save system/Scripts/Editor/SavablePrefabsEditor.cs
+  uploadId: 732964
