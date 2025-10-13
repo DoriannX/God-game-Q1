@@ -25,7 +25,6 @@ public class BucketComponent : MonoBehaviour
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize)
                 {
                     WaterSystem.instance.RemoveWaterTile(cell);
-                    WaterSystem.instance.ReactivateAdjacentWater(cell);
                 }
             }
         }

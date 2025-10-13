@@ -234,6 +234,7 @@ GameObject:
   - component: {fileID: 2424349180154339363}
   - component: {fileID: 2022015165024604261}
   - component: {fileID: 3057750871050936803}
+  - component: {fileID: 3552608091273977343}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -344,3 +345,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GhostAnimation
   floatAmplitude: 0.01
   floatFrequency: 10
+--- !u!114 &3552608091273977343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8484147219461251418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309f5c2845053874aaf028be2f5c7630, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveLoadSystem.SaveableEntity
+  m_ID: 
+  m_childID: 
+  m_prefabID: Sprite
+  m_saveTransform: 1

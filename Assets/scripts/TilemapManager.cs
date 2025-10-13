@@ -27,9 +27,6 @@ public class TilemapManager : MonoBehaviour, ISaveable
     public Action<Vector3Int> cellChanged;
 
     public Action<Vector3Int> onWaterCellChanged;
-
-    //public BoundsInt cellBounds => tilemap.cellBounds;
-    //public BoundsInt waterCellBounds => waterTilemap.cellBounds;
     public BoundsInt cellBounds => new BoundsInt(new Vector3Int(-90, -100, 0), new Vector3Int(180, 200, 1));
     public BoundsInt waterCellBounds => new BoundsInt(new Vector3Int(-90, -100, 0), new Vector3Int(180, 200, 1));
     public static TilemapManager instance { get; private set; }

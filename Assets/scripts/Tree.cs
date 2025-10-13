@@ -10,7 +10,7 @@ public class Tree : MonoBehaviour, ISaveable
         public SaveableEntity.Vector3Data position;
         public float waterProgress;
     }
-    private GrowComponent growComponent;
+    public GrowComponent growComponent;
     private float waterProgress = 0;
     [SerializeField] private float waterIncrement = 0.1f;
     
@@ -39,6 +39,10 @@ public class Tree : MonoBehaviour, ISaveable
             return;
         }
         waterProgress = 0;
+        if(growComponent == null)
+        {
+            growComponent = GetComponentInChildren<GrowComponent>();
+        }
         growComponent.Grow();
     }
     
@@ -76,5 +80,7 @@ public class Tree : MonoBehaviour, ISaveable
 
     public void PostInstantiation(object state){}
 
-    public void GotAddedAsChild(GameObject obj, GameObject hisParent){}
+    public void GotAddedAsChild(GameObject obj, GameObject hisParent)
+    {
+    }
 }

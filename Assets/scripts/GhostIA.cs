@@ -15,7 +15,7 @@ public class GhostIa : MonoBehaviour, ISaveable
     [SerializeField] private GhostMovement ghostMovement;
     [SerializeField] private GrowComponent growComponent;
 
-    private Vector2 targetPosition;
+    public Vector2 targetPosition { get; private set; }
     private List<Vector2> currentPath;
     private void OnEnable()
     {

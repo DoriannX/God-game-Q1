@@ -20,13 +20,16 @@ public class MeteoUI : MonoBehaviour
         rainButton.onClick.AddListener(() =>
         {
             MeteoManager.Instance.SetWeather(true);
-            selector.Select(rainButton);
         });
         
         sunButton.onClick.AddListener(() =>
         {
             MeteoManager.Instance.SetWeather(false);
-            selector.Select(sunButton);
         });
+        
+        MeteoManager.Instance.weatherChanged += isRaining =>
+        {
+            selector.Select(isRaining ? rainButton : sunButton);
+        };
     }
 }

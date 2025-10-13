@@ -120,7 +120,10 @@ public class WaterSystem : MonoBehaviour
     public void RemoveWaterTile(Vector3Int position)
     {
         if (waterTiles.Remove(position) || completedWaterTiles.Remove(position))
+        {
             TilemapManager.instance.SetWaterTile(position, null);
+            ReactivateAdjacentWater(position);
+        }
     }
     
     public void ClearAllWater()
@@ -134,7 +137,7 @@ public class WaterSystem : MonoBehaviour
         completedWaterTiles.Clear();
     }
 
-    public void ReactivateAdjacentWater(Vector3Int position)
+    private void ReactivateAdjacentWater(Vector3Int position)
     {
         void Reactivate(Vector3Int p)
         {

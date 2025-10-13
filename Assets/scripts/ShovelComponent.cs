@@ -35,12 +35,16 @@ public class ShovelComponent : MonoBehaviour
                 Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
                 Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
 
-                if (Vector2.Distance(pos, cellWorldPos) <= brushSize && !modifiedCells.Contains(cell))
+                if (Vector2.Distance(pos, cellWorldPos) <= brushSize )
                 {
-                    modifiedCells.Add(cell);
-                    TileBase previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
-                    if (previousTile == null) continue;
-                    TilemapManager.instance.SetTile(cell, previousTile);
+                    if(!modifiedCells.Contains(cell))
+                    {
+                        modifiedCells.Add(cell);
+                        TileBase previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
+                        if (previousTile == null) continue;
+                        TilemapManager.instance.SetTile(cell, previousTile);
+                    }
+                    WaterSystem.instance?.RemoveWaterTile(cell);
                 }
             }
         }

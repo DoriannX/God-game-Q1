@@ -41,7 +41,6 @@ public class StateMachineController : MonoBehaviour
     }   
     private void SetupStateMachine()
     {
-        print("SetupStateMachine");
         State workState = new WorkState( ghostIA, workComponent);
         State fuckState = new FuckState(ghostIA, houseRetriever);
         ((FuckState) fuckState).onFuckFinished += () => stateMachine.Trigger("OnFuckFinished");

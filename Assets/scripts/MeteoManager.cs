@@ -1,9 +1,19 @@
 using System;
+using SaveLoadSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MeteoManager : MonoBehaviour
+[RequireComponent(typeof(SaveableEntity))]
+public class MeteoManager : MonoBehaviour, ISaveable
 {
+    [Serializable]
+    public struct MeteoData
+    {
+        public bool isRaining;
+        public int manualTick;
+        public bool setManually;
+        public float rainIntensity;
+    }
     public static MeteoManager Instance { get; private set; }
     [SerializeField] private RainController rainController;
     [SerializeField, Range(0, 1)] private float rainChance;
@@ -101,5 +111,45 @@ public class MeteoManager : MonoBehaviour
     private void OnDisable()
     {
         TickSystem.ticked -= OnTicked;
+    }
+
+    public bool NeedsToBeSaved()
+    {
+        return true;
+    }
+
+    public bool NeedsReinstantiation()
+    {
+        return false;
+    }
+
+    public object SaveState()
+    {
+        MeteoData data = new MeteoData
+        {
+            isRaining = isRaining,
+            manualTick = manualTick,
+            setManually = setManually,
+            rainIntensity = rainController.masterIntensity
+        };
+        return data;
+    }
+
+    public void LoadState(object state)
+    {
+        MeteoData data = (MeteoData)state;
+        isRaining = data.isRaining;
+        manualTick = data.manualTick;
+        setManually = data.setManually;
+        rainController.masterIntensity = isRaining ? data.rainIntensity : 0f;
+        weatherChanged?.Invoke(isRaining);
+    }
+
+    public void PostInstantiation(object state)
+    {
+    }
+
+    public void GotAddedAsChild(GameObject obj, GameObject hisParent)
+    {
     }
 }

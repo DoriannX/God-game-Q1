@@ -1,4 +1,5 @@
 using System;
+using SaveLoadSystem;
 using UnityEngine;
 
 public class GhostMovement : MonoBehaviour

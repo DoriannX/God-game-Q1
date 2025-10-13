@@ -4,12 +4,12 @@ using System.Linq;
 using SaveLoadSystem;
 using UnityEngine;
 
-public class House : WorkTask
+[RequireComponent(typeof(SaveableEntity))]
+public class House : WorkTask, ISaveable
 {
     [Serializable]
     private struct HouseData
     {
-        public float growthStage;
         public float fuckProgress;
         public int ticksAlone;
         public bool isFucking;
@@ -134,5 +134,64 @@ public class House : WorkTask
                 return;
             Destroy(ghost.gameObject);
         }
+    }
+
+    public bool NeedsToBeSaved()
+    {
+        return true;
+    }
+
+    public bool NeedsReinstantiation()
+    {
+        return true;
+    }
+
+    public object SaveState()
+    {
+        List<GhostIa.GhostData> ghostsData = new List<GhostIa.GhostData>();
+        foreach (var ghost in fuckingGhosts)
+        {
+            ghostsData.Add((GhostIa.GhostData)ghost.SaveState());
+            
+        }
+        HouseData data = new HouseData
+        {
+            fuckProgress = fuckProgress,
+            ticksAlone = ticksAlone,
+            isFucking = isFucking,
+            fuckingGhosts = ghostsData
+        };
+        return data;
+    }
+
+    public void LoadState(object state)
+    {
+        HouseData data = (HouseData)state;
+        fuckProgress = data.fuckProgress;
+        ticksAlone = data.ticksAlone;
+        isFucking = data.isFucking;
+        foreach (var ghostData in data.fuckingGhosts)
+        {
+            GhostIa ghost = Instantiate(ghostPrefab,
+                TilemapManager.instance.GetCellCenterWorld(
+                    TilemapManager.instance.tilemap.WorldToCell(ghostData.position.ToVector2())), Quaternion.identity);
+            ghost.LoadState(ghostData);
+            ghost.gameObject.SetActive(false);
+            fuckingGhosts.Add(ghost);
+        }
+    }
+
+    public void PostInstantiation(object state)
+    {
+        HouseData data = (HouseData)state;
+        if (data.isFucking && fuckingGhosts.Count == 2)
+        {
+            StartFucking();
+        }
+    }
+
+    public void GotAddedAsChild(GameObject obj, GameObject hisParent)
+    {
+        
     }
 }

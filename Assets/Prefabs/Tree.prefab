@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1440058222318695666}
   - component: {fileID: 8422449215005281698}
   - component: {fileID: 8265398961987882884}
+  - component: {fileID: 3345385986583392430}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -109,6 +110,22 @@ MonoBehaviour:
   - {fileID: 4134985361545656292, guid: 6fe1b0554da20e463ada084f8d80c5b2, type: 3}
   - {fileID: -1566730818833404899, guid: 6fe1b0554da20e463ada084f8d80c5b2, type: 3}
   - {fileID: -7301469273254094464, guid: 6fe1b0554da20e463ada084f8d80c5b2, type: 3}
+--- !u!114 &3345385986583392430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3583273482679043159}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 309f5c2845053874aaf028be2f5c7630, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveLoadSystem.SaveableEntity
+  m_ID: 
+  m_childID: 
+  m_prefabID: Sprite
+  m_saveTransform: 1
 --- !u!1 &8270336819756170988
 GameObject:
   m_ObjectHideFlags: 0

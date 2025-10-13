@@ -1,9 +1,17 @@
 using System;
+using SaveLoadSystem;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class DayCycleSystem : MonoBehaviour
+[RequireComponent(typeof(SaveableEntity))]
+public class DayCycleSystem : MonoBehaviour, ISaveable
 {
+    [Serializable]
+    public struct DayCycleData
+    {
+        public bool isDay;
+        public float timeElapsed;
+    }
     public static DayCycleSystem instance;
     [SerializeField] private Light2D globalLight;
 
@@ -34,7 +42,6 @@ public class DayCycleSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        
         TickSystem.ticked += OnTicked;
     }
 
@@ -96,5 +103,35 @@ public class DayCycleSystem : MonoBehaviour
     {
         
         TickSystem.ticked -= OnTicked;
+    }
+
+    public bool NeedsToBeSaved() => true;
+
+    public bool NeedsReinstantiation() => false;
+
+    public object SaveState()
+    {
+        DayCycleData data = new DayCycleData
+        {
+            isDay = isDay,
+            timeElapsed = timeElapsed
+        };
+        return data;
+    }
+
+    public void LoadState(object state)
+    {
+        DayCycleData data = (DayCycleData)state;
+        isDay = data.isDay;
+        timeElapsed = data.timeElapsed;
+        UpdateLight();
+    }
+
+    public void PostInstantiation(object state)
+    {
+    }
+
+    public void GotAddedAsChild(GameObject obj, GameObject hisParent)
+    {
     }
 }
