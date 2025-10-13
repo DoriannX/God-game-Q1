@@ -20,7 +20,7 @@ public class WaterChecker : MonoBehaviour
 
     private void CheckWater(Vector3Int obj)
     {
-        Vector2 tilePos = TilemapManager.instance.tilemap.CellToWorld(obj);
+        Vector2 tilePos = TilemapManager.instance.CellToWorld(obj);
         if(Vector2.Distance(transform.position, tilePos) < checkRadius)
         {
             scareComponent.Scare(tilePos);

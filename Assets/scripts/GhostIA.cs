@@ -61,8 +61,8 @@ public class GhostIa : MonoBehaviour, ISaveable
 
     private void ComputePath()
     {
-        Vector3Int startCell = TilemapManager.instance.tilemap.WorldToCell(transform.position);
-        Vector3Int goalCell = TilemapManager.instance.tilemap.WorldToCell(targetPosition);
+        Vector3Int startCell = TilemapManager.instance.WorldToCell(transform.position);
+        Vector3Int goalCell = TilemapManager.instance.WorldToCell(targetPosition);
 
         List<Vector3Int> tilePath = HexPathfinding2D.instance.FindPath(startCell, goalCell);
         currentPath = HexPathfinding2D.instance.GetWorldPath(tilePath);
@@ -70,7 +70,7 @@ public class GhostIa : MonoBehaviour, ISaveable
     
     public Vector2? GetRandomWalkablePosition(float radius)
     {
-        Vector3Int? cell = HexPathfinding2D.instance.GetRandomWalkableCell(radius);
+        Vector3Int? cell = HexPathfinding2D.instance.GetRandomWalkableCell(transform.position, radius);
         if (cell == null) return null;
         return TilemapManager.instance.GetCellCenterWorld(cell.Value);
     }

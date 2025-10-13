@@ -11,6 +11,8 @@ public class StateMachineController : MonoBehaviour
     [SerializeField] private GrowComponent growComponent;
     [SerializeField] private ScareComponent scareComponent;
     [SerializeField] private GhostIa ghostIA;
+    [SerializeField] private float workProbability = 0.1f;
+    [SerializeField] private float fuckProbability = 0.05f;
     private StateMachine stateMachine;
 
     private void OnEnable()
@@ -47,8 +49,8 @@ public class StateMachineController : MonoBehaviour
         workComponent.onWork += () => stateMachine.Trigger("OnWork");
         stateMachine.AddState("Work", workState);
         stateMachine.AddState("Fuck", fuckState);
-        stateMachine.AddTransition("Wander", "Work", _ => Random.Range(0f, 1f) < 0.1f);
-        stateMachine.AddTransition("Wander", "Fuck", _ => Random.Range(0f, 1f) < 0.05f);
+        stateMachine.AddTransition("Wander", "Work", _ => Random.Range(0f, 1f) < workProbability);
+        stateMachine.AddTransition("Wander", "Fuck", _ => Random.Range(0f, 1f) < fuckProbability);
         stateMachine.AddTriggerTransition("OnWork", "Work", "Wander");
         stateMachine.AddTriggerTransition("OnFuckFinished", "Fuck", "Wander");
         stateMachine.Init();

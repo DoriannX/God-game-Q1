@@ -62,8 +62,8 @@ public class TilemapManager : MonoBehaviour, ISaveable
         }
     }
 
-    [field: SerializeField] public Tilemap tilemap { get; private set; }
-    [field: SerializeField] public Tilemap waterTilemap { get; private set; }
+    [SerializeField] private Tilemap tilemap;
+    [ SerializeField] private Tilemap waterTilemap;
 
     public Vector3 GetCellCenterWorld(Vector3Int cellPosition) => tilemap.GetCellCenterWorld(cellPosition);
 
@@ -180,6 +180,7 @@ public class TilemapManager : MonoBehaviour, ISaveable
         }
 
         tileCache.Clear();
+        HexPathfinding2D.instance.ComputeWalkableCells();
     }
 
     public void PostInstantiation(object state)
@@ -189,5 +190,10 @@ public class TilemapManager : MonoBehaviour, ISaveable
 
     public void GotAddedAsChild(GameObject obj, GameObject hisParent)
     {
+    }
+
+    public Vector2 CellToWorld(Vector3Int vector3Int)
+    {
+        return tilemap.CellToWorld(vector3Int);
     }
 }

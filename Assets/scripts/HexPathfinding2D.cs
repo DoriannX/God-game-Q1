@@ -54,7 +54,7 @@ public class HexPathfinding2D : MonoBehaviour
         new(-1, 0), new(0, -1), new(+1, -1),
     };
 
-    public Vector3Int? GetRandomWalkableCell(float radius)
+    public Vector3Int? GetRandomWalkableCell(Vector2 position, float radius)
     {
         if (walkableCells.Count == 0) return null;
         var list = new List<Vector3Int>(walkableCells);
@@ -62,7 +62,7 @@ public class HexPathfinding2D : MonoBehaviour
         while (attempts-- > 0)
         {
             var cell = list[Random.Range(0, list.Count)];
-            if (Vector2.Distance(Vector2.zero, tilemapManager.GetCellCenterWorld(cell)) <= radius)
+            if (Vector2.Distance(position, tilemapManager.GetCellCenterWorld(cell)) <= radius)
                 return cell;
         }
 
@@ -79,10 +79,10 @@ public class HexPathfinding2D : MonoBehaviour
         TilemapManager.instance.onWaterCellChanged += OnTileChanged;
     }
 
-    private void ComputeWalkableCells()
+    public void ComputeWalkableCells()
     {
         walkableCells.Clear();
-        BoundsInt bounds = tilemapManager.tilemap.cellBounds;
+        BoundsInt bounds = tilemapManager.cellBounds;
         for (int x = bounds.xMin; x < bounds.xMax; x++)
         {
             for (int y = bounds.yMin; y < bounds.yMax; y++)

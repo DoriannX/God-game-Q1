@@ -14,7 +14,6 @@ public class House : WorkTask, ISaveable
         public int ticksAlone;
         public bool isFucking;
         public List<GhostIa.GhostData> fuckingGhosts;
-        //TODO: save ghosts inside
         
     }
     private HashSet<GhostIa> fuckingGhosts = new();
@@ -101,7 +100,7 @@ public class House : WorkTask, ISaveable
         {
             Instantiate(ghostPrefab,
                 TilemapManager.instance.GetCellCenterWorld(
-                    TilemapManager.instance.tilemap.WorldToCell(transform.position)), Quaternion.identity);
+                    TilemapManager.instance.WorldToCell(transform.position)), Quaternion.identity);
         }
 
         fuckProgress = 0f;
@@ -174,7 +173,7 @@ public class House : WorkTask, ISaveable
         {
             GhostIa ghost = Instantiate(ghostPrefab,
                 TilemapManager.instance.GetCellCenterWorld(
-                    TilemapManager.instance.tilemap.WorldToCell(ghostData.position.ToVector2())), Quaternion.identity);
+                    TilemapManager.instance.WorldToCell(ghostData.position.ToVector2())), Quaternion.identity);
             ghost.LoadState(ghostData);
             ghost.gameObject.SetActive(false);
             fuckingGhosts.Add(ghost);
