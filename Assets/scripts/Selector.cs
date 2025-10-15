@@ -30,11 +30,11 @@ public class Selector : MonoBehaviour
         if(selectedObject.TryGetComponent(out RectTransform objRectTransform))
         {
             rectTransform.sizeDelta = objRectTransform.sizeDelta;
-            rectTransform.localPosition = objRectTransform.localPosition;
+            rectTransform.position = objRectTransform.position;
         }
         else
         {
-            rectTransform.localPosition = selectedObject.transform.position;
+            rectTransform.position = selectedObject.transform.position;
         }
     }
 

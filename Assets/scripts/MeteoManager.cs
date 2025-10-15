@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SaveLoadSystem;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -24,6 +25,7 @@ public class MeteoManager : MonoBehaviour, ISaveable
     public bool isRaining { get; private set; }
     private bool setManually;
     public event Action<bool> weatherChanged;
+    private readonly List<GameObject> activeWeatherEffects = new();
 
     private void Awake()
     {

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
 public class HexPathfinding2D : MonoBehaviour
 {
@@ -30,10 +32,13 @@ public class HexPathfinding2D : MonoBehaviour
 
     private void Update()
     {
-        int batchSize = 50;
-        int count = Mathf.Min(batchSize, pendingUpdates.Count);
+        int batchSize = 50;    
+        int maxProcessed = Mathf.Min(1000, pendingUpdates.Count); // Cap processing
+        int count = Mathf.Min(batchSize, maxProcessed);
+
         for (int i = 0; i < count; i++)
         {
+            if (pendingUpdates.Count == 0) break;
             var cell = pendingUpdates.Dequeue();
             var tile = tilemapManager.GetTile(cell);
             bool isWalkable = tile != null && walkableSet.Contains(tile) && tilemapManager.GetWaterTile(cell) == null;
@@ -54,21 +59,6 @@ public class HexPathfinding2D : MonoBehaviour
         new(-1, 0), new(0, -1), new(+1, -1),
     };
 
-    public Vector3Int? GetRandomWalkableCell(Vector2 position, float radius)
-    {
-        if (walkableCells.Count == 0) return null;
-        var list = new List<Vector3Int>(walkableCells);
-        int attempts = 100;
-        while (attempts-- > 0)
-        {
-            var cell = list[Random.Range(0, list.Count)];
-            if (Vector2.Distance(position, tilemapManager.GetCellCenterWorld(cell)) <= radius)
-                return cell;
-        }
-
-        return null;
-    }
-
     private void Start()
     {
         heightManager = HeightManager.instance;
@@ -77,6 +67,15 @@ public class HexPathfinding2D : MonoBehaviour
         ComputeWalkableCells();
         TilemapManager.instance.cellChanged += OnTileChanged;
         TilemapManager.instance.onWaterCellChanged += OnTileChanged;
+    }
+
+    private void OnDestroy()
+    {
+        if (TilemapManager.instance != null)
+        {
+            TilemapManager.instance.cellChanged -= OnTileChanged;
+            TilemapManager.instance.onWaterCellChanged -= OnTileChanged;
+        }
     }
 
     public void ComputeWalkableCells()
@@ -95,65 +94,81 @@ public class HexPathfinding2D : MonoBehaviour
         }
     }
 
-    public List<Vector2> GetWorldPath(List<Vector3Int> path)
+    public List<Vector2> FindPath(Vector2 startWorld, Vector2 goalWorld)
     {
-        if (path == null) return null;
-        int count = path.Count;
-        var worldPath = new List<Vector2>(count);
-        for (int i = 0; i < count; i++)
-            worldPath.Add(tilemapManager.GetCellCenterWorld(path[i]));
-        return worldPath;
-    }
-
-    public List<Vector3Int> FindPath(Vector2 startWorld, Vector2 goalWorld)
-    {
-        return FindPath(tilemapManager.WorldToCell(startWorld), tilemapManager.WorldToCell(goalWorld));
-    }
-
-    public List<Vector3Int> FindPath(Vector3Int start, Vector3Int goal)
-    {
-        if (!walkableCells.Contains(start) || !walkableCells.Contains(goal))
+        // Convert world positions to grid coordinates
+        Vector3Int startCell = tilemapManager.WorldToCell(startWorld);
+        Vector3Int goalCell = tilemapManager.WorldToCell(goalWorld);
+    
+        // Check if start and goal are walkable
+        if (!walkableCells.Contains(startCell) || !walkableCells.Contains(goalCell))
             return null;
-
-        var openSet = new PriorityQueue<Vector3Int>();
-        var cameFrom = new Dictionary<Vector3Int, Vector3Int>();
-        var gScore = new Dictionary<Vector3Int, float>();
-
-        openSet.Enqueue(start, 0);
-        gScore[start] = 0;
-
-        var neighborBuffer = new Vector3Int[6];
-
+    
+        // Initialize A* data structures
+        //f = g + h
+        //h = heuristic cost to goal
+        var openSet = new PriorityQueue<Vector3Int>();  // Cells to explore, sorted by f score
+        var parentCell = new Dictionary<Vector3Int, Vector3Int>();  // Track path for reconstruction
+        var costFromStart = new Dictionary<Vector3Int, float>();  // g score: actual cost from start
+    
+        openSet.Enqueue(startCell, 0);
+        costFromStart[startCell] = 0;
+    
+        var neighborBuffer = new Vector3Int[6];  // Reusable buffer to avoid allocations
+    
+        // Main A* loop
         while (openSet.Count > 0)
         {
-            var current = openSet.Dequeue();
-
-            if (current == goal)
-                return Reconstruct(cameFrom, current);
-
-            int nCount = GetNeighbors(current, neighborBuffer);
-            float currentG = gScore[current];
-
-            for (int i = 0; i < nCount; i++)
+            Vector3Int currentCell = openSet.Dequeue();
+    
+            // Goal reached - reconstruct path
+            if (currentCell == goalCell)
             {
-                var neighbor = neighborBuffer[i];
-
-                if (!walkableCells.Contains(neighbor))
+                var path = new List<Vector2>();
+                while (parentCell.TryGetValue(currentCell, out Vector3Int previousCell))
+                {
+                    path.Add(tilemapManager.GetCellCenterWorld(currentCell));
+                    currentCell = previousCell;
+                }
+                path.Add(tilemapManager.GetCellCenterWorld(currentCell));
+                path.Reverse();
+                openSet.Dispose();
+                return path;
+            }
+    
+            // Explore neighbors
+            int neighborCount = GetNeighbors(currentCell, neighborBuffer);
+            float currentCost = costFromStart[currentCell];
+    
+            for (int i = 0; i < neighborCount; i++)
+            {
+                var neighborCell = neighborBuffer[i];
+    
+                // Skip if not walkable or height difference too large
+                if (!walkableCells.Contains(neighborCell))
                     continue;
-                if (!IsHeightWalkable(tilemapManager.GetTile(current), tilemapManager.GetTile(neighbor)))
+                if (!IsHeightWalkable(tilemapManager.GetTile(currentCell), tilemapManager.GetTile(neighborCell)))
                     continue;
-
-                float tentative = currentG + 1f;
-                if (gScore.TryGetValue(neighbor, out float existingG) && tentative >= existingG)
+    
+                // Calculate new cost (g score)
+                float newCost = currentCost + 1f;
+    
+                // Skip if not better than existing path
+                if (costFromStart.TryGetValue(neighborCell, out float existingCost) && newCost >= existingCost)
                     continue;
-
-                cameFrom[neighbor] = current;
-                gScore[neighbor] = tentative;
-                float f = tentative + Heuristic(neighbor, goal);
-                openSet.Enqueue(neighbor, f);
+    
+                // Update best path to this neighbor
+                parentCell[neighborCell] = currentCell;
+                costFromStart[neighborCell] = newCost;
+                
+                // Calculate f = g + h and add to priority queue
+                float priorityScore = newCost + Heuristic(neighborCell, goalCell);
+                openSet.Enqueue(neighborCell, priorityScore);
             }
         }
-
+    
+        // No path found
+        openSet.Dispose();
         return null;
     }
 

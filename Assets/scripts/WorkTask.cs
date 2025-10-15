@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class WorkTask : MonoBehaviour
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(WorkTask), true)]
     public class TaskEditor : Editor
     {
@@ -19,6 +20,7 @@ public abstract class WorkTask : MonoBehaviour
             }
         }
     }
+#endif
     
     public event Action onComplete;
     public float progress { get; private set; } = 0f;

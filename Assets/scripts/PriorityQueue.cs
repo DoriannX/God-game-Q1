@@ -1,30 +1,79 @@
 using System.Collections.Generic;
 
-public class PriorityQueue<T>
-{
-    private readonly List<(T item, float priority)> elements = new();
+using System;
+using System.Collections.Generic;
 
-    public int Count => elements.Count;
+public class PriorityQueue<T> : IDisposable
+{
+    private List<(T item, float priority)> heap = new();
+
+    public int Count => heap.Count;
 
     public void Enqueue(T item, float priority)
     {
-        elements.Add((item, priority));
+        heap.Add((item, priority));
+        HeapifyUp(heap.Count - 1);
     }
 
     public T Dequeue()
     {
-        int bestIndex = 0;
-        float bestPriority = elements[0].priority;
-        for (int i = 1; i < elements.Count; i++)
+        if (heap.Count == 0)
+            throw new InvalidOperationException("Queue is empty");
+
+        var result = heap[0].item;
+        int lastIndex = heap.Count - 1;
+        heap[0] = heap[lastIndex];
+        heap.RemoveAt(lastIndex);
+
+        if (heap.Count > 0)
+            HeapifyDown(0);
+
+        return result;
+    }
+
+    private void HeapifyUp(int index)
+    {
+        while (index > 0)
         {
-            if (elements[i].priority < bestPriority)
-            {
-                bestPriority = elements[i].priority;
-                bestIndex = i;
-            }
+            int parentIndex = (index - 1) / 2;
+            if (heap[index].priority >= heap[parentIndex].priority)
+                break;
+
+            (heap[index], heap[parentIndex]) = (heap[parentIndex], heap[index]);
+            index = parentIndex;
         }
-        var bestItem = elements[bestIndex].item;
-        elements.RemoveAt(bestIndex);
-        return bestItem;
+    }
+
+    private void HeapifyDown(int index)
+    {
+        while (true)
+        {
+            int smallest = index;
+            int leftChild = 2 * index + 1;
+            int rightChild = 2 * index + 2;
+
+            if (leftChild < heap.Count && heap[leftChild].priority < heap[smallest].priority)
+                smallest = leftChild;
+
+            if (rightChild < heap.Count && heap[rightChild].priority < heap[smallest].priority)
+                smallest = rightChild;
+
+            if (smallest == index)
+                break;
+
+            (heap[index], heap[smallest]) = (heap[smallest], heap[index]);
+            index = smallest;
+        }
+    }
+
+    public void Clear()
+    {
+        heap.Clear();
+    }
+
+    public void Dispose()
+    {
+        Clear();
+        heap = null;
     }
 }

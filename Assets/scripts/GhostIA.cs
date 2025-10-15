@@ -17,6 +17,7 @@ public class GhostIa : MonoBehaviour, ISaveable
 
     public Vector2 targetPosition { get; private set; }
     private List<Vector2> currentPath;
+    private bool usePathFinding = false;
     private void OnEnable()
     {
         TickSystem.ticked += Tick;
@@ -29,6 +30,7 @@ public class GhostIa : MonoBehaviour, ISaveable
 
     public void GoTo(Vector2 position)
     {
+        usePathFinding = true;
         targetPosition = position;
         ComputePath();
     }
@@ -36,7 +38,47 @@ public class GhostIa : MonoBehaviour, ISaveable
     public void GoBy(Vector2 direction)
     {
         targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
+        usePathFinding = true;
         ComputePath();
+    }
+    
+    public void GoByRandom()
+    {
+        const int maxAttempts = 12;
+        Vector2 origin = transform.position;
+        
+        // Cache frequently accessed instances
+        var tilemapManager = TilemapManager.instance;
+        var waterSystem = WaterSystem.instance;
+        var heightManager = HeightManager.instance;
+        Vector3 cellSize = tilemapManager.cellSize;
+        
+        // Get current height once instead of in every iteration
+        Vector3Int currentCell = tilemapManager.WorldToCell(origin);
+        int currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));
+        
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
+            Vector2 candidate = origin + dir * cellSize;
+                
+            Vector3Int candidateCell = tilemapManager.WorldToCell(candidate);
+            if(waterSystem.waterTiles.Contains(candidateCell))
+                continue;
+            int candidateHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(candidateCell));
+            
+            if (candidateHeight <= currentHeight)
+            {
+                targetPosition = TilemapManager.instance.GetCellCenterWorld(candidateCell);
+                usePathFinding = false;
+                currentPath = new List<Vector2> { origin, targetPosition };
+                return;
+            }
+        }
+        
+        // No valid position found
+        targetPosition = origin;
+        currentPath = null;
     }
 
     private void Tick()
@@ -44,7 +86,8 @@ public class GhostIa : MonoBehaviour, ISaveable
         growComponent.Grow();
         if (ghostMovement.isMoving)
             return;
-        ComputePath();
+        if (usePathFinding)
+            ComputePath();
 
         if ( currentPath == null || currentPath.Count < 2)
         {
@@ -61,18 +104,7 @@ public class GhostIa : MonoBehaviour, ISaveable
 
     private void ComputePath()
     {
-        Vector3Int startCell = TilemapManager.instance.WorldToCell(transform.position);
-        Vector3Int goalCell = TilemapManager.instance.WorldToCell(targetPosition);
-
-        List<Vector3Int> tilePath = HexPathfinding2D.instance.FindPath(startCell, goalCell);
-        currentPath = HexPathfinding2D.instance.GetWorldPath(tilePath);
-    }
-    
-    public Vector2? GetRandomWalkablePosition(float radius)
-    {
-        Vector3Int? cell = HexPathfinding2D.instance.GetRandomWalkableCell(transform.position, radius);
-        if (cell == null) return null;
-        return TilemapManager.instance.GetCellCenterWorld(cell.Value);
+        currentPath = HexPathfinding2D.instance.FindPath(transform.position, targetPosition);
     }
 
     private void OnDrawGizmos()

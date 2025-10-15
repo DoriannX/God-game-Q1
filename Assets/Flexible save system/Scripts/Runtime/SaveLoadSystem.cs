@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
@@ -96,7 +97,7 @@ namespace SaveLoadSystem
             }
         }
 
-        public static void SaveNew()
+        public static void SaveNew(Action onComplete = null)
         {
             long startT = System.DateTimeOffset.Now.ToUnixTimeMilliseconds();
             SaveablePrefabs.UpdateTable();
@@ -105,6 +106,7 @@ namespace SaveLoadSystem
             SaveFile(state);
             long endT = System.DateTimeOffset.Now.ToUnixTimeMilliseconds();
             Debug.Log("Save time: " + (endT - startT) + "ms");
+            onComplete?.Invoke();
         }
 
         public static void Save()

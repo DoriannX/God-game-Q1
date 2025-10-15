@@ -44,7 +44,7 @@ public class ShovelComponent : MonoBehaviour
                         if (previousTile == null) continue;
                         TilemapManager.instance.SetTile(cell, previousTile);
                     }
-                    WaterSystem.instance?.RemoveWaterTile(cell);
+                    WaterSystem.instance?.RemoveWater(cell);
                 }
             }
         }

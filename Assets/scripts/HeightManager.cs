@@ -1,60 +1,98 @@
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-
-public class HeightManager : MonoBehaviour
-{
-    public static HeightManager instance;
+    using UnityEngine;
+    using UnityEngine.Tilemaps;
     
-    private void Awake()
+    public class HeightManager : MonoBehaviour
     {
-        if (instance == null)
-            instance = this;
-        else
-            Destroy(gameObject);
-    }
-    [SerializeField] private List<HeightCell> heightCells;
-    
-    public TileBase GetUnderHeightTile(TileBase tile)
-    {
-        HeightCell cell = heightCells.Find(hc => hc.tile == tile);
-        return cell != null ? cell.previousHeightTile : null;
-    }
-    
-    public TileBase GetUnderHeightTile(TileBase tile, int levels)
-    {
-        TileBase underTile = tile;
-        for(int i = 0; i < levels; i++)
+        public static HeightManager instance;
+        
+        private void Awake()
         {
-            TileBase nextTile = GetUnderHeightTile(underTile);
-            if (nextTile == null) break;
-            underTile = nextTile;
+            if (instance == null)
+            {
+                instance = this;
+                BuildCaches();
+            }
+            else
+                Destroy(gameObject);
         }
-        return underTile;
-    }
-    
-    public int GetHeightIndex(TileBase tile)
-    {
-        TileBase underTile = GetUnderHeightTile(tile);
-        int index = 0;
-        while(underTile != null)
+        
+        [SerializeField] private List<HeightCell> heightCells;
+        
+        private Dictionary<TileBase, TileBase> _tileToPreviousHeight;
+        private Dictionary<TileBase, int> _tileToHeightIndex;
+        private int _totalHeightLevels;
+        
+        private void BuildCaches()
         {
-            index++;
-            tile = underTile;
-            underTile = GetUnderHeightTile(tile);
+            _tileToPreviousHeight = new Dictionary<TileBase, TileBase>(heightCells.Count);
+            _tileToHeightIndex = new Dictionary<TileBase, int>(heightCells.Count);
+            
+            foreach (var cell in heightCells)
+            {
+                _tileToPreviousHeight[cell.tile] = cell.previousHeightTile;
+            }
+            
+            foreach (var cell in heightCells)
+            {
+                if (!_tileToHeightIndex.ContainsKey(cell.tile))
+                {
+                    _tileToHeightIndex[cell.tile] = CalculateHeightIndex(cell.tile);
+                }
+            }
+            
+            _totalHeightLevels = CalculateTotalHeightLevels();
         }
-        return index;
-    }
-    
-    public int GetTotalHeightLevels()
-    {
-        int maxIndex = 0;
-        foreach(var cell in heightCells)
+        
+        public TileBase GetUnderHeightTile(TileBase tile)
         {
-            int index = GetHeightIndex(cell.tile);
-            if (index > maxIndex)
-                maxIndex = index;
+            return _tileToPreviousHeight.TryGetValue(tile, out var previous) ? previous : null;
         }
-        return maxIndex + 1; // +1 to count the base level
+        
+        public TileBase GetUnderHeightTile(TileBase tile, int levels)
+        {
+            TileBase underTile = tile;
+            for (int i = 0; i < levels; i++)
+            {
+                if (!_tileToPreviousHeight.TryGetValue(underTile, out var nextTile) || nextTile == null)
+                    break;
+                underTile = nextTile;
+            }
+            return underTile;
+        }
+        
+        public int GetHeightIndex(TileBase tile)
+        {
+            return _tileToHeightIndex.TryGetValue(tile, out var index) ? index : 0;
+        }
+        
+        private int CalculateHeightIndex(TileBase tile)
+        {
+            int index = 0;
+            TileBase current = tile;
+            
+            while (_tileToPreviousHeight.TryGetValue(current, out var previous) && previous != null)
+            {
+                index++;
+                current = previous;
+            }
+            
+            return index;
+        }
+        
+        public int GetTotalHeightLevels()
+        {
+            return _totalHeightLevels;
+        }
+        
+        private int CalculateTotalHeightLevels()
+        {
+            int maxIndex = 0;
+            foreach (var kvp in _tileToHeightIndex)
+            {
+                if (kvp.Value > maxIndex)
+                    maxIndex = kvp.Value;
+            }
+            return maxIndex + 1;
+        }
     }
-}

@@ -9,8 +9,10 @@ public class WaterSystem : MonoBehaviour
     [SerializeField] private TileBase waterTile;
     [SerializeField] private HeightManager heightManager;
 
-    private readonly HashSet<Vector3Int> waterTiles = new();
-    private readonly HashSet<Vector3Int> completedWaterTiles = new();
+    private Queue<Vector3Int> propagationQueue = new();
+    private HashSet<Vector3Int> activeTiles = new();
+    public HashSet<Vector3Int> waterTiles { get; } = new();
+    private readonly List<Vector3Int> pendingRemovals = new();
 
     private static readonly Vector3Int[] evenNeighborOffsets =
     {
@@ -24,9 +26,9 @@ public class WaterSystem : MonoBehaviour
 
     private void Awake()
     {
-        paintComponent.paintedWater += AddWaterTile;
+        paintComponent.paintedWater += DrawWater;
         TickSystem.ticked += Tick;
-        
+
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -39,122 +41,142 @@ public class WaterSystem : MonoBehaviour
 
     private void Start()
     {
+        List<Vector3Int> dryTiles = new List<Vector3Int>();
+
         foreach (var pos in TilemapManager.instance.waterCellBounds.allPositionsWithin)
         {
             if (TilemapManager.instance.GetWaterTile(pos) == waterTile)
+            {
                 waterTiles.Add(pos);
+            }
+            else
+            {
+                dryTiles.Add(pos);
+            }
         }
-    }
 
-    private void MarkTileCompleted(Vector3Int position)
-    {
-        if (!completedWaterTiles.Contains(position))
-            completedWaterTiles.Add(position);
-        waterTiles.Remove(position);
-
-        if (TilemapManager.instance.GetWaterTile(position) != waterTile)
-            TilemapManager.instance.SetWaterTile(position, waterTile);
+        foreach (var dry in dryTiles)
+        {
+            ActivateOneAdjacent(dry);
+        }
     }
 
     private void Tick()
     {
-        if (waterTiles.Count == 0) return;
-
-        var snapshot = new List<Vector3Int>(waterTiles);
-        foreach (var pos in snapshot)
-            ExpandFrom(pos);
-
-        foreach (var pos in snapshot)
-        {
-            if (IsTileCompleted(pos))
-                MarkTileCompleted(pos);
-        }
+        ProcessPendingRemovals();
+        Expand();
     }
-    
+
     public bool IsOnWater(Vector2 position)
     {
         var cell = TilemapManager.instance.WorldToCell(position);
-        return TilemapManager.instance.GetWaterTile(cell) == waterTile;
+        return waterTiles.Contains(cell);
     }
 
-    private void ExpandFrom(Vector3Int position)
+    private IEnumerable<Vector3Int> GetNeighbors(Vector3Int pos)
     {
-        int currentHeight = heightManager.GetHeightIndex(TilemapManager.instance.GetTile(position));
-        var offsets = ((position.y & 1) == 0) ? evenNeighborOffsets : oddNeighborOffsets;
-
-        foreach (var off in offsets)
+        Vector3Int[] hexNeighbors = (pos.y & 1) == 0 ? evenNeighborOffsets : oddNeighborOffsets;
+        int selfHeight = heightManager.GetHeightIndex(TilemapManager.instance.GetTile(pos));
+        foreach (Vector3Int n in hexNeighbors)
         {
-            var neighbor = position + off;
-
-            if (waterTiles.Contains(neighbor) || completedWaterTiles.Contains(neighbor))
-                continue;
-
-            var neighborTile = TilemapManager.instance.GetTile(neighbor);
-            if (heightManager.GetHeightIndex(neighborTile) > currentHeight)
-                continue;
-
-            AddWaterTile(neighbor);
-            TilemapManager.instance.SetWaterTile(neighbor, waterTile);
+            int neighborHeight = heightManager.GetHeightIndex(TilemapManager.instance.GetTile(pos + n));
+            if (TilemapManager.instance.waterCellBounds.Contains(pos + n) && neighborHeight >= selfHeight)
+            {
+                yield return pos + n;
+            }
         }
     }
 
-    private bool IsTileCompleted(Vector3Int position)
+    private void Expand()
     {
-        var offsets = ((position.y & 1) == 0) ? evenNeighborOffsets : oddNeighborOffsets;
-        foreach (var off in offsets)
+        int tilesToProcess = propagationQueue.Count;
+        print(tilesToProcess);
+        for (int i = 0; i < tilesToProcess; i++)
         {
-            var neighbor = position + off;
-            if (!waterTiles.Contains(neighbor) && !completedWaterTiles.Contains(neighbor))
-                return false;
+            Vector3Int tile = propagationQueue.Dequeue();
+            activeTiles.Remove(tile);
+
+            if (!waterTiles.Contains(tile) && AnyNeighborHasWater(tile))
+            {
+                DrawWater(tile);
+            }
         }
-        return true;
     }
 
-    public void AddWaterTile(Vector3Int position)
+    private bool AnyNeighborHasWater(Vector3Int pos)
     {
-        if (waterTiles.Contains(position) || completedWaterTiles.Contains(position)) return;
+        foreach (Vector3Int neighbor in GetNeighbors(pos))
+        {
+            if (waterTiles.Contains(neighbor))
+                return true;
+        }
+
+        return false;
+    }
+
+    public void AddWater(Vector3Int position)
+    {
         waterTiles.Add(position);
+
+        foreach (Vector3Int neighbor in GetNeighbors(position))
+        {
+            if (activeTiles.Add(neighbor))
+                propagationQueue.Enqueue(neighbor);
+        }
+    }
+
+    private void DrawWater(Vector3Int position)
+    {
+        AddWater(position);
         TilemapManager.instance.SetWaterTile(position, waterTile);
     }
 
-    public void RemoveWaterTile(Vector3Int position)
+    private void ActivateOneAdjacent(Vector3Int position)
     {
-        if (waterTiles.Remove(position) || completedWaterTiles.Remove(position))
+        foreach (Vector3Int neighbor in GetNeighbors(position))
+        {
+            if (waterTiles.Contains(neighbor))
+            {
+                if (activeTiles.Add(position))
+                {
+                    propagationQueue.Enqueue(position);
+                }
+
+                break;
+            }
+        }
+    }
+
+    public void RemoveWater(Vector3Int position)
+    {
+        if (waterTiles.Remove(position))
         {
             TilemapManager.instance.SetWaterTile(position, null);
-            ReactivateAdjacentWater(position);
+            pendingRemovals.Add(position);
         }
     }
     
+    private void ProcessPendingRemovals()
+    {
+        if (pendingRemovals.Count == 0) return;
+
+        int batchSize = 1000;
+        int count = Mathf.Min(batchSize, pendingRemovals.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector3Int removedTile = pendingRemovals[i];
+            ActivateOneAdjacent(removedTile);
+        }
+
+        pendingRemovals.RemoveRange(0, count);
+    }
+
     public void ClearAllWater()
     {
         foreach (var pos in waterTiles)
             TilemapManager.instance.SetWaterTile(pos, null);
-        foreach (var pos in completedWaterTiles)
-            TilemapManager.instance.SetWaterTile(pos, null);
-        
+
         waterTiles.Clear();
-        completedWaterTiles.Clear();
-    }
-
-    private void ReactivateAdjacentWater(Vector3Int position)
-    {
-        void Reactivate(Vector3Int p)
-        {
-            if (completedWaterTiles.Remove(p))
-            {
-                waterTiles.Add(p);
-            }
-            else if (TilemapManager.instance.GetWaterTile(p) == waterTile && !waterTiles.Contains(p))
-            {
-                waterTiles.Add(p);
-            }
-        }
-
-        Reactivate(position);
-
-        var offsets = (position.y & 1) == 0 ? evenNeighborOffsets : oddNeighborOffsets;
-        foreach (var off in offsets)
-            Reactivate(position + off);
     }
 }

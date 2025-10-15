@@ -51,4 +51,9 @@ public class TaskManager : MonoBehaviour
         }
         return task;
     }
+    
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
 }

@@ -24,11 +24,6 @@ public class ToolSelector : MonoBehaviour
             painter.SetMode(PainterMode.Paint);
             selector.Select(brushButton);
         });
-        shovelButton.onClick.AddListener(() =>
-        {
-            painter.SetMode(PainterMode.Shovel);
-            selector.Select(shovelButton);
-        });
         bucketButton.onClick.AddListener(() =>
         {
             painter.SetMode(PainterMode.Bucket);

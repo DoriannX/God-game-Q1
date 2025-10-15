@@ -91,6 +91,8 @@ MonoBehaviour:
   growComponent: {fileID: 2022015165024604261}
   scareComponent: {fileID: 5805087815445507371}
   ghostIA: {fileID: 7957398275529141594}
+  workProbability: 0.05
+  fuckProbability: 0.01
 --- !u!114 &3234770281780568274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c01bf5be8b4db18f868eebd31ebd0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderComponent
-  wanderRadius: 3
   ghostMovement: {fileID: 7957398275529141594}
 --- !u!114 &7957398275529141594
 MonoBehaviour:

@@ -11,11 +11,6 @@ public class ScareState : State
         this.ghostIa = ghostIa;
     }
 
-    public override void OnEnter()
-    {
-        base.OnEnter();
-    }
-
     public override void OnLogic()
     {
         base.OnLogic();

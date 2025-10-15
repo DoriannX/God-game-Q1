@@ -21,6 +21,8 @@ public class InputHandler : MonoBehaviour
     public event Action<float> mouseScrollStarted;
     public event Action mouseScrollStopped;
     
+    public event Action pausePressed;
+    
     public void HandleMouseDeltaMoveInput(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
@@ -90,6 +92,14 @@ public class InputHandler : MonoBehaviour
         }else if (ctx.canceled)
         {
             mouseScrollStopped?.Invoke();
+        }
+    }
+    
+    public void HandlePauseInput(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            pausePressed?.Invoke();
         }
     }
 }
