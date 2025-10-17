@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: f55dea4f3d01c6d4e9ebac5d7984b5bb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 225017
+  packageName: Flexible save system
+  packageVersion: 01.02.05
+  assetPath: Assets/Flexible save system/Scripts/Runtime/ISaveable.cs
+  uploadId: 732964

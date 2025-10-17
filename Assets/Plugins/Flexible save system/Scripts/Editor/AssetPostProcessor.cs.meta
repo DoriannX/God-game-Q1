@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 234298f3ce9e506488fd650ce6fc34f8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 225017
+  packageName: Flexible save system
+  packageVersion: 01.02.05
+  assetPath: Assets/Flexible save system/Scripts/Editor/AssetPostProcessor.cs
+  uploadId: 732964

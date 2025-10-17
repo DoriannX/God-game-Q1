@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f4f0ea6a43f039848916fce4c2d2123d
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 225017
+  packageName: Flexible save system
+  packageVersion: 01.02.05
+  assetPath: Assets/Flexible save system/Scripts/ScriptTemplates/02-c# Templates__SaveableScriptableObjIDEditor-NewScriptableObjIDEditor.cs.txt
+  uploadId: 732964
