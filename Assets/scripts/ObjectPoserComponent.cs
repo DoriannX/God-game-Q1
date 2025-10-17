@@ -7,15 +7,18 @@ using Random = UnityEngine.Random;
 public class ObjectPoserComponent : MonoBehaviour
 {
     [field: SerializeField] public PosableObject[] posableObjects { get; private set; }
+    [SerializeField] private float maxObject = 100f;
     public int objectIndex { get; private set; }
     private Vector2 lastPos;
     private Vector2 lastHitPos;
     private bool canPlace = true;
     private Camera camera1;
+    private int ghostIndex;
 
     private void Start()
     {
         camera1 = Camera.main;
+        ghostIndex = Array.FindIndex(posableObjects, obj => obj.GetComponent<GhostIa>() != null);
     }
 
     private void OnEnable()
@@ -60,7 +63,14 @@ public class ObjectPoserComponent : MonoBehaviour
         var waterTile = tilemap.GetWaterTile(cellPos);
         if (waterTile != null && !allowedTiles.Contains(waterTile)) return;
 
-        Instantiate(prefab, tilemap.GetCellCenterWorld(cellPos), Quaternion.identity);
+        if (objectIndex == ghostIndex)
+        {
+            GhostManager.instance.SpawnGhost(tilemap.GetCellCenterWorld(cellPos));
+        }
+        else
+        {
+            Instantiate(prefab, tilemap.GetCellCenterWorld(cellPos), Quaternion.identity);
+        }
         canPlace = false;
     }
 
@@ -79,8 +89,14 @@ public class ObjectPoserComponent : MonoBehaviour
             var obj = hit.collider.GetComponent<PosableObject>();
             if (obj == null) return;
 
-            Destroy(hit.collider.gameObject);
-            print("Destroyed object at " + hit.point);
+            if( obj.GetComponent<GhostIa>() != null)
+            {
+                GhostManager.instance.RemoveGhost(obj.gameObject);
+            }
+            else
+            {
+                Destroy(obj.gameObject);
+            }
             lastHitPos = hit.point;
             return;
         }
@@ -89,7 +105,17 @@ public class ObjectPoserComponent : MonoBehaviour
         foreach (var col in colliders)
         {
             var obj = col.GetComponent<PosableObject>();
-            if (obj != null) Destroy(col.gameObject);
+            if (obj != null)
+            {
+                if( col.GetComponent<GhostIa>() != null)
+                {
+                    GhostManager.instance.RemoveGhost(col.gameObject);
+                }
+                else
+                {
+                    Destroy(col.gameObject);
+                }
+            }
         }
     }
 

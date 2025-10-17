@@ -162,6 +162,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         {
             currentPath = null;
         }
+        GhostManager.instance.RegisterGhost(this);
     }
 
     public void PostInstantiation(object state)

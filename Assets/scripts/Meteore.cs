@@ -70,7 +70,17 @@ public class Meteore : DestructionObject
         {
             var destructible = results[i].GetComponent<PosableObject>();
             if (destructible != null)
-                Destroy(destructible.gameObject);
+            {
+                if( destructible.GetComponent<GhostIa>() != null)
+                {
+                    GhostManager.instance.RemoveGhost(destructible.gameObject);
+                }
+                else
+                {
+                    Destroy(destructible.gameObject);
+                }
+            }
+                
         }
 
         // Destruction du météore lui-même

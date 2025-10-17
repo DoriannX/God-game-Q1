@@ -20,7 +20,6 @@ public class House : WorkTask, ISaveable
     private GrowComponent growComponent;
     private float fuckProgress = 0;
     [SerializeField] private float fuckIncrement = 0.1f;
-    [SerializeField] private GhostIa ghostPrefab;
     [SerializeField] private int tickToExitAlone = 5;
     [SerializeField] private int minBabies = 1;
     [SerializeField] private int maxBabies = 3;
@@ -98,9 +97,8 @@ public class House : WorkTask, ISaveable
         int babiesCount = minBabies + (int)((maxBabies - minBabies) * progress);
         for (var i = 0; i < babiesCount; i++)
         {
-            Instantiate(ghostPrefab,
-                TilemapManager.instance.GetCellCenterWorld(
-                    TilemapManager.instance.WorldToCell(transform.position)), Quaternion.identity);
+            GhostManager.instance.SpawnGhost(TilemapManager.instance.GetCellCenterWorld(
+                TilemapManager.instance.WorldToCell(transform.position)));
         }
 
         fuckProgress = 0f;
@@ -171,9 +169,8 @@ public class House : WorkTask, ISaveable
         isFucking = data.isFucking;
         foreach (var ghostData in data.fuckingGhosts)
         {
-            GhostIa ghost = Instantiate(ghostPrefab,
-                TilemapManager.instance.GetCellCenterWorld(
-                    TilemapManager.instance.WorldToCell(ghostData.position.ToVector2())), Quaternion.identity);
+            GhostIa ghost = GhostManager.instance.SpawnGhost(TilemapManager.instance.GetCellCenterWorld(
+                TilemapManager.instance.WorldToCell(ghostData.position.ToVector2()))).GetComponent<GhostIa>();
             ghost.LoadState(ghostData);
             ghost.gameObject.SetActive(false);
             fuckingGhosts.Add(ghost);

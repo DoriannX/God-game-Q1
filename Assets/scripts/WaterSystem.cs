@@ -90,7 +90,6 @@ public class WaterSystem : MonoBehaviour
     private void Expand()
     {
         int tilesToProcess = propagationQueue.Count;
-        print(tilesToProcess);
         for (int i = 0; i < tilesToProcess; i++)
         {
             Vector3Int tile = propagationQueue.Dequeue();
@@ -125,13 +124,13 @@ public class WaterSystem : MonoBehaviour
         }
     }
 
-    private void DrawWater(Vector3Int position)
+    public void DrawWater(Vector3Int position)
     {
         AddWater(position);
         TilemapManager.instance.SetWaterTile(position, waterTile);
     }
 
-    private void ActivateOneAdjacent(Vector3Int position)
+    public void ActivateOneAdjacent(Vector3Int position)
     {
         foreach (Vector3Int neighbor in GetNeighbors(position))
         {

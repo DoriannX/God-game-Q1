@@ -44,6 +44,7 @@ public class PaintComponent : MonoBehaviour
                     else
                     {
                         TilemapManager.instance.SetTile(cell, tile);
+                        WaterSystem.instance.ActivateOneAdjacent(cell);
                     }
                 }
             }

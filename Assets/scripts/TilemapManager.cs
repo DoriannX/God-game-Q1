@@ -176,7 +176,7 @@ public class TilemapManager : MonoBehaviour, ISaveable
         {
             Vector3Int pos = new Vector3Int((int)data.waterTilemap.positions[i].x,
                 (int)data.waterTilemap.positions[i].y, (int)data.waterTilemap.positions[i].z);
-            WaterSystem.instance.AddWater(pos);
+            WaterSystem.instance.DrawWater(pos);
         }
 
         tileCache.Clear();
