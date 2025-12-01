@@ -50,4 +50,10 @@ public class GhostManager : MonoBehaviour
         ghosts.Add(ghostIa.gameObject);
         onGhostsChanged?.Invoke(ghosts.Count);
     }
+
+    public void UnregisterGhost(GhostIa ghostIa)
+    {
+        ghosts.Remove(ghostIa.gameObject);
+        onGhostsChanged?.Invoke(ghosts.Count);
+    }
 }
