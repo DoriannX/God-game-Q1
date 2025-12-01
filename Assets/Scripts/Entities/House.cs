@@ -16,7 +16,8 @@ public class House : WorkTask, ISaveable
         public List<GhostIa.GhostData> fuckingGhosts;
         
     }
-    private HashSet<GhostIa> fuckingGhosts = new();
+
+    public HashSet<GhostIa> fuckingGhosts = new();
     private GrowComponent growComponent;
     private float fuckProgress = 0;
     [SerializeField] private float fuckIncrement = 0.1f;
