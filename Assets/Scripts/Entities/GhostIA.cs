@@ -18,6 +18,7 @@ public class GhostIa : MonoBehaviour, ISaveable
     public Vector2 targetPosition { get; private set; }
     private List<Vector2> currentPath;
     private bool usePathFinding = false;
+    private int currentHeight;
     private void OnEnable()
     {
         TickSystem.ticked += Tick;
@@ -55,8 +56,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         
         // Get current height once instead of in every iteration
         Vector3Int currentCell = tilemapManager.WorldToCell(origin);
-        int currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));
-        
+        currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));
         for (int i = 0; i < maxAttempts; i++)
         {
             Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
@@ -67,7 +67,7 @@ public class GhostIa : MonoBehaviour, ISaveable
                 continue;
             int candidateHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(candidateCell));
             
-            if (candidateHeight <= currentHeight)
+            if (candidateHeight - 1 <= currentHeight)
             {
                 targetPosition = TilemapManager.instance.GetCellCenterWorld(candidateCell);
                 usePathFinding = false;
@@ -93,8 +93,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         {
             return;
         }
-
-        ghostMovement.GoTo(currentPath[1]);
+        ghostMovement.GoTo(currentPath[1], currentHeight);
     }
 
     public bool isMoving =>
