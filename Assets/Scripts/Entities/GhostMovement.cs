@@ -13,11 +13,11 @@ public class GhostMovement : MonoBehaviour
         currentTarget = transform.position;
     }
 
-    public void GoTo(Vector2 position, int currentHeight)
+    public void GoTo(Vector2 position, int newHeight)
     {
         startPosition = transform.position;
         currentTarget = position;
-        height = currentHeight;
+        height = newHeight;
     }
 
     private void Update()
