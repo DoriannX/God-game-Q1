@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GhostManager : MonoBehaviour
@@ -51,9 +52,13 @@ public class GhostManager : MonoBehaviour
         onGhostsChanged?.Invoke(ghosts.Count);
     }
 
-    public void UnregisterGhost(GhostIa ghostIa)
+    public void UnregisterGhostInHouse(House house)
     {
-        ghosts.Remove(ghostIa.gameObject);
+        for (int numberOfGhostInHouse = 0; numberOfGhostInHouse < house.fuckingGhosts.Count; numberOfGhostInHouse++)
+        {
+            ghosts.Remove(house.fuckingGhosts.ElementAt(numberOfGhostInHouse).gameObject);
+        }
+        Destroy(house.gameObject);
         onGhostsChanged?.Invoke(ghosts.Count);
     }
 }
