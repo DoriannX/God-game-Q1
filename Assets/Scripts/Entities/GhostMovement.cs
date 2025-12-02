@@ -6,16 +6,18 @@ public class GhostMovement : MonoBehaviour
 {
     private Vector2 currentTarget;
     private Vector2 startPosition;
+    private int height;
 
     private void Start()
     {
         currentTarget = transform.position;
     }
 
-    public void GoTo(Vector2 position)
+    public void GoTo(Vector2 position, int currentHeight)
     {
         startPosition = transform.position;
         currentTarget = position;
+        height = currentHeight;
     }
 
     private void Update()
@@ -25,6 +27,9 @@ public class GhostMovement : MonoBehaviour
         float distance = Vector2.Distance(startPosition, currentTarget);
         float speed = distance / time;
         transform.position = Vector2.MoveTowards(currentPosition, currentTarget, speed * Time.deltaTime);
+        Vector3 newPos = transform.position;
+        newPos.z = height;
+        transform.position = newPos;
     }
 
     public bool isMoving =>
