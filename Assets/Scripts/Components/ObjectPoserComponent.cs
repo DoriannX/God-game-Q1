@@ -111,6 +111,10 @@ public class ObjectPoserComponent : MonoBehaviour
                 {
                     GhostManager.instance.RemoveGhost(col.gameObject);
                 }
+                else if (col.GetComponent<House>() != null)
+                {
+                    GhostManager.instance.UnregisterGhostInHouse(col.GetComponent<House>());
+                }
                 else
                 {
                     Destroy(col.gameObject);

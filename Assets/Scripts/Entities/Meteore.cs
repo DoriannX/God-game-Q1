@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -78,12 +77,7 @@ public class Meteore : DestructionObject
                 }
                 else if (destructible.GetComponent<House>() != null)
                 {
-                    House house = destructible.GetComponent<House>();
-                    for (int numberOfGhostInHouse = 0; numberOfGhostInHouse < house.fuckingGhosts.Count; numberOfGhostInHouse++)
-                    {
-                        GhostManager.instance.UnregisterGhost(house.fuckingGhosts.ElementAt(numberOfGhostInHouse));
-                    }
-                    Destroy(destructible.gameObject);   
+                    GhostManager.instance.UnregisterGhostInHouse(destructible.GetComponent<House>());
                 }
                 else
                 {
