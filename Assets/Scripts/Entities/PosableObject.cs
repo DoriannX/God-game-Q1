@@ -7,6 +7,7 @@ public class PosableObject : MonoBehaviour
 {
     private Sprite cachedSprite;
     private GhostIa ghostIa;
+    private House house;
 
     public Sprite sprite
     {
@@ -28,6 +29,7 @@ public class PosableObject : MonoBehaviour
     private void Awake()
     {
         ghostIa = GetComponent<GhostIa>();
+        house = GetComponent<House>();
     }
 
     private void OnEnable()
@@ -39,13 +41,17 @@ public class PosableObject : MonoBehaviour
     {
         if (WaterSystem.instance.IsOnWater(transform.position))
         {
-            if (ghostIa == null)
+            if (ghostIa != null)
             {
-                Destroy(gameObject);
+                GhostManager.instance.RemoveGhost(gameObject);
+            }
+            else if (house != null)
+            {
+                GhostManager.instance.UnregisterGhostInHouse(house);
             }
             else
             {
-                GhostManager.instance.RemoveGhost(gameObject);
+                Destroy(gameObject);
             }
         }
     }
