@@ -1,0 +1,289 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class TilemapManagerCopy : MonoBehaviour
+{
+    [SerializeField] private TilePool tilePool; // Référence au pool de tiles
+    [SerializeField] private float hexSize = 1f; // Largeur de l'hexagone (distance entre côtés opposés pour flat-top)
+    [SerializeField] private TileHeightManager heightManager; // Référence au TileHeightManager
+    [SerializeField] private BrushSizeManager brushManager; // Référence au BrushSizeManager
+    [SerializeField] private TileSelector tileSelector; // Référence au TileSelector
+    [SerializeField] private TileNeighborOcclusionCulling neighborOcclusion; // Référence au système d'occlusion (optionnel)
+    [SerializeField] private float clickCooldown = 0.1f; // Temps minimum entre deux placements (en secondes)
+    [SerializeField] private bool allowReplacement = true; // Permettre le remplacement des tiles existantes
+    
+    private Camera mainCamera;
+    private Dictionary<Vector2Int, GameObject> tiles = new Dictionary<Vector2Int, GameObject>();
+    private float lastClickTime;
+    private float lastRightClickTime;
+    
+    private void Start()
+    {
+        mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            Debug.LogError("No main camera found in the scene!");
+        }
+        
+        if (tilePool == null)
+        {
+            Debug.LogError("TilePool is not assigned to TilemapManagerCopy!");
+        }
+    }
+    
+    private void Update()
+    {
+        // Clic gauche : Remplacer/placer la tile de base
+        if (Input.GetMouseButton(0))
+        {
+            // Vérifier si le cooldown est écoulé
+            if (Time.time >= lastClickTime + clickCooldown)
+            {
+                DetectMouseClick(false); // false = clic gauche (remplacer)
+                lastClickTime = Time.time;
+            }
+        }
+        
+        // Clic droit : Ajouter en hauteur (ne remplace pas, ajoute par dessus)
+        // MAIS pas si Shift est enfoncé (réservé pour baisser dans TileHeightManager)
+        if (Input.GetMouseButton(1) && !Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
+        {
+            // Vérifier si le cooldown est écoulé
+            if (Time.time >= lastRightClickTime + clickCooldown)
+            {
+                DetectMouseClick(true); // true = clic droit (ajouter en hauteur)
+                lastRightClickTime = Time.time;
+            }
+        }
+    }
+    
+    private void DetectMouseClick(bool isRightClick)
+    {
+        // Obtenir la position de la souris à l'écran
+        Vector3 mouseScreenPosition = Input.mousePosition;
+        
+        // Créer un raycast depuis la caméra vers la position de la souris
+        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPosition);
+        RaycastHit hit;
+        
+        Vector3 worldPosition;
+        
+        // Effectuer le raycast
+        if (Physics.Raycast(ray, out hit))
+        {
+            // Position exacte du clic en coordonnées world si un objet est touché
+            worldPosition = hit.point;
+            
+            // Visualiser le raycast en vert jusqu'au point d'impact
+            Debug.DrawRay(ray.origin, ray.direction * hit.distance, Color.green, 2f);
+            
+            // Dessiner une croix à la position du hit
+            DrawCross(worldPosition, Color.green, 0.5f, 2f);
+        }
+        else
+        {
+            // Si aucun objet n'est touché, calculer l'intersection avec le plan Y = 0
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            float distance;
+            
+            if (groundPlane.Raycast(ray, out distance))
+            {
+                worldPosition = ray.GetPoint(distance);
+                
+                // Visualiser le raycast en cyan jusqu'au plan
+                Debug.DrawRay(ray.origin, ray.direction * distance, Color.cyan, 2f);
+                
+                // Dessiner une croix à la position calculée
+                DrawCross(worldPosition, Color.cyan, 0.5f, 2f);
+            }
+            else
+            {
+                // Visualiser le raycast en rouge si aucune intersection
+                Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+                Debug.LogWarning("Could not calculate world position");
+                return;
+            }
+        }
+        
+        // Convertir la position world en coordonnées axiales hexagonales
+        Vector2Int hexCoords = WorldToHexAxial(worldPosition);
+        
+        // Obtenir la zone du brush
+        Vector2Int[] brushArea;
+        if (brushManager != null)
+        {
+            brushArea = brushManager.GetBrushArea(hexCoords);
+        }
+        else
+        {
+            // Si pas de brush manager, spawner seulement une tile
+            brushArea = new Vector2Int[] { hexCoords };
+        }
+        
+        // Si on a beaucoup de tiles, utiliser le mode batch pour l'occlusion
+        bool useBatch = brushArea.Length > 1 && neighborOcclusion != null;
+        if (useBatch)
+        {
+            neighborOcclusion.BeginBatch();
+        }
+        
+        // Spawner les tiles dans la zone du brush
+        foreach (Vector2Int coord in brushArea)
+        {
+            if (isRightClick)
+            {
+                // Clic droit : Ajouter en hauteur (utiliser le heightManager)
+                if (heightManager != null)
+                {
+                    heightManager.RaiseColumnWithTileType(coord, GetCurrentTilePrefab());
+                }
+            }
+            else
+            {
+                // Clic gauche : Remplacer/placer la tile de base
+                SpawnTileAt(coord);
+            }
+        }
+        
+        // Terminer le mode batch
+        if (useBatch)
+        {
+            neighborOcclusion.EndBatch();
+        }
+    }
+    
+    private void SpawnTileAt(Vector2Int hexCoords)
+    {
+        // Obtenir le prefab de la tile actuelle depuis le TileSelector
+        GameObject tilePrefab = GetCurrentTilePrefab();
+        if (tilePrefab == null)
+        {
+            Debug.LogWarning("No tile prefab selected!");
+            return;
+        }
+        
+        // Vérifier si une tile existe déjà à cette position
+        if (tiles.ContainsKey(hexCoords))
+        {
+            if (!allowReplacement)
+            {
+                // Ne pas remplacer si le remplacement est désactivé
+                return;
+            }
+            
+            // Récupérer l'ancienne tile
+            GameObject oldTile = tiles[hexCoords];
+            
+            // Retourner SEULEMENT les tiles de hauteur au pool, garder la base pour la remplacer
+            if (heightManager != null)
+            {
+                heightManager.ResetColumnKeepBase(hexCoords, tilePool);
+            }
+            
+            // Détruire l'ancienne tile de base
+            if (oldTile != null)
+            {
+                Destroy(oldTile);
+            }
+            
+            // Retirer l'ancienne tile du dictionnaire
+            tiles.Remove(hexCoords);
+        }
+        
+        Vector3 spawnPosition = HexAxialToWorld(hexCoords.x, hexCoords.y);
+        
+        // Instancier la nouvelle tile (pas de pool car tiles différentes)
+        GameObject tile = Instantiate(tilePrefab, spawnPosition, Quaternion.identity);
+        tile.name = $"Tile_{tilePrefab.name}_({hexCoords.x}, {hexCoords.y})";
+        
+        // Ajouter la tile au dictionnaire
+        tiles.Add(hexCoords, tile);
+        
+        // Notifier le height manager de la nouvelle tile de base
+        if (heightManager != null)
+        {
+            heightManager.RegisterBaseTile(hexCoords, tile);
+        }
+    }
+    
+    // Obtenir le prefab de la tile actuelle depuis le TileSelector
+    private GameObject GetCurrentTilePrefab()
+    {
+        if (tileSelector != null)
+        {
+            return tileSelector.GetCurrentTilePrefab();
+        }
+        return null;
+    }
+    
+    // Convertir une position world en coordonnées axiales hexagonales (flat-top)
+    private Vector2Int WorldToHexAxial(Vector3 worldPosition)
+    {
+        // Pour flat-top hexagons avec largeur (width = distance entre côtés opposés):
+        // La largeur correspond à 2 * taille_interne
+        // Donc taille_interne = largeur / 2
+        
+        float x = worldPosition.x;
+        float z = worldPosition.z;
+        
+        float sizeInternal = hexSize / 2f;
+        
+        float q = (2f / 3f * x) / sizeInternal;
+        float r = (-1f / 3f * x + Mathf.Sqrt(3f) / 3f * z) / sizeInternal;
+        
+        // Arrondir aux coordonnées hexagonales entières
+        return HexRound(q, r);
+    }
+    
+    // Arrondir les coordonnées fractionnelles vers les coordonnées hexagonales entières
+    private Vector2Int HexRound(float q, float r)
+    {
+        float s = -q - r; // coordonnée cubique s
+        
+        int roundedQ = Mathf.RoundToInt(q);
+        int roundedR = Mathf.RoundToInt(r);
+        int roundedS = Mathf.RoundToInt(s);
+        
+        float qDiff = Mathf.Abs(roundedQ - q);
+        float rDiff = Mathf.Abs(roundedR - r);
+        float sDiff = Mathf.Abs(roundedS - s);
+        
+        // Réajuster la coordonnée avec la plus grande différence
+        if (qDiff > rDiff && qDiff > sDiff)
+        {
+            roundedQ = -roundedR - roundedS;
+        }
+        else if (rDiff > sDiff)
+        {
+            roundedR = -roundedQ - roundedS;
+        }
+        
+        return new Vector2Int(roundedQ, roundedR);
+    }
+    
+    // Convertir des coordonnées axiales hexagonales en position world (si nécessaire)
+    private Vector3 HexAxialToWorld(int q, int r)
+    {
+        // Pour flat-top hexagons avec largeur (width):
+        // La largeur correspond à 2 * taille_interne
+        // Donc taille_interne = largeur / 2
+        
+        float sizeInternal = hexSize / 2f;
+        
+        float x = sizeInternal * (3f / 2f * q);
+        float z = sizeInternal * (Mathf.Sqrt(3f) / 2f * q + Mathf.Sqrt(3f) * r);
+        
+        return new Vector3(x, 0f, z);
+    }
+    
+    // Dessiner une croix pour visualiser la position
+    private void DrawCross(Vector3 position, Color color, float size, float duration)
+    {
+        // Croix sur le plan XY
+        Debug.DrawLine(position + Vector3.left * size, position + Vector3.right * size, color, duration);
+        Debug.DrawLine(position + Vector3.up * size, position + Vector3.down * size, color, duration);
+        
+        // Ligne verticale sur Z
+        Debug.DrawLine(position + Vector3.forward * size, position + Vector3.back * size, color, duration);
+    }
+}
