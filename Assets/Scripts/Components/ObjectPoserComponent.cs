@@ -60,8 +60,6 @@ public class ObjectPoserComponent : MonoBehaviour
         var baseTile = tilemap.GetTile(cellPos);
         if (baseTile == null || !allowedTiles.Contains(baseTile)) return;
 
-        var waterTile = tilemap.GetWaterTile(cellPos);
-        if (waterTile != null && !allowedTiles.Contains(waterTile)) return;
 
         if (objectIndex == ghostIndex)
         {
