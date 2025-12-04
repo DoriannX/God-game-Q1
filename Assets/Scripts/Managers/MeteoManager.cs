@@ -5,6 +5,10 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+using FMODUnity;
+using FMOD.Studio;
+
+
 public enum MeteoState
 {
     Neutral,
@@ -19,7 +23,13 @@ public enum MeteoState
 [RequireComponent(typeof(SaveableEntity))]
 public class MeteoManager : MonoBehaviour, ISaveable
 {
-    
+
+    [EventRef]
+
+    [SerializeField] private string rainEventPath = "event:/Ambiance/Rain";
+
+    private EventInstance rainInstance;
+
     [Serializable]
     public struct MeteoData
     {
@@ -51,13 +61,25 @@ public class MeteoManager : MonoBehaviour, ISaveable
         {
             Instance = this;
         }
+        rainInstance = RuntimeManager.CreateInstance(rainEventPath);
     }
     
     public void SetWeather(MeteoState newState)
     {
         setManually = true;
         manualTick = 0;
+
+        if (activeMeteoEvent != null && activeMeteoEvent.GetState() == newState)
+        {
+            return;
+        }
+
         StopWeather();
+        if (newState == MeteoState.Raining)
+        {
+            rainInstance.start();
+
+        }
         StartWeather(newState);
     }
 
@@ -75,7 +97,8 @@ public class MeteoManager : MonoBehaviour, ISaveable
                 activeMeteoEvent = meteoEvent;
                 activeMeteoEvent.gameObject.SetActive(true);
                 state = newState;
-                weatherChanged?.Invoke(newState == MeteoState.Raining);
+
+                weatherChanged?.Invoke(state == MeteoState.Raining);
             }
         }
     }
@@ -88,6 +111,9 @@ public class MeteoManager : MonoBehaviour, ISaveable
         }
         activeMeteoEvent.gameObject.SetActive(false);
         activeMeteoEvent = null;
+
+        rainInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+
         state = MeteoState.Sunny;
         weatherChanged?.Invoke(false);
     }
@@ -166,4 +192,10 @@ public class MeteoManager : MonoBehaviour, ISaveable
     public void GotAddedAsChild(GameObject obj, GameObject hisParent)
     {
     }
+    private void OnDestroy()
+    {
+        rainInstance.release(); // libère l’instance proprement [web:72]
+    }
+
+
 }

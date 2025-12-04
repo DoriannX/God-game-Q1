@@ -489,6 +489,7 @@ MonoBehaviour:
   MasterBanks:
   - Master
   Banks:
+  - Ambiance
   - Dialogue_CN
   - Dialogue_EN
   - Dialogue_JP
