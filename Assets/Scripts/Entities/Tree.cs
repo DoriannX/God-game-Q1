@@ -25,7 +25,7 @@ public class Tree : MonoBehaviour, ISaveable
     
     private void OnTick()
     {
-        if(MeteoManager.Instance.isRaining)
+        if(MeteoManager.Instance.state == MeteoState.Raining)
         {
             waterProgress += waterIncrement;
         }
