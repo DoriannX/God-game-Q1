@@ -1,9 +1,10 @@
 using System;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [Serializable]
 public class HeightCell
 {
-    public TileBase tile;
-    public TileBase previousHeightTile;
+    public GameObject tile;
+    public GameObject previousHeightTile;
 }

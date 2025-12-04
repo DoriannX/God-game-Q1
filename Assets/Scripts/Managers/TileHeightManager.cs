@@ -15,9 +15,9 @@ public class TileHeightManager : MonoBehaviour
     private Camera mainCamera;
     // Dictionnaire qui stocke les colonnes de tiles par coordonnées hexagonales
     // La clé est (q, r), la valeur est une liste de GameObjects empilés
-    private Dictionary<Vector2Int, List<GameObject>> tileColumns = new Dictionary<Vector2Int, List<GameObject>>();
+    private Dictionary<Vector3Int, List<GameObject>> tileColumns = new Dictionary<Vector3Int, List<GameObject>>();
     private float lastClickTime; // Temps du dernier clic
-    private Dictionary<Vector2Int, float> lastPlacementTime = new Dictionary<Vector2Int, float>(); // Temps du dernier placement par coordonnée
+    private Dictionary<Vector3Int, float> lastPlacementTime = new Dictionary<Vector3Int, float>(); // Temps du dernier placement par coordonnée
     
     private void Start()
     {
@@ -74,13 +74,13 @@ public class TileHeightManager : MonoBehaviour
             // Debug.Log($"Click at world position: {worldPosition}, hex coords: ({hexCoords.x}, {hexCoords.y})");
             
             // Convertir la position world en coordonnées hexagonales (comme BrushPreview)
-            Vector2Int hexCoords = WorldToHexAxial(worldPosition);
+            Vector3Int hexCoords = WorldToHexAxial(worldPosition);
             
             // Debug.Log désactivé pour éviter le spam
             // Debug.Log($"Raising {brushArea.Length} columns with brush size {brushManager.GetBrushSize()}");
             
             // Obtenir la zone du brush
-            Vector2Int[] brushArea;
+            Vector3Int[] brushArea;
             if (brushManager != null)
             {
                 brushArea = brushManager.GetBrushArea(hexCoords);
@@ -90,11 +90,11 @@ public class TileHeightManager : MonoBehaviour
             else
             {
                 // Si pas de brush manager, monter seulement une colonne
-                brushArea = new Vector2Int[] { hexCoords };
+                brushArea = new Vector3Int[] { hexCoords };
             }
             
             // Monter toutes les colonnes dans la zone du brush
-            foreach (Vector2Int coord in brushArea)
+            foreach (Vector3Int coord in brushArea)
             {
                 RaiseColumn(coord);
             }
@@ -125,13 +125,13 @@ public class TileHeightManager : MonoBehaviour
             Debug.DrawRay(ray.origin, ray.direction * distance, Color.magenta, 2f);
             
             // Convertir la position world en coordonnées hexagonales (comme BrushPreview)
-            Vector2Int hexCoords = WorldToHexAxial(worldPosition);
+            Vector3Int hexCoords = WorldToHexAxial(worldPosition);
             
             // Debug.Log désactivé pour éviter le spam
             // Debug.Log($"Shift+Click at world position: {worldPosition}, hex coords: ({hexCoords.x}, {hexCoords.y})");
             
             // Obtenir la zone du brush
-            Vector2Int[] brushArea;
+            Vector3Int[] brushArea;
             if (brushManager != null)
             {
                 brushArea = brushManager.GetBrushArea(hexCoords);
@@ -139,7 +139,7 @@ public class TileHeightManager : MonoBehaviour
             else
             {
                 // Si pas de brush manager, baisser seulement une colonne
-                brushArea = new Vector2Int[] { hexCoords };
+                brushArea = new Vector3Int[] { hexCoords };
             }
             
             // Si on a beaucoup de tiles, utiliser le mode batch pour l'occlusion
@@ -150,7 +150,7 @@ public class TileHeightManager : MonoBehaviour
             }
             
             // Baisser toutes les colonnes dans la zone du brush
-            foreach (Vector2Int coord in brushArea)
+            foreach (Vector3Int coord in brushArea)
             {
                 LowerColumn(coord);
             }
@@ -167,7 +167,7 @@ public class TileHeightManager : MonoBehaviour
         }
     }
     
-    private void RaiseColumn(Vector2Int hexCoords)
+    private void RaiseColumn(Vector3Int hexCoords)
     {
         if (tilePool == null)
         {
@@ -219,7 +219,7 @@ public class TileHeightManager : MonoBehaviour
         // Debug.Log($"Raised column at hex ({hexCoords.x}, {hexCoords.y}) to height {column.Count}. Spawned at Y={newTileY}");
     }
     
-    private void LowerColumn(Vector2Int hexCoords)
+    private void LowerColumn(Vector3Int hexCoords)
     {
         // Vérifier le cooldown pour cette coordonnée spécifique
         if (lastPlacementTime.ContainsKey(hexCoords))
@@ -269,7 +269,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour obtenir la hauteur d'une colonne
-    public int GetColumnHeight(Vector2Int hexCoords)
+    public int GetColumnHeight(Vector3Int hexCoords)
     {
         if (tileColumns.ContainsKey(hexCoords))
         {
@@ -279,7 +279,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour obtenir la position Y où la prochaine tile sera placée
-    public float GetNextTileYPosition(Vector2Int hexCoords)
+    public float GetNextTileYPosition(Vector3Int hexCoords)
     {
         if (!tileColumns.ContainsKey(hexCoords))
         {
@@ -302,7 +302,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour obtenir la position Y de la dernière tile dans la colonne (pour la preview)
-    public float GetTopTileYPosition(Vector2Int hexCoords)
+    public float GetTopTileYPosition(Vector3Int hexCoords)
     {
         if (!tileColumns.ContainsKey(hexCoords))
         {
@@ -329,7 +329,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour enregistrer une tile de base créée par le TilemapManager
-    public void RegisterBaseTile(Vector2Int hexCoords, GameObject baseTile)
+    public void RegisterBaseTile(Vector3Int hexCoords, GameObject baseTile)
     {
         // Initialiser la colonne si elle n'existe pas encore
         if (!tileColumns.ContainsKey(hexCoords))
@@ -358,7 +358,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour réinitialiser une colonne (détruire toutes les tiles au-dessus de la base)
-    public void ResetColumn(Vector2Int hexCoords)
+    public void ResetColumn(Vector3Int hexCoords)
     {
         if (tileColumns.ContainsKey(hexCoords))
         {
@@ -380,7 +380,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour reset ET clear toute la colonne (y compris la base)
-    public void ResetAndClearColumn(Vector2Int hexCoords, TilePool pool)
+    public void ResetAndClearColumn(Vector3Int hexCoords, TilePool pool)
     {
         if (tileColumns.ContainsKey(hexCoords))
         {
@@ -403,7 +403,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode optimisée : reset seulement les tiles au-dessus, GARDER la base
-    public void ResetColumnKeepBase(Vector2Int hexCoords, TilePool pool)
+    public void ResetColumnKeepBase(Vector3Int hexCoords, TilePool pool)
     {
         if (!tileColumns.ContainsKey(hexCoords))
         {
@@ -435,7 +435,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Méthode publique pour ajouter une tile en hauteur avec un type spécifique
-    public void RaiseColumnWithTileType(Vector2Int hexCoords, GameObject tilePrefab)
+    public void RaiseColumnWithTileType(Vector3Int hexCoords, GameObject tilePrefab)
     {
         // Vérifier le cooldown pour cette coordonnée spécifique
         if (lastPlacementTime.ContainsKey(hexCoords))
@@ -500,7 +500,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Convertir une position world en coordonnées axiales hexagonales (flat-top)
-    private Vector2Int WorldToHexAxial(Vector3 worldPosition)
+    private Vector3Int WorldToHexAxial(Vector3 worldPosition)
     {
         float x = worldPosition.x;
         float z = worldPosition.z;
@@ -514,7 +514,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     // Arrondir les coordonnées fractionnelles vers les coordonnées hexagonales entières
-    private Vector2Int HexRound(float q, float r)
+    private Vector3Int HexRound(float q, float r)
     {
         float s = -q - r;
         
@@ -535,7 +535,7 @@ public class TileHeightManager : MonoBehaviour
             roundedR = -roundedQ - roundedS;
         }
         
-        return new Vector2Int(roundedQ, roundedR);
+        return new Vector3Int(roundedQ, roundedR);
     }
     
     // ===== Méthodes publiques pour l'occlusion par voisinage =====
@@ -543,15 +543,15 @@ public class TileHeightManager : MonoBehaviour
     /// <summary>
     /// Obtenir toutes les coordonnées des colonnes existantes
     /// </summary>
-    public List<Vector2Int> GetAllColumnCoordinates()
+    public List<Vector3Int> GetAllColumnCoordinates()
     {
-        return new List<Vector2Int>(tileColumns.Keys);
+        return new List<Vector3Int>(tileColumns.Keys);
     }
     
     /// <summary>
     /// Obtenir les tiles d'une colonne
     /// </summary>
-    public List<GameObject> GetColumnTiles(Vector2Int hexCoords)
+    public List<GameObject> GetColumnTiles(Vector3Int hexCoords)
     {
         if (tileColumns.ContainsKey(hexCoords))
         {

@@ -99,7 +99,7 @@ public class House : WorkTask, ISaveable
         for (var i = 0; i < babiesCount; i++)
         {
             GhostManager.instance.SpawnGhost(TilemapManager.instance.GetCellCenterWorld(
-                TilemapManager.instance.WorldToCell(transform.position)));
+                TilemapManager.instance.WorldToHexAxial(transform.position)));
         }
 
         fuckProgress = 0f;
@@ -171,7 +171,7 @@ public class House : WorkTask, ISaveable
         foreach (var ghostData in data.fuckingGhosts)
         {
             GhostIa ghost = GhostManager.instance.SpawnGhost(TilemapManager.instance.GetCellCenterWorld(
-                TilemapManager.instance.WorldToCell(ghostData.position.ToVector2()))).GetComponent<GhostIa>();
+                TilemapManager.instance.WorldToHexAxial(ghostData.position.ToVector2()))).GetComponent<GhostIa>();
             ghost.LoadState(ghostData);
             ghost.gameObject.SetActive(false);
             fuckingGhosts.Add(ghost);

@@ -56,7 +56,7 @@ public class PosableObject : MonoBehaviour
         }
     }
 
-    [field: SerializeField] public List<TileBase> allowedTiles { get; private set; } = new();
+    [field: SerializeField] public List<GameObject> allowedTiles { get; private set; } = new();
 
     private void OnDisable()
     {

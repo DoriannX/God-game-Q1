@@ -19,10 +19,10 @@ public class HexPathfinding2D : MonoBehaviour
         instance = this;
     }
     private HeightManager heightManager;
-    private HashSet<TileBase> walkableSet;
+    private HashSet<GameObject> walkableSet;
     private HashSet<Vector3Int> walkableCells = new();
     private TilemapManager tilemapManager;
-    [SerializeField] private TileBase[] walkableTiles;
+    [SerializeField] private GameObject[] walkableTiles;
     private readonly Queue<Vector3Int> pendingUpdates = new();
 
     public void OnTileChanged(Vector3Int cell)
@@ -67,7 +67,7 @@ public class HexPathfinding2D : MonoBehaviour
     {
         heightManager = HeightManager.instance;
         tilemapManager = TilemapManager.instance;
-        walkableSet = new HashSet<TileBase>(walkableTiles);
+        walkableSet = new HashSet<GameObject>(walkableTiles);
         ComputeWalkableCells();
         TilemapManager.instance.cellChanged += OnTileChanged;
         
@@ -95,7 +95,7 @@ public class HexPathfinding2D : MonoBehaviour
             for (int y = bounds.yMin; y < bounds.yMax; y++)
             {
                 var cell = new Vector3Int(x, y, 0);
-                TileBase tile = tilemapManager.GetTile(cell);
+                GameObject tile = tilemapManager.GetTile(cell);
                 
                 // DISABLED: Water tile checking removed (water system disabled)
                 // Walkability now only checks if tile exists and is in walkable set
@@ -108,8 +108,8 @@ public class HexPathfinding2D : MonoBehaviour
     public List<Vector2> FindPath(Vector2 startWorld, Vector2 goalWorld)
     {
         // Convert world positions to grid coordinates
-        Vector3Int startCell = tilemapManager.WorldToCell(startWorld);
-        Vector3Int goalCell = tilemapManager.WorldToCell(goalWorld);
+        Vector3Int startCell = tilemapManager.WorldToHexAxial(startWorld);
+        Vector3Int goalCell = tilemapManager.WorldToHexAxial(goalWorld);
     
         // Check if start and goal are walkable
         if (!walkableCells.Contains(startCell) || !walkableCells.Contains(goalCell))
@@ -192,7 +192,7 @@ public class HexPathfinding2D : MonoBehaviour
         return 6;
     }
 
-    bool IsHeightWalkable(TileBase fromTile, TileBase toTile)
+    bool IsHeightWalkable(GameObject fromTile, GameObject toTile)
     {
         int fromH = heightManager.GetHeightIndex(fromTile);
         int toH = heightManager.GetHeightIndex(toTile);

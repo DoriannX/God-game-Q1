@@ -21,7 +21,7 @@ public class TaskManager : MonoBehaviour
 
     public WorkTask CreateRandomTask(Vector2 position)
     {
-        Vector3Int cell = TilemapManager.instance.WorldToCell(position);
+        Vector3Int cell = TilemapManager.instance.WorldToHexAxial(position);
         if(completedTasks.Contains(cell))
             return null;
         int taskType = Random.Range(0, taskPrefabs.Count);

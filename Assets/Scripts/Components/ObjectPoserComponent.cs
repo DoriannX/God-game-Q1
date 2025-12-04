@@ -53,10 +53,10 @@ public class ObjectPoserComponent : MonoBehaviour
         }
     }
 
-    private void TryPlace(TilemapManager tilemap, Vector3 worldPos, List<TileBase> allowedTiles,
+    private void TryPlace(TilemapManager tilemap, Vector3 worldPos, List<GameObject> allowedTiles,
         PosableObject prefab)
     {
-        var cellPos = tilemap.WorldToCell(worldPos);
+        var cellPos = tilemap.WorldToHexAxial(worldPos);
         var baseTile = tilemap.GetTile(cellPos);
         if (baseTile == null || !allowedTiles.Contains(baseTile)) return;
 

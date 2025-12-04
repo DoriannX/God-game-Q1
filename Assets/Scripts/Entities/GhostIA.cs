@@ -55,14 +55,14 @@ public class GhostIa : MonoBehaviour, ISaveable
         Vector3 cellSize = tilemapManager.cellSize;
         
         // Get current height once instead of in every iteration
-        Vector3Int currentCell = tilemapManager.WorldToCell(origin);
+        Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
         currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));
         for (int i = 0; i < maxAttempts; i++)
         {
             Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
             Vector2 candidate = origin + dir * cellSize;
                 
-            Vector3Int candidateCell = tilemapManager.WorldToCell(candidate);
+            Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
             if(waterSystem.waterTiles.Contains(candidateCell))
                 continue;
             int candidateHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(candidateCell));

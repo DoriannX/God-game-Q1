@@ -19,7 +19,7 @@ public class BrushPreview : MonoBehaviour
     private Camera mainCamera;
     private Material previewMaterial;
     private List<GameObject> previewObjects = new List<GameObject>();
-    private Vector2Int lastCenterHex = new Vector2Int(int.MinValue, int.MinValue);
+    private Vector3Int lastCenterHex = new Vector3Int(int.MinValue, int.MinValue);
     private int lastBrushSize = -1;
     private int lastTileIndex = -1; // Pour détecter le changement de tile
     private float updateInterval = 0.1f; // Intervalle de mise à jour automatique
@@ -72,7 +72,7 @@ public class BrushPreview : MonoBehaviour
             Vector3 worldPosition = ray.GetPoint(distance);
             
             // Convertir en coordonnées hexagonales
-            Vector2Int centerHex = WorldToHexAxial(worldPosition);
+            Vector3Int centerHex = WorldToHexAxial(worldPosition);
             int currentBrushSize = brushManager.GetBrushSize();
             int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
             
@@ -97,10 +97,10 @@ public class BrushPreview : MonoBehaviour
         }
     }
     
-    private void UpdatePreview(Vector2Int centerHex)
+    private void UpdatePreview(Vector3Int centerHex)
     {
         // Obtenir la zone du brush
-        Vector2Int[] brushArea = brushManager.GetBrushArea(centerHex);
+        Vector3Int[] brushArea = brushManager.GetBrushArea(centerHex);
         
         // Obtenir l'index de la tile actuelle
         int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
@@ -246,11 +246,11 @@ public class BrushPreview : MonoBehaviour
             if (obj != null)
                 obj.SetActive(false);
         }
-        lastCenterHex = new Vector2Int(int.MinValue, int.MinValue);
+        lastCenterHex = new Vector3Int(int.MinValue, int.MinValue);
     }
     
     // Convertir une position world en coordonnées axiales hexagonales (flat-top)
-    private Vector2Int WorldToHexAxial(Vector3 worldPosition)
+    private Vector3Int WorldToHexAxial(Vector3 worldPosition)
     {
         float x = worldPosition.x;
         float z = worldPosition.z;
@@ -264,7 +264,7 @@ public class BrushPreview : MonoBehaviour
     }
     
     // Arrondir les coordonnées fractionnelles vers les coordonnées hexagonales entières
-    private Vector2Int HexRound(float q, float r)
+    private Vector3Int HexRound(float q, float r)
     {
         float s = -q - r;
         
@@ -285,7 +285,7 @@ public class BrushPreview : MonoBehaviour
             roundedR = -roundedQ - roundedS;
         }
         
-        return new Vector2Int(roundedQ, roundedR);
+        return new Vector3Int(roundedQ, roundedR);
     }
     
     // Convertir des coordonnées axiales hexagonales en position world

@@ -15,7 +15,7 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private bool allowReplacement = true; // Permettre le remplacement des tiles existantes
     
     private Camera mainCamera;
-    private Dictionary<Vector2Int, GameObject> tiles = new();
+    private Dictionary<Vector3Int, GameObject> tiles = new();
     private float lastClickTime;
     private float lastRightClickTime;
     
@@ -161,10 +161,10 @@ public class TilemapManager : MonoBehaviour
         }
         
         // Convertir la position world en coordonnées axiales hexagonales
-        Vector2Int hexCoords = WorldToHexAxial(worldPosition);
+        Vector3Int hexCoords = WorldToHexAxial(worldPosition);
         
         // Obtenir la zone du brush
-        Vector2Int[] brushArea;
+        Vector3Int[] brushArea;
         if (brushManager != null)
         {
             brushArea = brushManager.GetBrushArea(hexCoords);
@@ -172,7 +172,7 @@ public class TilemapManager : MonoBehaviour
         else
         {
             // Si pas de brush manager, spawner seulement une tile
-            brushArea = new Vector2Int[] { hexCoords };
+            brushArea = new Vector3Int[] { hexCoords };
         }
         
         // Si on a beaucoup de tiles, utiliser le mode batch pour l'occlusion
@@ -183,7 +183,7 @@ public class TilemapManager : MonoBehaviour
         }
         
         // Spawner les tiles dans la zone du brush
-        foreach (Vector2Int coord in brushArea)
+        foreach (Vector3Int coord in brushArea)
         {
             if (isRightClick)
             {
@@ -207,7 +207,7 @@ public class TilemapManager : MonoBehaviour
         }
     }
     
-    private void SpawnTileAt(Vector2Int hexCoords)
+    private void SpawnTileAt(Vector3Int hexCoords)
     {
         // Obtenir le prefab de la tile actuelle depuis le TileSelector
         GameObject tilePrefab = GetCurrentTilePrefab();
@@ -275,7 +275,7 @@ public class TilemapManager : MonoBehaviour
     }
     
     // Convertir une position world en coordonnées axiales hexagonales (flat-top)
-    private Vector2Int WorldToHexAxial(Vector3 worldPosition)
+    public Vector3Int WorldToHexAxial(Vector3 worldPosition)
     {
         // Pour flat-top hexagons avec largeur (width = distance entre côtés opposés):
         // La largeur correspond à 2 * taille_interne
@@ -294,7 +294,7 @@ public class TilemapManager : MonoBehaviour
     }
     
     // Arrondir les coordonnées fractionnelles vers les coordonnées hexagonales entières
-    private Vector2Int HexRound(float q, float r)
+    private Vector3Int HexRound(float q, float r)
     {
         float s = -q - r; // coordonnée cubique s
         
@@ -316,7 +316,7 @@ public class TilemapManager : MonoBehaviour
             roundedR = -roundedQ - roundedS;
         }
         
-        return new Vector2Int(roundedQ, roundedR);
+        return new Vector3Int(roundedQ, roundedR, 0);
     }
     
     // Convertir des coordonnées axiales hexagonales en position world (si nécessaire)
@@ -345,14 +345,10 @@ public class TilemapManager : MonoBehaviour
         Debug.DrawLine(position + Vector3.forward * size, position + Vector3.back * size, color, duration);
     }
 
-    public Vector3Int WorldToCell(Vector3 worldPos)
+    public GameObject GetTile(Vector3Int cellPos)
     {
-        throw new System.NotImplementedException();
-    }
-
-    public TileBase GetTile(Vector3Int cellPos)
-    {
-        throw new System.NotImplementedException();
+        tiles.TryGetValue(new Vector3Int(cellPos.x, cellPos.z, 0), out GameObject tile);
+        return tile;
     }
 
     public Vector3 GetCellCenterWorld(Vector3Int cellPos)
@@ -360,7 +356,7 @@ public class TilemapManager : MonoBehaviour
         throw new System.NotImplementedException();
     }
 
-    public void SetTile(Vector3Int cell, TileBase tile)
+    public void SetTile(Vector3Int cell, GameObject tile)
     {
         throw new System.NotImplementedException();
     }

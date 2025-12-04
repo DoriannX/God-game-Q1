@@ -75,17 +75,17 @@ public class BrushSizeManager : MonoBehaviour
     
     // Méthode pour obtenir les coordonnées hexagonales dans la zone du brush
     // Retourne une liste de coordonnées hexagonales en fonction de la taille du brush
-    public Vector2Int[] GetBrushArea(Vector2Int centerHex)
+    public Vector3Int[] GetBrushArea(Vector3Int centerHex)
     {
         if (currentBrushSize == 1)
         {
             // Brush de taille 1 = seulement le centre
-            return new Vector2Int[] { centerHex };
+            return new[] { centerHex };
         }
         
         // Calculer tous les hexagones dans le rayon du brush
         int radius = currentBrushSize - 1;
-        System.Collections.Generic.List<Vector2Int> hexagons = new System.Collections.Generic.List<Vector2Int>();
+        System.Collections.Generic.List<Vector3Int> hexagons = new System.Collections.Generic.List<Vector3Int>();
         
         // Algorithme pour obtenir tous les hexagones dans un rayon (coordonnées axiales)
         for (int q = -radius; q <= radius; q++)
@@ -95,7 +95,7 @@ public class BrushSizeManager : MonoBehaviour
             
             for (int r = r1; r <= r2; r++)
             {
-                hexagons.Add(new Vector2Int(centerHex.x + q, centerHex.y + r));
+                hexagons.Add(new Vector3Int(centerHex.x + q, centerHex.y + r));
             }
         }
         
