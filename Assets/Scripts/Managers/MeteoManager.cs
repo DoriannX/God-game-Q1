@@ -1,31 +1,45 @@
+using SaveLoadSystem;
 using System;
 using System.Collections.Generic;
-using SaveLoadSystem;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
+
+public enum MeteoState
+{
+    Neutral,
+    Sunny,
+    Raining,
+    Tornado,
+    Earthquake,
+    Tsunami,
+    Sandstorm
+}
 
 [RequireComponent(typeof(SaveableEntity))]
 public class MeteoManager : MonoBehaviour, ISaveable
 {
+    
     [Serializable]
     public struct MeteoData
     {
-        public bool isRaining;
+        public MeteoEvent activeMeteoObject;
         public int manualTick;
         public bool setManually;
-        public float rainIntensity;
+        public MeteoState state;
     }
     public static MeteoManager Instance { get; private set; }
-    [SerializeField] private RainController rainController;
     [SerializeField, Range(0, 1)] private float rainChance;
     [SerializeField, Range(0, 1)] private float sunChance;
-    [SerializeField, Range(0, 1)] private float rainChangeChance;
+    [SerializeField] private List<MeteoEvent> meteoComponents = new List<MeteoEvent>();
     [SerializeField] private int ticksToAutomateWeather = 5;
     private int manualTick = 0;
-    public bool isRaining { get; private set; }
     private bool setManually;
     public event Action<bool> weatherChanged;
     private readonly List<GameObject> activeWeatherEffects = new();
+    private MeteoEvent activeMeteoEvent;
+    public MeteoState state;
+    float sum = 0;
 
     private void Awake()
     {
@@ -39,18 +53,12 @@ public class MeteoManager : MonoBehaviour, ISaveable
         }
     }
     
-    public void SetWeather(bool raining)
+    public void SetWeather(MeteoState newState)
     {
         setManually = true;
         manualTick = 0;
-        if (raining)
-        {
-            StartRain();
-        }
-        else
-        {
-            StopRain();
-        }
+        StopWeather();
+        StartWeather(newState);
     }
 
     private void OnEnable()
@@ -58,22 +66,29 @@ public class MeteoManager : MonoBehaviour, ISaveable
         TickSystem.ticked += OnTicked;
     }
     
-    private void StartRain()
+    private void StartWeather(MeteoState newState)
     {
-        isRaining = true;
-        rainController.masterIntensity = Random.Range(0.3f, 1f);
-        weatherChanged?.Invoke(true);
+        foreach (MeteoEvent meteoEvent in meteoComponents)
+        {
+            if (meteoEvent.GetState() == newState)
+            {
+                activeMeteoEvent = meteoEvent;
+                activeMeteoEvent.gameObject.SetActive(true);
+                state = newState;
+                weatherChanged?.Invoke(newState == MeteoState.Raining);
+            }
+        }
     }
     
-    private void ChangeRainIntensity()
+    private void StopWeather()
     {
-        rainController.masterIntensity = Random.Range(0.3f, 1f);
-    }
-    
-    private void StopRain()
-    {
-        isRaining = false;
-        rainController.masterIntensity = 0f;
+        if (activeMeteoEvent == null)
+        {
+            return;
+        }
+        activeMeteoEvent.gameObject.SetActive(false);
+        activeMeteoEvent = null;
+        state = MeteoState.Sunny;
         weatherChanged?.Invoke(false);
     }
     
@@ -89,23 +104,20 @@ public class MeteoManager : MonoBehaviour, ISaveable
             }
             return;
         }
-        if (!isRaining)
+
+        //Algorithm to randomly select events with different chances of appearing.
+        foreach (MeteoEvent component in meteoComponents)
         {
-            if(Random.value < rainChance)
-            {
-                StartRain();
-            }
+            sum += component.GetChance();
         }
-        else 
+        sum = Random.Range(0, sum);
+        foreach (MeteoEvent component in meteoComponents)
         {
-            if(rainChangeChance > Random.value)
+            sum -= component.GetChance();
+            if (sum <= 0)
             {
-                ChangeRainIntensity();
+                SetWeather(component.GetState());
                 return;
-            }
-            if(Random.value < sunChance)
-            {
-                StopRain();
             }
         }
     }
@@ -129,10 +141,10 @@ public class MeteoManager : MonoBehaviour, ISaveable
     {
         MeteoData data = new MeteoData
         {
-            isRaining = isRaining,
+            activeMeteoObject = activeMeteoEvent,
             manualTick = manualTick,
             setManually = setManually,
-            rainIntensity = rainController.masterIntensity
+            state = state
         };
         return data;
     }
@@ -140,11 +152,11 @@ public class MeteoManager : MonoBehaviour, ISaveable
     public void LoadState(object state)
     {
         MeteoData data = (MeteoData)state;
-        isRaining = data.isRaining;
+        activeMeteoEvent = data.activeMeteoObject;
         manualTick = data.manualTick;
         setManually = data.setManually;
-        rainController.masterIntensity = isRaining ? data.rainIntensity : 0f;
-        weatherChanged?.Invoke(isRaining);
+        state = data.state;
+        weatherChanged?.Invoke(activeMeteoEvent);
     }
 
     public void PostInstantiation(object state)
