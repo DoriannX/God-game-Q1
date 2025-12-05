@@ -35,7 +35,7 @@ public class TileSelector : MonoBehaviour
     {
         if (AvailableTiles == null || AvailableTiles.Length == 0)
         {
-            Debug.LogWarning("No tiles available in TileSelector!");
+            Debug.LogWarning("No tilesPosition available in TileSelector!");
         }
         else
         {

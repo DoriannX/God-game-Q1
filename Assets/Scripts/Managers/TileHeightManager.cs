@@ -12,7 +12,7 @@ public class TileHeightManager : MonoBehaviour
     [SerializeField] private float hexSize = 1f; // Largeur de l'hexagone (doit correspondre à TilemapManagerCopy)
     
     private Camera mainCamera;
-    // Dictionnaire qui stocke les colonnes de tiles par coordonnées hexagonales
+    // Dictionnaire qui stocke les colonnes de tilesPosition par coordonnées hexagonales
     // La clé est (q, r), la valeur est une liste de GameObjects empilés
     private float lastClickTime; // Temps du dernier clic
     private Dictionary<Vector3Int, float> lastPlacementTime = new Dictionary<Vector3Int, float>(); // Temps du dernier placement par coordonnée
@@ -140,7 +140,7 @@ public class TileHeightManager : MonoBehaviour
                 brushArea = new Vector3Int[] { hexCoords };
             }
             
-            // Si on a beaucoup de tiles, utiliser le mode batch pour l'occlusion
+            // Si on a beaucoup de tilesPosition, utiliser le mode batch pour l'occlusion
             bool useBatch = brushArea.Length > 1 && neighborOcclusion != null;
             if (useBatch)
             {
@@ -184,7 +184,7 @@ public class TileHeightManager : MonoBehaviour
         
         List<GameObject> column = tileColumns[hexCoords];
         
-        // Vérifier qu'il y a au moins 2 tiles (base + une au-dessus)
+        // Vérifier qu'il y a au moins 2 tilesPosition (base + une au-dessus)
         // On ne peut pas détruire la tile de base (index 0)
         if (column.Count <= 1)
         {
@@ -195,7 +195,7 @@ public class TileHeightManager : MonoBehaviour
         int lastIndex = column.Count - 1;
         GameObject tileToRemove = column[lastIndex];
         
-        // Détruire la tile (pas de pool car différentes tiles)
+        // Détruire la tile (pas de pool car différentes tilesPosition)
         if (tileToRemove != null)
         {
             Destroy(tileToRemove);
@@ -303,14 +303,14 @@ public class TileHeightManager : MonoBehaviour
         }
     }
     
-    // Méthode publique pour réinitialiser une colonne (détruire toutes les tiles au-dessus de la base)
+    // Méthode publique pour réinitialiser une colonne (détruire toutes les tilesPosition au-dessus de la base)
     public void ResetColumn(Vector3Int hexCoords)
     {
         if (tileColumns.ContainsKey(hexCoords))
         {
             List<GameObject> column = tileColumns[hexCoords];
             
-            // Détruire toutes les tiles de la colonne sauf la première (tile de base)
+            // Détruire toutes les tilesPosition de la colonne sauf la première (tile de base)
             for (int i = 1; i < column.Count; i++)
             {
                 if (column[i] != null && tilePool != null)
@@ -332,7 +332,7 @@ public class TileHeightManager : MonoBehaviour
         {
             List<GameObject> column = tileColumns[hexCoords];
             
-            // Retourner TOUTES les tiles au pool (y compris la base, index 0)
+            // Retourner TOUTES les tilesPosition au pool (y compris la base, index 0)
             // SAUF la base qui sera gérée par TilemapManagerCopy
             for (int i = 1; i < column.Count; i++)
             {
@@ -348,7 +348,7 @@ public class TileHeightManager : MonoBehaviour
         }
     }
     
-    // Méthode optimisée : reset seulement les tiles au-dessus, GARDER la base
+    // Méthode optimisée : reset seulement les tilesPosition au-dessus, GARDER la base
     public void ResetColumnKeepBase(Vector3Int hexCoords, TilePool pool)
     {
         if (!tileColumns.ContainsKey(hexCoords))
@@ -364,7 +364,7 @@ public class TileHeightManager : MonoBehaviour
             return; // Déjà resetée, évite le lag
         }
         
-        // Détruire SEULEMENT les tiles au-dessus de la base (index 1+)
+        // Détruire SEULEMENT les tilesPosition au-dessus de la base (index 1+)
         // On détruit au lieu d'utiliser le pool car ce sont des instances de prefabs différents
         for (int i = column.Count - 1; i >= 1; i--)
         {
@@ -421,13 +421,13 @@ public class TileHeightManager : MonoBehaviour
         Vector3 basePosition = baseTile.transform.position;
         
         // Calculer la hauteur Y pour la nouvelle tile
-        // On part de la position Y de la base et on ajoute la hauteur en fonction du nombre de tiles
+        // On part de la position Y de la base et on ajoute la hauteur en fonction du nombre de tilesPosition
         float newTileY = basePosition.y + (column.Count) * tileHeight;
         
         // Utiliser la position X et Z de la base, mais avec la nouvelle hauteur Y
         Vector3 spawnPosition = new Vector3(basePosition.x, newTileY, basePosition.z);
         
-        // Instancier le prefab spécifique (pas de pool car différentes tiles)
+        // Instancier le prefab spécifique (pas de pool car différentes tilesPosition)
         GameObject newTile = Instantiate(tilePrefab, spawnPosition, Quaternion.identity);
         newTile.name = $"Tile_{tilePrefab.name}_({hexCoords.x}, {hexCoords.y})_H{column.Count}";
         
@@ -495,7 +495,7 @@ public class TileHeightManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Obtenir les tiles d'une colonne
+    /// Obtenir les tilesPosition d'une colonne
     /// </summary>
     public List<GameObject> GetColumnTiles(Vector3Int hexCoords)
     {

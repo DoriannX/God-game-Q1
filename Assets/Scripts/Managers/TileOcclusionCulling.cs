@@ -1,7 +1,7 @@
 // ============================================================================
 // SCRIPT DÉSACTIVÉ - CONSERVÉ POUR USAGE FUTUR
 // ============================================================================
-// Ce script implémente un système d'occlusion culling pour optimiser le rendu des tiles.
+// Ce script implémente un système d'occlusion culling pour optimiser le rendu des tilesPosition.
 // Il est actuellement désactivé mais conservé pour une utilisation future si nécessaire.
 // 
 // Pour l'utiliser :
@@ -82,7 +82,7 @@ public class TileOcclusionCulling : MonoBehaviour
         }
     }
     
-    // Mettre à jour la visibilité de toutes les tiles
+    // Mettre à jour la visibilité de toutes les tilesPosition
     private void UpdateVisibility()
     {
         if (targetCamera == null)
@@ -201,7 +201,7 @@ public class TileOcclusionCulling : MonoBehaviour
         UpdateVisibility();
     }
     
-    // Nettoyer les tiles nulles du dictionnaire
+    // Nettoyer les tilesPosition nulles du dictionnaire
     public void CleanupNullTiles()
     {
         List<GameObject> toRemove = new List<GameObject>();
