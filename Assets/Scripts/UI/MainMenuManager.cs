@@ -9,11 +9,17 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private SaveLoadManager saveLoadManager;
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button continueButton;
+    [SerializeField] private Button OptionsButton;
+    [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
     private void Awake()
     {
         newGameButton.onClick.AddListener(LoadGame);
+
+        OptionsButton.onClick.AddListener(Options);
+
+        creditsButton.onClick.AddListener(Credits);
 
         continueButton.onClick.AddListener(() =>
         {
@@ -33,5 +39,15 @@ public class MainMenuManager : MonoBehaviour
     private void LoadGame()
     {
         SceneManager.LoadScene("Scenes/SampleScene");
+    }
+
+    private void Options()
+    {
+        SceneManager.LoadScene("Scenes/Options");
+    }
+
+    private void Credits()
+    {
+               SceneManager.LoadScene("Scenes/Credits");
     }
 }
