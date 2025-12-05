@@ -15,8 +15,8 @@ public class GhostIa : MonoBehaviour, ISaveable
     [SerializeField] private GhostMovement ghostMovement;
     [SerializeField] private GrowComponent growComponent;
 
-    public Vector2 targetPosition { get; private set; }
-    private List<Vector2> currentPath;
+    public Vector3 targetPosition { get; private set; }
+    private List<Vector3> currentPath;
     private bool usePathFinding = false;
     private int currentHeight;
     private void OnEnable()
@@ -29,40 +29,44 @@ public class GhostIa : MonoBehaviour, ISaveable
         TickSystem.ticked -= Tick;
     }
 
-    public void GoTo(Vector2 position)
+    public void GoTo(Vector3 position)
     {
         usePathFinding = true;
         targetPosition = position;
         ComputePath();
     }
     
-    public void GoBy(Vector2 direction)
+    public void GoBy(Vector3 direction)
     {
-        //TODO : refaire
+
         /*targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
+        targetPosition = transform.position +
+                         Vector3.Scale(direction.normalized, TilemapManager.instance.GetHexCellSize());
+
         usePathFinding = true;
         ComputePath();*/
     }
     
     public void GoByRandom()
     {
-        //TODO : refiare
-        /*const int maxAttempts = 12;
-        Vector2 origin = transform.position;
+        const int maxAttempts = 12;
+        Vector3 origin = transform.position;
+        Debug.Log(origin); 
         
         // Cache frequently accessed instances
         var tilemapManager = TilemapManager.instance;
         var waterSystem = WaterSystem.instance;
         var heightManager = HeightManager.instance;
-        Vector3 cellSize = tilemapManager.cellSize;
+        Vector3 cellSize = tilemapManager.GetHexCellSize();
         
         // Get current height once instead of in every iteration
-        Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
-        currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));
+        Vector3Int currentCell = new Vector3Int(tilemapManager.WorldToHexAxial(origin).x, 0, tilemapManager.WorldToHexAxial(origin).y);
+        Debug.Log(currentCell);
+        /*currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));*/
         for (int i = 0; i < maxAttempts; i++)
         {
-            Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
-            Vector2 candidate = origin + dir * cellSize;
+            Vector3 dir = UnityEngine.Random.insideUnitCircle.normalized;
+            Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
                 
             Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
             if(waterSystem.waterTiles.Contains(candidateCell))
@@ -73,7 +77,7 @@ public class GhostIa : MonoBehaviour, ISaveable
             {
                 targetPosition = TilemapManager.instance.HexAxialToWorld(candidateCell);
                 usePathFinding = false;
-                currentPath = new List<Vector2> { origin, targetPosition };
+                currentPath = new List<Vector3> { origin, targetPosition };
                 return;
             }
         }
@@ -102,10 +106,14 @@ public class GhostIa : MonoBehaviour, ISaveable
         Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath != null && currentPath.Count > 1;
 
     public void ForceRepath() => ComputePath();
-
-    private void ComputePath()
-    {
-        //currentPath = HexPathfinding2D.instance.FindPath(transform.position, targetPosition);
+    private void ComputePath() {
+        Vector3Int currentCell = TilemapManager.instance.WorldToHexAxial(transform.position);
+        Vector3Int targetCell = TilemapManager.instance.WorldToHexAxial(targetPosition);
+    
+        int startHeight = HeightManager.instance.GetHeightIndex(TilemapManager.instance.GetTile(currentCell));
+        int goalHeight = HeightManager.instance.GetHeightIndex(TilemapManager.instance.GetTile(targetCell));
+    
+        currentPath = HexPathfinding3D.instance.FindPath(transform.position, targetPosition, startHeight, goalHeight);
     }
 
     private void OnDrawGizmos()
@@ -151,7 +159,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         var data = (GhostData)state;
         transform.position = data.position.ToVector2();
         targetPosition = data.targetPosition.ToVector2();
-        currentPath = new List<Vector2>();
+        currentPath = new List<Vector3>();
         if (data.currentPath != null)
         {
             foreach (var pos in data.currentPath)
@@ -173,4 +181,6 @@ public class GhostIa : MonoBehaviour, ISaveable
     public void GotAddedAsChild(GameObject obj, GameObject hisParent)
     {
     }
+    
+    
 }

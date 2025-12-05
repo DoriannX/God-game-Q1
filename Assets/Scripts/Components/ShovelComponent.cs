@@ -27,8 +27,8 @@ public class ShovelComponent : MonoBehaviour
         //TODO: refaire
         /*Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
 
-        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
-        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
+        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f /*/ TilemapManager.instance.cellSize.x*/);
+        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f /*/ TilemapManager.instance.cellSize.y*/);
 
         int maxRadius = Mathf.Max(cellRadiusX, cellRadiusY);
 
