@@ -48,7 +48,7 @@ public class Meteore : DestructionObject
                     );
 
                     if (previousTile == null) continue;
-                    TilemapManager.instance.SetTile(cell, previousTile);
+                    TilemapManager.instance.SpawnTileAt(cell, previousTile);
                     WaterSystem.instance.RemoveWater(cell);
                 }
             }

@@ -10,15 +10,30 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private TileHeightManager heightManager; // Référence au TileHeightManager
     [SerializeField] private BrushSizeManager brushManager; // Référence au BrushSizeManager
     [SerializeField] private TileSelector tileSelector; // Référence au TileSelector
-    [SerializeField] private TileNeighborOcclusionCulling neighborOcclusion; // Référence au système d'occlusion (optionnel)
+
+    [SerializeField]
+    private TileNeighborOcclusionCulling neighborOcclusion; // Référence au système d'occlusion (optionnel)
+
     [SerializeField] private float clickCooldown = 0.1f; // Temps minimum entre deux placements (en secondes)
     [SerializeField] private bool allowReplacement = true; // Permettre le remplacement des tiles existantes
-    
+
     private Camera mainCamera;
     private Dictionary<Vector3Int, GameObject> tiles = new();
     private float lastClickTime;
     private float lastRightClickTime;
-    
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     /// <summary>
     /// Returns the bounds of all spawned tiles in the scene.
     /// Calculates min/max hex coordinates and converts to world space bounds.
@@ -29,13 +44,13 @@ public class TilemapManager : MonoBehaviour
         {
             if (tiles.Count == 0)
                 return new BoundsInt(Vector3Int.zero, new Vector3Int(0, 0, 0));
-            
+
             // Find min and max hex coordinates
             int minQ = int.MaxValue;
             int maxQ = int.MinValue;
             int minR = int.MaxValue;
             int maxR = int.MinValue;
-            
+
             foreach (var coord in tiles.Keys)
             {
                 if (coord.x < minQ) minQ = coord.x;
@@ -43,35 +58,37 @@ public class TilemapManager : MonoBehaviour
                 if (coord.y < minR) minR = coord.y;
                 if (coord.y > maxR) maxR = coord.y;
             }
-            
+
             // Convert hex bounds to world space bounds
             Vector3 minPos = HexAxialToWorld(minQ, minR);
             Vector3 maxPos = HexAxialToWorld(maxQ, maxR);
-            
+
             // Calculate bounds size (add padding for hex size)
             Vector3Int min = new Vector3Int(
                 Mathf.FloorToInt(minPos.x - hexSize),
                 0,
                 Mathf.FloorToInt(minPos.z - hexSize)
             );
-            
+
             Vector3Int max = new Vector3Int(
                 Mathf.CeilToInt(maxPos.x + hexSize),
                 0,
                 Mathf.CeilToInt(maxPos.z + hexSize)
             );
-            
+
             Vector3Int size = max - min;
-            
+
             return new BoundsInt(min, size);
         }
     }
-    
+
     public event Action<Vector3Int> cellChanged;
-    public Vector2 cellSize => new Vector2(hexSize * 0.75f, hexSize * Mathf.Sqrt(3) / 2f); // Taille d'une cellule hexagonale (flat-top)
+
+    public Vector2 cellSize =>
+        new Vector2(hexSize * 0.75f, hexSize * Mathf.Sqrt(3) / 2f); // Taille d'une cellule hexagonale (flat-top)
 
     public static TilemapManager instance { get; private set; }
-    
+
     private void Start()
     {
         mainCamera = Camera.main;
@@ -79,16 +96,16 @@ public class TilemapManager : MonoBehaviour
         {
             Debug.LogError("No main camera found in the scene!");
         }
-        
+
         if (tilePool == null)
         {
             Debug.LogError("TilePool is not assigned to TilemapManagerCopy!");
         }
     }
-    
+
     private void Update()
     {
-        // Clic gauche : Remplacer/placer la tile de base
+        /*// Clic gauche : Remplacer/placer la tile de base
         if (Input.GetMouseButton(0))
         {
             // Vérifier si le cooldown est écoulé
@@ -98,7 +115,7 @@ public class TilemapManager : MonoBehaviour
                 lastClickTime = Time.time;
             }
         }
-        
+
         // Clic droit : Ajouter en hauteur (ne remplace pas, ajoute par dessus)
         // MAIS pas si Shift est enfoncé (réservé pour baisser dans TileHeightManager)
         if (Input.GetMouseButton(1) && !Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.RightShift))
@@ -109,16 +126,24 @@ public class TilemapManager : MonoBehaviour
                 DetectMouseClick(true); // true = clic droit (ajouter en hauteur)
                 lastRightClickTime = Time.time;
             }
-        }
+        }*/
+    }
+
+    public void PlaceTile(Vector3 mousePos, GameObject tilePrefab)
+    {
+        DetectMouseClick(mousePos, false, tilePrefab);
     }
     
-    private void DetectMouseClick(bool isRightClick)
+    public void RaiseTile(Vector3 mousePos)
     {
-        // Obtenir la position de la souris à l'écran
-        Vector3 mouseScreenPosition = Input.mousePosition;
+        DetectMouseClick(mousePos, true);
+    }
+
+    private void DetectMouseClick(Vector2 mousePos, bool isRightClick, GameObject tilePrefab = null)
+    {
         
         // Créer un raycast depuis la caméra vers la position de la souris
-        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPosition);
+        Ray ray = mainCamera.ScreenPointToRay(mousePos);
         RaycastHit hit;
         
         Vector3 worldPosition;
@@ -159,10 +184,10 @@ public class TilemapManager : MonoBehaviour
                 return;
             }
         }
-        
+
         // Convertir la position world en coordonnées axiales hexagonales
         Vector3Int hexCoords = WorldToHexAxial(worldPosition);
-        
+
         // Obtenir la zone du brush
         Vector3Int[] brushArea;
         if (brushManager != null)
@@ -174,14 +199,14 @@ public class TilemapManager : MonoBehaviour
             // Si pas de brush manager, spawner seulement une tile
             brushArea = new Vector3Int[] { hexCoords };
         }
-        
+
         // Si on a beaucoup de tiles, utiliser le mode batch pour l'occlusion
         bool useBatch = brushArea.Length > 1 && neighborOcclusion != null;
         if (useBatch)
         {
             neighborOcclusion.BeginBatch();
         }
-        
+
         // Spawner les tiles dans la zone du brush
         foreach (Vector3Int coord in brushArea)
         {
@@ -196,27 +221,20 @@ public class TilemapManager : MonoBehaviour
             else
             {
                 // Clic gauche : Remplacer/placer la tile de base
-                SpawnTileAt(coord);
+                SpawnTileAt(coord, tilePrefab);
             }
         }
-        
+
         // Terminer le mode batch
         if (useBatch)
         {
             neighborOcclusion.EndBatch();
         }
     }
-    
-    private void SpawnTileAt(Vector3Int hexCoords)
+
+    public void SpawnTileAt(Vector3Int hexCoords, GameObject tilePrefab)
     {
-        // Obtenir le prefab de la tile actuelle depuis le TileSelector
-        GameObject tilePrefab = GetCurrentTilePrefab();
-        if (tilePrefab == null)
-        {
-            Debug.LogWarning("No tile prefab selected!");
-            return;
-        }
-        
+
         // Vérifier si une tile existe déjà à cette position
         if (tiles.ContainsKey(hexCoords))
         {
@@ -225,45 +243,45 @@ public class TilemapManager : MonoBehaviour
                 // Ne pas remplacer si le remplacement est désactivé
                 return;
             }
-            
+
             // Récupérer l'ancienne tile
             GameObject oldTile = tiles[hexCoords];
-            
+
             // Retourner SEULEMENT les tiles de hauteur au pool, garder la base pour la remplacer
             if (heightManager != null)
             {
                 heightManager.ResetColumnKeepBase(hexCoords, tilePool);
             }
-            
+
             // Détruire l'ancienne tile de base
             if (oldTile != null)
             {
                 Destroy(oldTile);
             }
-            
+
             // Retirer l'ancienne tile du dictionnaire
             tiles.Remove(hexCoords);
         }
-        
+
         Vector3 spawnPosition = HexAxialToWorld(hexCoords.x, hexCoords.y);
-        
+
         // Instancier la nouvelle tile (pas de pool car tiles différentes)
         GameObject tile = Instantiate(tilePrefab, spawnPosition, Quaternion.identity);
         tile.name = $"Tile_{tilePrefab.name}_({hexCoords.x}, {hexCoords.y})";
-        
+
         // Ajouter la tile au dictionnaire
         tiles.Add(hexCoords, tile);
-        
+
         // Notifier le height manager de la nouvelle tile de base
         if (heightManager != null)
         {
             heightManager.RegisterBaseTile(hexCoords, tile);
         }
-        
+
         // Notify listeners that cells have changed
-        cellChanged?.Invoke( new Vector3Int(hexCoords.x, 0, hexCoords.y) );
+        cellChanged?.Invoke(new Vector3Int(hexCoords.x, 0, hexCoords.y));
     }
-    
+
     // Obtenir le prefab de la tile actuelle depuis le TileSelector
     private GameObject GetCurrentTilePrefab()
     {
@@ -271,41 +289,42 @@ public class TilemapManager : MonoBehaviour
         {
             return tileSelector.GetCurrentTilePrefab();
         }
+
         return null;
     }
-    
+
     // Convertir une position world en coordonnées axiales hexagonales (flat-top)
     public Vector3Int WorldToHexAxial(Vector3 worldPosition)
     {
         // Pour flat-top hexagons avec largeur (width = distance entre côtés opposés):
         // La largeur correspond à 2 * taille_interne
         // Donc taille_interne = largeur / 2
-        
+
         float x = worldPosition.x;
         float z = worldPosition.z;
-        
+
         float sizeInternal = hexSize / 2f;
-        
+
         float q = (2f / 3f * x) / sizeInternal;
         float r = (-1f / 3f * x + Mathf.Sqrt(3f) / 3f * z) / sizeInternal;
-        
+
         // Arrondir aux coordonnées hexagonales entières
         return HexRound(q, r);
     }
-    
+
     // Arrondir les coordonnées fractionnelles vers les coordonnées hexagonales entières
     private Vector3Int HexRound(float q, float r)
     {
         float s = -q - r; // coordonnée cubique s
-        
+
         int roundedQ = Mathf.RoundToInt(q);
         int roundedR = Mathf.RoundToInt(r);
         int roundedS = Mathf.RoundToInt(s);
-        
+
         float qDiff = Mathf.Abs(roundedQ - q);
         float rDiff = Mathf.Abs(roundedR - r);
         float sDiff = Mathf.Abs(roundedS - s);
-        
+
         // Réajuster la coordonnée avec la plus grande différence
         if (qDiff > rDiff && qDiff > sDiff)
         {
@@ -315,32 +334,32 @@ public class TilemapManager : MonoBehaviour
         {
             roundedR = -roundedQ - roundedS;
         }
-        
+
         return new Vector3Int(roundedQ, roundedR, 0);
     }
-    
+
     // Convertir des coordonnées axiales hexagonales en position world (si nécessaire)
     private Vector3 HexAxialToWorld(int q, int r)
     {
         // Pour flat-top hexagons avec largeur (width):
         // La largeur correspond à 2 * taille_interne
         // Donc taille_interne = largeur / 2
-        
+
         float sizeInternal = hexSize / 2f;
-        
+
         float x = sizeInternal * (3f / 2f * q);
         float z = sizeInternal * (Mathf.Sqrt(3f) / 2f * q + Mathf.Sqrt(3f) * r);
-        
+
         return new Vector3(x, 0f, z);
     }
-    
+
     // Dessiner une croix pour visualiser la position
     private void DrawCross(Vector3 position, Color color, float size, float duration)
     {
         // Croix sur le plan XY
         Debug.DrawLine(position + Vector3.left * size, position + Vector3.right * size, color, duration);
         Debug.DrawLine(position + Vector3.up * size, position + Vector3.down * size, color, duration);
-        
+
         // Ligne verticale sur Z
         Debug.DrawLine(position + Vector3.forward * size, position + Vector3.back * size, color, duration);
     }
@@ -353,16 +372,6 @@ public class TilemapManager : MonoBehaviour
 
     public Vector3 GetCellCenterWorld(Vector3Int cellPos)
     {
-        throw new System.NotImplementedException();
-    }
-
-    public void SetTile(Vector3Int cell, GameObject tile)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public Vector2 CellToWorld(Vector3Int vector3Int)
-    {
-        throw new System.NotImplementedException();
+        return HexAxialToWorld(cellPos.x, cellPos.z);
     }
 }

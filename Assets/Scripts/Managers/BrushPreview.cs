@@ -321,6 +321,8 @@ public class BrushPreview : MonoBehaviour
     
     private void OnDestroy()
     {
+        if (!Application.isPlaying) return;
+        
         // Nettoyer les objets de préview
         foreach (GameObject obj in previewObjects)
         {

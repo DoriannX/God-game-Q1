@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+
 public enum PainterMode
 {
     Paint,
@@ -8,6 +9,7 @@ public enum PainterMode
     Object,
     Destruction
 }
+
 [RequireComponent(typeof(PaintComponent))]
 [RequireComponent(typeof(ShovelComponent))]
 [RequireComponent(typeof(BucketComponent))]
@@ -33,12 +35,12 @@ public class Painter : MonoBehaviour
         poserComponent = GetComponent<ObjectPoserComponent>();
         destructionComponent = GetComponent<DestructionComponent>();
     }
-    
+
     public void SetBrushSize(float size)
     {
         brushSize = size;
     }
-    
+
     public void SetMode(PainterMode mode)
     {
         currentMode = mode;
@@ -53,7 +55,7 @@ public class Painter : MonoBehaviour
 
     private void OnMouseMoved(Vector2 position)
     {
-        mousePos = Camera.main != null ? Camera.main.ScreenToWorldPoint(position) : Vector3.zero;
+        mousePos = position;
     }
 
     private void Update()
@@ -65,10 +67,17 @@ public class Painter : MonoBehaviour
                 shovelComponent.Add(mousePos, brushSize);
                 poserComponent.Remove(mousePos, brushSize);
             }
-            else if( currentMode == PainterMode.Paint)
+            else if (currentMode == PainterMode.Paint)
             {
                 bucketComponent.Remove(mousePos, brushSize);
-                paintComponent.Add(mousePos, brushSize);
+                if (!inputHandler.isShiftPressed)
+                {
+                    paintComponent.Add(mousePos, brushSize);
+                }
+                else
+                {
+                    paintComponent.Up(mousePos, brushSize);
+                }
             }
             else if (currentMode == PainterMode.Bucket)
             {
@@ -82,7 +91,6 @@ public class Painter : MonoBehaviour
             {
                 destructionComponent.Add(mousePos, brushSize);
             }
-            
         }
     }
 
@@ -90,12 +98,12 @@ public class Painter : MonoBehaviour
     {
         isPainting = false;
     }
-    
+
     private void OnMouseClickPressed()
     {
         isPainting = true;
     }
-    
+
     private void OnDisable()
     {
         inputHandler.mouseClickPressed -= OnMouseClickPressed;

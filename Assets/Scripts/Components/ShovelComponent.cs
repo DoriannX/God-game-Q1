@@ -42,7 +42,7 @@ public class ShovelComponent : MonoBehaviour
                         modifiedCells.Add(cell);
                         GameObject previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
                         if (previousTile == null) continue;
-                        TilemapManager.instance.SetTile(cell, previousTile);
+                        TilemapManager.instance.SpawnTileAt(cell, previousTile);
                     }
                     WaterSystem.instance?.RemoveWater(cell);
                 }

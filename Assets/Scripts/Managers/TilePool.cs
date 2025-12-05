@@ -10,6 +10,7 @@ public class TilePool : MonoBehaviour
     [SerializeField] private bool prewarmOnStart = false; // Désactiver le prewarming par défaut pour tester
     
     private ObjectPool<GameObject> pool;
+    private bool isQuitting = false;
     
     private void Awake()
     {
@@ -79,17 +80,38 @@ public class TilePool : MonoBehaviour
     // Quand une tile est détruite (pool plein)
     private void OnDestroyTile(GameObject tile)
     {
-        Destroy(tile);
+        if (tile == null || isQuitting) return;
+        
+        if (Application.isPlaying)
+        {
+            Destroy(tile);
+        }
+        else
+        {
+            DestroyImmediate(tile);
+        }
+    }
+    
+    private void OnApplicationQuit()
+    {
+        isQuitting = true;
+    }
+    
+    private void OnDestroy()
+    {
+        isQuitting = true;
     }
     
     // Méthodes publiques pour obtenir/retourner des tiles
     public GameObject GetTile()
     {
+        if (isQuitting) return null;
         return pool.Get();
     }
     
     public void ReleaseTile(GameObject tile)
     {
+        if (isQuitting || tile == null) return;
         pool.Release(tile);
     }
     
