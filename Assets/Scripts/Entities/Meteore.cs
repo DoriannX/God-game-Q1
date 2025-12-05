@@ -24,7 +24,7 @@ public class Meteore : DestructionObject
         yield return new WaitForSeconds(waitTime);
 
         // Impact visuel
-        Vector3Int centerCell = TilemapManager.instance.WorldToCell(pos);
+        Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
         float meteoriteSize = Random.Range(minSize, maxSize);
 
         int cellRadiusX = Mathf.CeilToInt(meteoriteSize * 1.5f / TilemapManager.instance.cellSize.x);
@@ -42,13 +42,13 @@ public class Meteore : DestructionObject
                 {
                     float dist = Vector2.Distance(new Vector2(x, y), Vector2.zero);
                     float level = Mathf.Clamp01(1f - dist / maxRadius);
-                    TileBase previousTile = heightManager.GetUnderHeightTile(
+                    GameObject previousTile = heightManager.GetUnderHeightTile(
                         TilemapManager.instance.GetTile(cell),
                         (int)(level * 3)
                     );
 
                     if (previousTile == null) continue;
-                    TilemapManager.instance.SetTile(cell, previousTile);
+                    TilemapManager.instance.SpawnTileAt(cell, previousTile);
                     WaterSystem.instance.RemoveWater(cell);
                 }
             }

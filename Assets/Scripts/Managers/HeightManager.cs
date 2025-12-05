@@ -19,14 +19,14 @@ using System.Collections.Generic;
         
         [SerializeField] private List<HeightCell> heightCells;
         
-        private Dictionary<TileBase, TileBase> _tileToPreviousHeight;
-        private Dictionary<TileBase, int> _tileToHeightIndex;
+        private Dictionary<GameObject, GameObject> _tileToPreviousHeight;
+        private Dictionary<GameObject, int> _tileToHeightIndex;
         private int _totalHeightLevels;
         
         private void BuildCaches()
         {
-            _tileToPreviousHeight = new Dictionary<TileBase, TileBase>(heightCells.Count);
-            _tileToHeightIndex = new Dictionary<TileBase, int>(heightCells.Count);
+            _tileToPreviousHeight = new Dictionary<GameObject, GameObject>(heightCells.Count);
+            _tileToHeightIndex = new Dictionary<GameObject, int>(heightCells.Count);
             
             foreach (var cell in heightCells)
             {
@@ -44,14 +44,14 @@ using System.Collections.Generic;
             _totalHeightLevels = CalculateTotalHeightLevels();
         }
         
-        public TileBase GetUnderHeightTile(TileBase tile)
+        public GameObject GetUnderHeightTile(GameObject tile)
         {
             return _tileToPreviousHeight.TryGetValue(tile, out var previous) ? previous : null;
         }
         
-        public TileBase GetUnderHeightTile(TileBase tile, int levels)
+        public GameObject GetUnderHeightTile(GameObject tile, int levels)
         {
-            TileBase underTile = tile;
+            GameObject underTile = tile;
             for (int i = 0; i < levels; i++)
             {
                 if (!_tileToPreviousHeight.TryGetValue(underTile, out var nextTile) || nextTile == null)
@@ -61,15 +61,15 @@ using System.Collections.Generic;
             return underTile;
         }
         
-        public int GetHeightIndex(TileBase tile)
+        public int GetHeightIndex(GameObject tile)
         {
             return _tileToHeightIndex.TryGetValue(tile, out var index) ? index : 0;
         }
         
-        private int CalculateHeightIndex(TileBase tile)
+        private int CalculateHeightIndex(GameObject tile)
         {
             int index = 0;
-            TileBase current = tile;
+            GameObject current = tile;
             
             while (_tileToPreviousHeight.TryGetValue(current, out var previous) && previous != null)
             {

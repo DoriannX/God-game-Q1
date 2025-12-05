@@ -21,7 +21,7 @@ public class ShovelComponent : MonoBehaviour
 
     public void Add(Vector2 pos, float brushSize)
     {
-        Vector3Int centerCell = TilemapManager.instance.WorldToCell(pos);
+        Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
 
         int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
         int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
@@ -40,9 +40,9 @@ public class ShovelComponent : MonoBehaviour
                     if(!modifiedCells.Contains(cell))
                     {
                         modifiedCells.Add(cell);
-                        TileBase previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
+                        GameObject previousTile = heightManager.GetUnderHeightTile(TilemapManager.instance.GetTile(cell));
                         if (previousTile == null) continue;
-                        TilemapManager.instance.SetTile(cell, previousTile);
+                        TilemapManager.instance.SpawnTileAt(cell, previousTile);
                     }
                     WaterSystem.instance?.RemoveWater(cell);
                 }

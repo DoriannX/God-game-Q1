@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class PaletteUIMaker : MonoBehaviour
 {
-    [SerializeField] private PaintComponent paintComponent;
     [SerializeField] private Painter painter;
+    [SerializeField] private PaintComponent paintComponent;
     [SerializeField] private Image prefabImage;
     private Selector selector;
     private List<Image> images = new();
@@ -13,11 +13,11 @@ public class PaletteUIMaker : MonoBehaviour
     private void Awake()
     {
         selector = GetComponentInChildren<Selector>();
-        for(int i = 0; i < paintComponent.tiles.Length; i++)
+        for(int i = 0; i < TileSelector.instance.AvailableTiles.Length; i++)
         {
             Image img = Instantiate(prefabImage, transform);
             images.Add(img);
-            img.sprite = paintComponent.tiles[i].sprite;
+            img.sprite = TileSelector.instance.AvailableTiles[i].tileIcon;
             int index = i;
             img.GetComponent<Button>().onClick.AddListener(() =>
             {

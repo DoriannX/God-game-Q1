@@ -1,66 +1,37 @@
 using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-
+/// <summary>
+/// TEMPORARILY MODIFIED - Water painting disabled for new hexagonal TilemapManager.
+/// Core structure preserved for future re-implementation.
+/// </summary>
 public class PaintComponent : MonoBehaviour
 {
+    [Header("WATER SYSTEM DISABLED")]
     [SerializeField] private TileBase waterTile;
-    [field: SerializeField] public Tile[] tiles { get; private set; }
-    //Create objects and put them here
-    public int tileIndex { get; private set; }
-    private Vector2 lastPos;
-    private Vector2 lastHitPos;
+    
+    // Event kept for compatibility but not invoked
     public event Action<Vector3Int> paintedWater;
 
-    public void Add(Vector2 pos, float brushSize)
+    public void Add(Vector2 mousePos, float brushSize)
     {
-        Add(pos, brushSize, tiles[tileIndex]);
+        // DISABLED: Water painting temporarily disabled
+        Add(mousePos, brushSize, TileSelector.instance.GetCurrentTilePrefab());
+    }
+    
+    public void Up(Vector2 mousePos, float brushSize)
+    {
+        TilemapManager.instance.RaiseTile(mousePos);
     }
 
-    public void Add(Vector2 pos, float brushSize, TileBase tile)
+    public void Add(Vector2 mousePos, float brushSize, GameObject tile)
     {
-        Vector3Int centerCell = TilemapManager.instance.WorldToCell(pos);
-        
-        int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
-        int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
-        
-        int maxRadius = Mathf.Max(cellRadiusX, cellRadiusY);
-        
-        for (int x = -maxRadius; x <= maxRadius; x++)
-        {
-            for (int y = -maxRadius; y <= maxRadius; y++)
-            {
-                Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
-        
-                if (Vector2.Distance(pos, cellWorldPos) <= brushSize)
-                {
-                    if (tile == waterTile)
-                    {
-                        paintedWater?.Invoke(cell);
-                    }
-                    else
-                    {
-                        TilemapManager.instance.SetTile(cell, tile);
-                        WaterSystem.instance.ActivateOneAdjacent(cell);
-                    }
-                }
-            }
-        }
+        // DISABLED: Water painting temporarily disabled
+        TilemapManager.instance.PlaceTile(mousePos, tile);
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(lastPos, 1f);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(lastHitPos, 0.5f);
-    }
-
     public void SetCurrentTile(int index)
     {
-        tileIndex = index;
+        TileSelector.instance.SetCurrentTileIndex(index);
     }
 }

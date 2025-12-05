@@ -4,7 +4,7 @@ using UnityEngine.Tilemaps;
 
 public class HeightCalculator : MonoBehaviour
 {
-    [SerializeField] private TileBase tileToCheck;
+    [SerializeField] private GameObject tileToCheck;
     private HeightManager heightManager;
     #if UNITY_EDITOR
         [UnityEditor.CustomEditor(typeof(HeightCalculator))]
