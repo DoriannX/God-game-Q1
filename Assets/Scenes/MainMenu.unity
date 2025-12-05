@@ -289,7 +289,7 @@ PrefabInstance:
       objectReference: {fileID: 2049706288}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.87000006
+      value: 0.90000004
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_AnchorMax.y
@@ -297,7 +297,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.075
+      value: 0.112500004
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_AnchorMin.y
@@ -305,15 +305,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 81.000046
+      value: 84.000046
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.9783762
+      objectReference: {fileID: 0}
+    - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 40.500023
+      value: -2.699997
       objectReference: {fileID: 0}
     - target: {fileID: 1015708757760616415, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -329,11 +333,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1729433435017138059, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_margin.x
-      value: -1.0677795
+      value: 36.615585
       objectReference: {fileID: 0}
     - target: {fileID: 1729433435017138059, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_margin.z
-      value: 81.17172
+      value: 33.9533
       objectReference: {fileID: 0}
     - target: {fileID: 1729433435017138059, guid: f7f3dee25646788a0834386914263f56, type: 3}
       propertyPath: m_fontColor32.rgba
@@ -627,13 +631,13 @@ MonoBehaviour:
   CollisionTag: 
   EventReference:
     Guid:
-      Data1: 708724966
-      Data2: 1130599676
-      Data3: -768382828
-      Data4: 8080861
-    Path: event:/UI/Cancel
+      Data1: -1840800105
+      Data2: 1164219590
+      Data3: -1091619938
+      Data4: 1253267948
+    Path: event:/UI/UI_Button
   Event: 
-  EventPlayTrigger: 17
+  EventPlayTrigger: 19
   EventStopTrigger: 0
   AllowFadeout: 1
   TriggerOnce: 0
@@ -643,6 +647,17 @@ MonoBehaviour:
   OverrideAttenuation: 0
   OverrideMinDistance: 1
   OverrideMaxDistance: 20
+--- !u!114 &491770287 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5529502404137757265, guid: f7f3dee25646788a0834386914263f56, type: 3}
+  m_PrefabInstance: {fileID: 491770277}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491770280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &522501582
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -890,7 +905,7 @@ MonoBehaviour:
   newGameButton: {fileID: 1716282222}
   continueButton: {fileID: 1943999132}
   OptionsButton: {fileID: 1990549583}
-  creditsButton: {fileID: 0}
+  creditsButton: {fileID: 491770287}
   quitButton: {fileID: 522501584}
 --- !u!1 &694101101
 GameObject:
@@ -1211,7 +1226,7 @@ MonoBehaviour:
       Data4: 8080861
     Path: event:/UI/Cancel
   Event: 
-  EventPlayTrigger: 17
+  EventPlayTrigger: 19
   EventStopTrigger: 0
   AllowFadeout: 1
   TriggerOnce: 0
@@ -1367,7 +1382,7 @@ MonoBehaviour:
       Data4: 1253267948
     Path: event:/UI/Okay
   Event: 
-  EventPlayTrigger: 17
+  EventPlayTrigger: 19
   EventStopTrigger: 0
   AllowFadeout: 1
   TriggerOnce: 0
@@ -1855,7 +1870,7 @@ MonoBehaviour:
       Data4: 1253267948
     Path: event:/UI/Okay
   Event: 
-  EventPlayTrigger: 17
+  EventPlayTrigger: 19
   EventStopTrigger: 0
   AllowFadeout: 1
   TriggerOnce: 0
@@ -1890,13 +1905,13 @@ MonoBehaviour:
   CollisionTag: 
   EventReference:
     Guid:
-      Data1: 708724966
-      Data2: 1130599676
-      Data3: -768382828
-      Data4: 8080861
-    Path: event:/UI/Cancel
+      Data1: -1840800105
+      Data2: 1164219590
+      Data3: -1091619938
+      Data4: 1253267948
+    Path: event:/UI/UI_Button
   Event: 
-  EventPlayTrigger: 17
+  EventPlayTrigger: 19
   EventStopTrigger: 0
   AllowFadeout: 1
   TriggerOnce: 0
