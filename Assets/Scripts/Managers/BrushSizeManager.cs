@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BrushSizeManager : MonoBehaviour
@@ -21,7 +22,7 @@ public class BrushSizeManager : MonoBehaviour
     
     private void Update()
     {
-        // Détecter Ctrl + Molette de souris
+        /*// Détecter Ctrl + Molette de souris
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
             float scroll = Input.mouseScrollDelta.y;
@@ -30,10 +31,10 @@ public class BrushSizeManager : MonoBehaviour
             {
                 ChangeBrushSize(scroll);
             }
-        }
+        }*/
     }
     
-    private void ChangeBrushSize(float scrollDelta)
+    public void ChangeBrushSize(float scrollDelta)
     {
         int oldSize = currentBrushSize;
         
@@ -75,17 +76,16 @@ public class BrushSizeManager : MonoBehaviour
     
     // Méthode pour obtenir les coordonnées hexagonales dans la zone du brush
     // Retourne une liste de coordonnées hexagonales en fonction de la taille du brush
-    public Vector3Int[] GetBrushArea(Vector3Int centerHex)
+    public Vector2Int[] GetBrushArea(Vector3Int centerHex)
     {
         if (currentBrushSize == 1)
         {
-            // Brush de taille 1 = seulement le centre
-            return new[] { centerHex };
+            return new Vector2Int[] { new(centerHex.x, centerHex.y) };
         }
         
         // Calculer tous les hexagones dans le rayon du brush
         int radius = currentBrushSize - 1;
-        System.Collections.Generic.List<Vector3Int> hexagons = new System.Collections.Generic.List<Vector3Int>();
+        List<Vector2Int> hexagons = new();
         
         // Algorithme pour obtenir tous les hexagones dans un rayon (coordonnées axiales)
         for (int q = -radius; q <= radius; q++)
@@ -95,7 +95,7 @@ public class BrushSizeManager : MonoBehaviour
             
             for (int r = r1; r <= r2; r++)
             {
-                hexagons.Add(new Vector3Int(centerHex.x + q, centerHex.y + r));
+                hexagons.Add(new Vector2Int(centerHex.x + q, centerHex.y + r));
             }
         }
         

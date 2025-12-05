@@ -3,28 +3,28 @@ using System.Collections.Generic;
 
 public class BrushPreview : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private BrushSizeManager brushManager;
-    [SerializeField] private TileHeightManager heightManager; // Pour obtenir la hauteur des colonnes
-    [SerializeField] private TileSelector tileSelector; // Pour obtenir la tile sélectionnée
-    [SerializeField] private Material previewMaterialTemplate; // Matériau transparent à utiliser pour la preview
-    
-    [Header("Preview Settings")]
-    [SerializeField] private Color previewColor = new Color(0f, 1f, 0f, 0.5f); // Vert semi-transparent
-    [SerializeField] private float hexSize = 1f; // Doit correspondre à la taille dans TilemapManagerCopy
-    [SerializeField] private float tileHeight = 0.2f; // Hauteur d'une tile (doit correspondre à TileHeightManager)
-    [SerializeField] private float previewHeight = 0.01f; // Hauteur au-dessus de la colonne pour éviter le z-fighting
+    [Header("References")] [SerializeField]
+    private BrushSizeManager brushManager;
+
+    [SerializeField] private TileSelector tileSelector;
+    [SerializeField] private Material previewMaterialTemplate;
+
+    [Header("Preview Settings")] [SerializeField]
+    private Color previewColor = new Color(0f, 1f, 0f, 0.5f);
+
+    [SerializeField] private float hexSize = 1f;
+    [SerializeField] private float tileHeight = 0.2f;
     [SerializeField] private bool showPreview = true;
-    
+
     private Camera mainCamera;
     private Material previewMaterial;
-    private List<GameObject> previewObjects = new List<GameObject>();
-    private Vector3Int lastCenterHex = new Vector3Int(int.MinValue, int.MinValue);
+    private List<GameObject> previewObjects = new();
+    private Vector3Int lastCenterHex = new(int.MinValue, int.MinValue, int.MinValue);
     private int lastBrushSize = -1;
-    private int lastTileIndex = -1; // Pour détecter le changement de tile
-    private float updateInterval = 0.1f; // Intervalle de mise à jour automatique
-    private float lastUpdateTime = 0f;
-    
+    private int lastTileIndex = -1;
+    private float updateInterval = 0.1f;
+    private float lastUpdateTime;
+
     private void Start()
     {
         mainCamera = Camera.main;
@@ -32,80 +32,59 @@ public class BrushPreview : MonoBehaviour
         {
             Debug.LogError("No main camera found in the scene!");
         }
-        
+
         if (brushManager == null)
         {
             Debug.LogWarning("BrushManager is not assigned to BrushPreview!");
         }
-        
-        if (heightManager == null)
-        {
-            Debug.LogWarning("HeightManager is not assigned to BrushPreview! Preview will stay at ground level.");
-        }
-        
+
         if (tileSelector == null)
         {
             Debug.LogWarning("TileSelector is not assigned to BrushPreview!");
         }
-        
+
         if (previewMaterialTemplate == null)
         {
             Debug.LogWarning("PreviewMaterialTemplate is not assigned! Preview may not work correctly.");
         }
     }
-    
+
     private void Update()
     {
         if (!showPreview || brushManager == null)
             return;
-        
-        // Obtenir la position de la souris
-        Vector3 mouseScreenPosition = Input.mousePosition;
-        Ray ray = mainCamera.ScreenPointToRay(mouseScreenPosition);
-        
-        // Calculer l'intersection avec le plan Y = 0
+
+        // Calculate intersection with Y = 0 plane
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-        float distance;
-        
-        if (groundPlane.Raycast(ray, out distance))
+
+        // Convert to hexagonal coordinates
+        int currentBrushSize = brushManager.GetBrushSize();
+        int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
+
+        // Check if we need to update (position/size/tile changed OR interval elapsed)
+        bool positionChanged = TilemapManager.instance.hexCoords != lastCenterHex || currentBrushSize != lastBrushSize;
+        bool tileChanged = currentTileIndex != lastTileIndex;
+        bool intervalElapsed = Time.time >= lastUpdateTime + updateInterval;
+
+        if (positionChanged || tileChanged || intervalElapsed)
         {
-            Vector3 worldPosition = ray.GetPoint(distance);
-            
-            // Convertir en coordonnées hexagonales
-            Vector3Int centerHex = WorldToHexAxial(worldPosition);
-            int currentBrushSize = brushManager.GetBrushSize();
-            int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
-            
-            // Vérifier si on doit mettre à jour (position/taille/tile changée OU intervalle écoulé)
-            bool positionChanged = centerHex != lastCenterHex || currentBrushSize != lastBrushSize;
-            bool tileChanged = currentTileIndex != lastTileIndex;
-            bool intervalElapsed = Time.time >= lastUpdateTime + updateInterval;
-            
-            if (positionChanged || tileChanged || intervalElapsed)
-            {
-                UpdatePreview(centerHex);
-                lastCenterHex = centerHex;
-                lastBrushSize = currentBrushSize;
-                lastTileIndex = currentTileIndex;
-                lastUpdateTime = Time.time;
-            }
-        }
-        else
-        {
-            // Cacher la préview si pas d'intersection
-            ClearPreview();
+            UpdatePreview(TilemapManager.instance.hexCoords);
+            lastCenterHex = TilemapManager.instance.hexCoords;
+            lastBrushSize = currentBrushSize;
+            lastTileIndex = currentTileIndex;
+            lastUpdateTime = Time.time;
         }
     }
-    
+
     private void UpdatePreview(Vector3Int centerHex)
     {
-        // Obtenir la zone du brush
-        Vector3Int[] brushArea = brushManager.GetBrushArea(centerHex);
-        
-        // Obtenir l'index de la tile actuelle
+        // Get brush area
+        Vector2Int[] brushArea = brushManager.GetBrushArea(centerHex);
+
+        // Get current tile index
         int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
-        
-        // Si la tile a changé, détruire tous les objets existants pour les recréer avec le nouveau prefab
+
+        // If tile changed, destroy all existing objects to recreate with new prefab
         if (currentTileIndex != lastTileIndex && lastTileIndex != -1)
         {
             foreach (GameObject obj in previewObjects)
@@ -115,47 +94,32 @@ public class BrushPreview : MonoBehaviour
                     Destroy(obj);
                 }
             }
+
             previewObjects.Clear();
         }
-        
-        // Réutiliser ou créer les objets de préview
+
+        // Reuse or create preview objects
         for (int i = 0; i < brushArea.Length; i++)
         {
-            Vector3 hexWorldPos = HexAxialToWorld(brushArea[i].x, brushArea[i].y);
-            
-            // Obtenir la hauteur de la colonne à cette position
-            if (heightManager != null)
-            {
-                int columnHeight = heightManager.GetColumnHeight(brushArea[i]);
-                
-                if (columnHeight == 0)
-                {
-                    // Pas de colonne : preview au sol exactement à Y=0 (sans offset)
-                    hexWorldPos.y = 0f;
-                }
-                else
-                {
-                    // Il y a une colonne : afficher la preview au niveau de la dernière tile
-                    float topTileY = heightManager.GetTopTileYPosition(brushArea[i]);
-                    hexWorldPos.y = topTileY + previewHeight;
-                }
-            }
-            else
-            {
-                // Pas de height manager : preview au sol
-                hexWorldPos.y = 0f;
-            }
-            
+            Vector2Int coord = brushArea[i];
+
+            // Get column height using TilemapManager
+            int height = TilemapManager.instance.GetColumnHeight(coord);
+
+            // Calculate world position
+            Vector3Int hexCoords = new Vector3Int(coord.x, coord.y, height + 1);
+            Vector3 hexWorldPos = HexAxialToWorld(hexCoords);
+
             if (i < previewObjects.Count && previewObjects[i] != null)
             {
-                // Réutiliser un objet existant
+                // Reuse existing object
                 previewObjects[i].transform.position = hexWorldPos;
                 previewObjects[i].SetActive(true);
             }
             else
             {
-                // Créer un nouvel objet de préview
-                GameObject previewObj = CreateHexagonPreview(hexWorldPos);
+                // Create new preview object
+                GameObject previewObj = CreatePreviewObject(hexWorldPos);
                 if (previewObj != null)
                 {
                     if (i < previewObjects.Count)
@@ -169,8 +133,8 @@ public class BrushPreview : MonoBehaviour
                 }
             }
         }
-        
-        // Désactiver les objets non utilisés
+
+        // Deactivate unused objects
         for (int i = brushArea.Length; i < previewObjects.Count; i++)
         {
             if (previewObjects[i] != null)
@@ -179,66 +143,62 @@ public class BrushPreview : MonoBehaviour
             }
         }
     }
-    
-    private GameObject CreateHexagonPreview(Vector3 position)
+
+    private GameObject CreatePreviewObject(Vector3 position)
     {
-        // Obtenir le prefab actuel depuis le TileSelector
+        // Get current prefab from TileSelector
         GameObject tilePrefab = null;
         if (tileSelector != null)
         {
             tilePrefab = tileSelector.GetCurrentTilePrefab();
         }
-        
+
         if (tilePrefab == null)
         {
-            Debug.LogError("Cannot create preview: no tile prefab selected!");
             return null;
         }
-        
-        // Instancier le prefab
-        GameObject hexObj = Instantiate(tilePrefab, position, Quaternion.identity);
-        hexObj.name = "HexPreview";
-        hexObj.transform.SetParent(transform);
-        
-        // Désactiver les colliders pour éviter les interactions avec le raycast
-        Collider[] colliders = hexObj.GetComponentsInChildren<Collider>();
+
+        // Instantiate the prefab
+        GameObject previewObj = Instantiate(tilePrefab, position, Quaternion.identity);
+        previewObj.name = "TilePreview";
+        previewObj.transform.SetParent(transform);
+
+        // Disable colliders to avoid raycast interactions
+        Collider[] colliders = previewObj.GetComponentsInChildren<Collider>();
         foreach (Collider col in colliders)
         {
             col.enabled = false;
         }
-        
-        // Appliquer le matériau de préview
+
+        // Apply preview material
         if (previewMaterialTemplate != null)
         {
-            // Créer une instance du matériau pour cette preview
+            // Create material instance if needed
             if (previewMaterial == null)
             {
                 previewMaterial = new Material(previewMaterialTemplate);
                 previewMaterial.color = previewColor;
             }
-            
-            // Appliquer le matériau à tous les renderers
-            Renderer[] renderers = hexObj.GetComponentsInChildren<Renderer>();
+
+            // Apply material to all renderers
+            Renderer[] renderers = previewObj.GetComponentsInChildren<Renderer>();
             foreach (Renderer rend in renderers)
             {
-                // Remplacer tous les matériaux par le matériau de préview
+                // Replace all materials with preview material
                 Material[] newMaterials = new Material[rend.materials.Length];
                 for (int i = 0; i < newMaterials.Length; i++)
                 {
                     newMaterials[i] = previewMaterial;
                 }
+
                 rend.materials = newMaterials;
                 rend.enabled = true;
             }
         }
-        else
-        {
-            Debug.LogWarning("PreviewMaterialTemplate is not assigned! Using original materials.");
-        }
-        
-        return hexObj;
+
+        return previewObj;
     }
-    
+
     private void ClearPreview()
     {
         foreach (GameObject obj in previewObjects)
@@ -246,36 +206,36 @@ public class BrushPreview : MonoBehaviour
             if (obj != null)
                 obj.SetActive(false);
         }
-        lastCenterHex = new Vector3Int(int.MinValue, int.MinValue);
+
+        lastCenterHex = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
     }
-    
-    // Convertir une position world en coordonnées axiales hexagonales (flat-top)
+
+    // Convert world position to hexagonal axial coordinates (flat-top)
     private Vector3Int WorldToHexAxial(Vector3 worldPosition)
     {
         float x = worldPosition.x;
         float z = worldPosition.z;
-        
+
         float sizeInternal = hexSize / 2f;
-        
+
         float q = (2f / 3f * x) / sizeInternal;
         float r = (-1f / 3f * x + Mathf.Sqrt(3f) / 3f * z) / sizeInternal;
-        
+
         return HexRound(q, r);
     }
-    
-    // Arrondir les coordonnées fractionnelles vers les coordonnées hexagonales entières
+
     private Vector3Int HexRound(float q, float r)
     {
         float s = -q - r;
-        
+
         int roundedQ = Mathf.RoundToInt(q);
         int roundedR = Mathf.RoundToInt(r);
         int roundedS = Mathf.RoundToInt(s);
-        
+
         float qDiff = Mathf.Abs(roundedQ - q);
         float rDiff = Mathf.Abs(roundedR - r);
         float sDiff = Mathf.Abs(roundedS - s);
-        
+
         if (qDiff > rDiff && qDiff > sDiff)
         {
             roundedQ = -roundedR - roundedS;
@@ -284,22 +244,20 @@ public class BrushPreview : MonoBehaviour
         {
             roundedR = -roundedQ - roundedS;
         }
-        
-        return new Vector3Int(roundedQ, roundedR);
+
+        return new Vector3Int(roundedQ, roundedR, 0);
     }
-    
-    // Convertir des coordonnées axiales hexagonales en position world
-    private Vector3 HexAxialToWorld(int q, int r)
+
+    private Vector3 HexAxialToWorld(Vector3Int hexCoords)
     {
         float sizeInternal = hexSize / 2f;
-        
-        float x = sizeInternal * (3f / 2f * q);
-        float z = sizeInternal * (Mathf.Sqrt(3f) / 2f * q + Mathf.Sqrt(3f) * r);
-        
-        return new Vector3(x, 0f, z);
+
+        float x = sizeInternal * (3f / 2f * hexCoords.x);
+        float z = sizeInternal * (Mathf.Sqrt(3f) / 2f * hexCoords.x + Mathf.Sqrt(3f) * hexCoords.y);
+
+        return new Vector3(x, hexCoords.z * tileHeight, z);
     }
-    
-    // Méthode publique pour activer/désactiver la préview
+
     public void SetPreviewActive(bool active)
     {
         showPreview = active;
@@ -308,8 +266,7 @@ public class BrushPreview : MonoBehaviour
             ClearPreview();
         }
     }
-    
-    // Méthode publique pour changer la couleur de la préview
+
     public void SetPreviewColor(Color color)
     {
         previewColor = color;
@@ -318,20 +275,19 @@ public class BrushPreview : MonoBehaviour
             previewMaterial.color = color;
         }
     }
-    
+
     private void OnDestroy()
     {
         if (!Application.isPlaying) return;
-        
-        // Nettoyer les objets de préview
+
+        // Clean up preview objects
         foreach (GameObject obj in previewObjects)
         {
             if (obj != null)
                 Destroy(obj);
         }
-        
+
         if (previewMaterial != null)
             Destroy(previewMaterial);
     }
 }
-

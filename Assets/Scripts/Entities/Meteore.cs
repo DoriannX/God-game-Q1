@@ -19,7 +19,8 @@ public class Meteore : DestructionObject
 
     private IEnumerator DestroyAfterDelay(HeightManager heightManager, Vector2 pos)
     {
-        float waitTime = Random.Range(minDelay, maxDelay);
+        //TODO: refaire
+        /*float waitTime = Random.Range(minDelay, maxDelay);
         Instantiate(meteoriteAnimationPrefab, transform.position, Quaternion.identity).GetComponent<MeteoriteAnimation>().SetDuration(waitTime);
         yield return new WaitForSeconds(waitTime);
 
@@ -36,7 +37,7 @@ public class Meteore : DestructionObject
             for (int y = -maxRadius; y <= maxRadius; y++)
             {
                 Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
+                Vector3 cellWorldPos = TilemapManager.instance.HexAxialToWorld(cell);
 
                 if (Vector2.Distance(pos, cellWorldPos) <= meteoriteSize)
                 {
@@ -88,6 +89,7 @@ public class Meteore : DestructionObject
         }
 
         // Destruction du météore lui-même
-        Destroy(gameObject);
+        Destroy(gameObject);*/
+        yield return null;
     }
 }

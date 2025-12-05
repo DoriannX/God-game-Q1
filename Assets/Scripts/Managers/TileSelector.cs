@@ -52,7 +52,7 @@ public class TileSelector : MonoBehaviour
     
     private void Update()
     {
-        // Détecter le scroll de la molette pour changer de tile
+        /*// Détecter le scroll de la molette pour changer de tile
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         
         if (scroll != 0f && AvailableTiles != null && AvailableTiles.Length > 0)
@@ -83,7 +83,7 @@ public class TileSelector : MonoBehaviour
                 
                 scrollAccumulator = 0f;
             }
-        }
+        }*/
     }
     
     // Obtenir la tile actuellement sélectionnée

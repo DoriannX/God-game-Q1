@@ -34,14 +34,12 @@ public class ObjectPoserComponent : MonoBehaviour
     private void Add(Vector2 pos, float brushSize, PosableObject posableObject)
     {
         if (!canPlace) return;
-
-        var tilemap = TilemapManager.instance;
         var worldPos = new Vector3(pos.x, pos.y, 0);
         var allowedTiles = posableObject.allowedTiles;
 
         if (Mathf.Approximately(brushSize, 0.1f))
         {
-            TryPlace(tilemap, worldPos, allowedTiles, posableObject);
+            TryPlace(worldPos, allowedTiles, posableObject);
             return;
         }
 
@@ -49,25 +47,25 @@ public class ObjectPoserComponent : MonoBehaviour
         for (int i = 0; i < randomCount; i++)
         {
             var offset = new Vector3(Random.Range(-brushSize, brushSize), Random.Range(-brushSize, brushSize), 0);
-            TryPlace(tilemap, worldPos + offset, allowedTiles, posableObject);
+            TryPlace(worldPos + offset, allowedTiles, posableObject);
         }
     }
 
-    private void TryPlace(TilemapManager tilemap, Vector3 worldPos, List<GameObject> allowedTiles,
+    private void TryPlace(Vector3 worldPos, List<GameObject> allowedTiles,
         PosableObject prefab)
     {
-        var cellPos = tilemap.WorldToHexAxial(worldPos);
-        var baseTile = tilemap.GetTile(cellPos);
+        var cellPos = TilemapManager.instance.WorldToHexAxial(worldPos);
+        var baseTile = TilemapManager.instance.GetTile(cellPos);
         if (baseTile == null || !allowedTiles.Contains(baseTile)) return;
 
 
         if (objectIndex == ghostIndex)
         {
-            GhostManager.instance.SpawnGhost(tilemap.GetCellCenterWorld(cellPos));
+            GhostManager.instance.SpawnGhost(TilemapManager.instance.HexAxialToWorld(cellPos));
         }
         else
         {
-            Instantiate(prefab, tilemap.GetCellCenterWorld(cellPos), Quaternion.identity);
+            Instantiate(prefab, TilemapManager.instance.HexAxialToWorld(cellPos), Quaternion.identity);
         }
         canPlace = false;
     }
