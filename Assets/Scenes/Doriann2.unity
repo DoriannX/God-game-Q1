@@ -831,12 +831,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilemapManager
   tilePool: {fileID: 2137906315}
-  tileHeight: 0.2
-  hexSize: 1
   brushManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
-  maxHeight: 10
   neighborOcclusion: {fileID: 602190066}
+  tileHeight: 0.2
+  hexSize: 1
+  maxHeight: 10
   clickCooldown: 0.1
   allowReplacement: 1
 --- !u!1 &253952808
@@ -925,7 +925,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.7874792, y: 0.01651852}
   m_AnchorMax: {x: 0.85, y: 0.12155555}
-  m_AnchoredPosition: {x: 1.6999512, y: 5.199951}
+  m_AnchoredPosition: {x: 1.6999512, y: 5.2001953}
   m_SizeDelta: {x: -22, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &274380196
@@ -7334,16 +7334,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5565b57f98284d568e128febfee42590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileHeightManager
-  tilePool: {fileID: 2137906315}
-  tileHeight: 0.2
-  clickCooldown: 0.1
-  brushManager: {fileID: 1107755941}
-  tileSelector: {fileID: 1339345712}
-  neighborOcclusion: {fileID: 602190066}
-  hexSize: 1
-  maxHeight: 10
-  mainCamera: {fileID: 0}
-  lastClickTime: 0
 --- !u!1 &1977219130
 GameObject:
   m_ObjectHideFlags: 0

@@ -62,14 +62,14 @@ public class BrushPreview : MonoBehaviour
         int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
 
         // Check if we need to update (position/size/tile changed OR interval elapsed)
-        bool positionChanged = TilemapManager.instance.hexCoords != lastCenterHex || currentBrushSize != lastBrushSize;
+        bool positionChanged = TilemapManager.instance.currentHexCoordinates != lastCenterHex || currentBrushSize != lastBrushSize;
         bool tileChanged = currentTileIndex != lastTileIndex;
         bool intervalElapsed = Time.time >= lastUpdateTime + updateInterval;
 
         if (positionChanged || tileChanged || intervalElapsed)
         {
-            UpdatePreview(TilemapManager.instance.hexCoords);
-            lastCenterHex = TilemapManager.instance.hexCoords;
+            UpdatePreview(TilemapManager.instance.currentHexCoordinates);
+            lastCenterHex = TilemapManager.instance.currentHexCoordinates;
             lastBrushSize = currentBrushSize;
             lastTileIndex = currentTileIndex;
             lastUpdateTime = Time.time;

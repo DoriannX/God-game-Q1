@@ -16,8 +16,7 @@ public class PaintComponent : MonoBehaviour
 
     public void Add()
     {
-        // DISABLED: Water painting temporarily disabled
-        TilemapManager.instance.PlaceTile(TileSelector.instance.GetCurrentTilePrefab());
+        TilemapManager.instance.PlaceTiles(TileSelector.instance.GetCurrentTilePrefab());
     }
     public void SetCurrentTile(int index)
     {
