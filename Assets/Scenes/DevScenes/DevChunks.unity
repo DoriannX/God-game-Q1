@@ -10109,8 +10109,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b208c1f10b472bc46941818872c2adea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
-  chunkSize: {x: 5, y: 0, z: 5}
-  chunkCount: 9
+  chunkSize: {x: 35, y: 0, z: 25}
+  mainCamera: {fileID: 519420031}
 --- !u!4 &2106088761 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5520605117869745961, guid: 4d484893fae264f4fac554213fbdb074, type: 3}

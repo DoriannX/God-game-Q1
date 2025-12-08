@@ -435,6 +435,8 @@ public class TileHeightManager : MonoBehaviour
         // Ajouter la tile à la colonne
         column.Add(newTile);
         
+        ChunkManager.Instance.AddGameObjectToChunk(hexCoords, newTile);
+        
         // Enregistrer le temps du placement pour cette coordonnée
         lastPlacementTime[hexCoords] = Time.time;
         
