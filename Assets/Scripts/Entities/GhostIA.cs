@@ -84,7 +84,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         
         // No valid position found
         targetPosition = origin;
-        currentPath = null;*/
+        currentPath = null;
     }
 
     private void Tick()
