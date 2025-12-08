@@ -19,6 +19,7 @@ public class GhostIa : MonoBehaviour, ISaveable
     private List<Vector3> currentPath;
     private bool usePathFinding = false;
     private int currentHeight;
+    
     private void OnEnable()
     {
         TickSystem.ticked += Tick;
@@ -51,30 +52,29 @@ public class GhostIa : MonoBehaviour, ISaveable
     {
         const int maxAttempts = 12;
         Vector3 origin = transform.position;
-        Debug.Log(origin); 
         
         // Cache frequently accessed instances
         var tilemapManager = TilemapManager.instance;
         var waterSystem = WaterSystem.instance;
-        var heightManager = HeightManager.instance;
         Vector3 cellSize = tilemapManager.GetHexCellSize();
         
-        // Get current height once instead of in every iteration
-        Vector3Int currentCell = new Vector3Int(tilemapManager.WorldToHexAxial(origin).x, 0, tilemapManager.WorldToHexAxial(origin).y);
-        Debug.Log(currentCell);
-        /*currentHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(currentCell));*/
-        for (int i = 0; i < maxAttempts; i++)
-        {
+        Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
+        currentCell.z--;
+        
+        if(tilemapManager.GetTile(currentCell) == null) {
+            return;
+        }
+        
+        for (int i = 0; i < maxAttempts; i++) {
             Vector3 dir = UnityEngine.Random.insideUnitCircle.normalized;
             Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
-                
-            Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
-            if(waterSystem.waterTiles.Contains(candidateCell))
-                continue;
-            int candidateHeight = heightManager.GetHeightIndex(tilemapManager.GetTile(candidateCell));
             
-            if (candidateHeight - 1 <= currentHeight)
-            {
+            Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
+            /*if(waterSystem.waterTiles.Contains(candidateCell))
+                continue;*/
+            
+            if(tilemapManager.GetTile(candidateCell) != null && candidateCell != currentCell) {
+                Debug.Log("candidate cell: " + candidateCell + " is walkable");
                 targetPosition = TilemapManager.instance.HexAxialToWorld(candidateCell);
                 usePathFinding = false;
                 currentPath = new List<Vector3> { origin, targetPosition };
@@ -107,14 +107,16 @@ public class GhostIa : MonoBehaviour, ISaveable
 
     public void ForceRepath() => ComputePath();
     private void ComputePath() {
+        Debug.Log("Computing path");
         Vector3Int currentCell = TilemapManager.instance.WorldToHexAxial(transform.position);
         Vector3Int targetCell = TilemapManager.instance.WorldToHexAxial(targetPosition);
-    
-        int startHeight = HeightManager.instance.GetHeightIndex(TilemapManager.instance.GetTile(currentCell));
-        int goalHeight = HeightManager.instance.GetHeightIndex(TilemapManager.instance.GetTile(targetCell));
-    
-        currentPath = HexPathfinding3D.instance.FindPath(transform.position, targetPosition, startHeight, goalHeight);
+        Debug.Log("current cell: " + currentCell + " target cell: " + targetCell);
+        
+        Debug.Log(HexPathfinding3D.instance == null);
+        
+        currentPath = HexPathfinding3D.instance.FindPath(transform.position, targetPosition, currentCell.z, targetCell.z);
     }
+
 
     private void OnDrawGizmos()
     {

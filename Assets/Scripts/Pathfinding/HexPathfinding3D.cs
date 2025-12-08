@@ -18,7 +18,6 @@ public class HexPathfinding3D : MonoBehaviour
 
         instance = this;
     }
-    private HeightManager heightManager;
     private HashSet<GameObject> walkableSet;
     private HashSet<Vector3Int> walkableCells = new();
     private TilemapManager tilemapManager;
@@ -63,7 +62,6 @@ public class HexPathfinding3D : MonoBehaviour
 
     private void Start()
     {
-        heightManager = HeightManager.instance;
         tilemapManager = TilemapManager.instance;
         walkableSet = new HashSet<GameObject>(walkableTiles);
         ComputeWalkableCells();
@@ -95,8 +93,8 @@ public class HexPathfinding3D : MonoBehaviour
         }
     }
 
-    public List<Vector3> FindPath(Vector3 startWorld, Vector3 goalWorld, int startHeight = 0, int goalHeight = 0)
-    {
+    public List<Vector3> FindPath(Vector3 startWorld, Vector3 goalWorld, int startHeight = 0, int goalHeight = 0) {
+        Debug.Log("Finding path from " + startWorld + " to " + goalWorld);
         // Convert world positions to grid coordinates
         Vector3Int startCell = tilemapManager.WorldToHexAxial(startWorld);
         startCell.z = startHeight;
@@ -217,10 +215,12 @@ public class HexPathfinding3D : MonoBehaviour
     {
         if (fromTile == null || toTile == null)
             return false;
+        
+        return true;
             
-        int fromH = heightManager.GetHeightIndex(fromTile);
+        /*int fromH = heightManager.GetHeightIndex(fromTile);
         int toH = heightManager.GetHeightIndex(toTile);
-        return Mathf.Abs(fromH - toH) <= 1;
+        return Mathf.Abs(fromH - toH) <= 1;*/
     }
 
     float Heuristic(Vector3Int a, Vector3Int b)

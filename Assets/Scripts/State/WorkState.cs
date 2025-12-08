@@ -15,8 +15,7 @@ public class WorkState : State
     {
         base.OnLogic();
         WorkTask task = workComponent.GetTask();
-        if (task == null)
-        {
+        if (task == null) {
             workComponent.Work();
             return;
         }
