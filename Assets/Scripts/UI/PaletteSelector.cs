@@ -7,6 +7,7 @@ public class PaletteSelector : MonoBehaviour
     [SerializeField] private Selector selector;
     [SerializeField] private Button shovelButton;
     [SerializeField] private Button bucketButton;
+    [SerializeField] private Button upButton;
     [SerializeField] private List<Button> objectButtons;
     [SerializeField] private List<Button> destructionButtons;
     [SerializeField] private List<Button> tileButtons;
@@ -28,6 +29,12 @@ public class PaletteSelector : MonoBehaviour
             painter.SetMode(PainterMode.Bucket);
             selector.Select(bucketButton);
         });
+        upButton.onClick.AddListener(() =>
+        {
+            painter.SetMode(PainterMode.Up);
+            selector.Select(upButton);
+        });
+        
         for (var i = 0; i < objectButtons.Count; i++)
         {
             Button button = objectButtons[i];
