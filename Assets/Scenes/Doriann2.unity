@@ -765,6 +765,7 @@ MonoBehaviour:
   brushManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
   previewMaterialTemplate: {fileID: 2100000, guid: 17b6afd5f4138a5a997013c46e2df612, type: 2}
+  tilePool: {fileID: 2137906315}
   previewColor: {r: 0, g: 1, b: 0, a: 0.5}
   hexSize: 1
   tileHeight: 0.2
@@ -831,14 +832,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilemapManager
   tilePool: {fileID: 2137906315}
-  brushManager: {fileID: 1107755941}
+  brushSizeManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
-  neighborOcclusion: {fileID: 602190066}
   tileHeight: 0.2
   hexSize: 1
   maxHeight: 10
   clickCooldown: 0.1
-  allowReplacement: 1
 --- !u!1 &253952808
 GameObject:
   m_ObjectHideFlags: 0
@@ -2480,7 +2479,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1f8db326253499fa72b7504dd20b66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileNeighborOcclusionCulling
-  tilemapManager: {fileID: 0}
+  tilemapManager: {fileID: 241177947}
   enableOcclusion: 1
   occludeBaseTiles: 1
   occludeHeightTiles: 1
@@ -4467,7 +4466,7 @@ GameObject:
   - component: {fileID: 1107755940}
   - component: {fileID: 1107755941}
   m_Layer: 0
-  m_Name: BrushManager
+  m_Name: BrushSizeManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5227,13 +5226,14 @@ MonoBehaviour:
   <AvailableTiles>k__BackingField:
   - tileName: Tile1
     tileIcon: {fileID: 0}
-    tilePrefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
+    tileMaterials:
+    - {fileID: 2100000, guid: 22f60806bc766ebf1bac04501221a315, type: 2}
+    - {fileID: 2100000, guid: 6a9e877050beec100a568920122a5f7a, type: 2}
   - tileName: Tile2
     tileIcon: {fileID: 0}
-    tilePrefab: {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
-  <CurrentTileIndex>k__BackingField: 0
-  scrollSensitivity: 1
-  showTileInfo: 1
+    tileMaterials:
+    - {fileID: 1703768709389746576, guid: e236498470db82900a802103fa7922c0, type: 3}
+    - {fileID: 6339727405671095630, guid: e236498470db82900a802103fa7922c0, type: 3}
 --- !u!1 &1389629590
 GameObject:
   m_ObjectHideFlags: 0

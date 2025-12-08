@@ -7,7 +7,6 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private TilePool tilePool;
     [SerializeField] private BrushSizeManager brushSizeManager;
     [SerializeField] private TileSelector tileSelector;
-    [SerializeField] private TileNeighborOcclusionCulling occlusionCullingManager;
 
     [SerializeField] private float tileHeight = 0.2f;
     [SerializeField] private float hexSize = 1f;
@@ -21,9 +20,11 @@ public class TilemapManager : MonoBehaviour
     private float lastRightClickTime;
 
     public Dictionary<Vector3Int, GameObject> tiles { get; private set; } = new();
-    
     private Dictionary<Vector2Int, int> columnHeights = new();
-    
+    public event Action<Vector3Int> columnModified;
+    public event Action startedPlacingTiles;
+    public event Action endedPlacingTiles;
+
     public Vector3Int currentHexCoordinates { get; private set; }
 
     public static TilemapManager instance { get; private set; }
@@ -153,7 +154,7 @@ public class TilemapManager : MonoBehaviour
     /// Places tiles in brush area at the current mouse hex coordinates and updates the occlusion culling.
     /// </summary>
     /// <param name="tilePrefab"> The tile to place </param>
-    public void PlaceTiles(GameObject tilePrefab = null)
+    public void PlaceTiles(Material[] tileMaterials)
     {
         if(Time.time - lastClickTime < clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
         {
@@ -161,24 +162,16 @@ public class TilemapManager : MonoBehaviour
         }
         lastClickTime = Time.time;
         var brushArea = brushSizeManager.GetBrushArea(currentHexCoordinates);
-        
-        bool useBatchMode = brushArea.Length > 1 && occlusionCullingManager != null;
-        if (useBatchMode)
-        {
-            occlusionCullingManager.BeginBatch();
-        }
+        startedPlacingTiles?.Invoke();
         
         foreach (var hexCoordinate in brushArea)
         {
             int columnHeight = GetColumnHeight(hexCoordinate);
             Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, columnHeight + 1);
-            SpawnTileAt(tilePosition, tilePrefab);
+            SpawnTileAt(tilePosition, tileMaterials);
         }
 
-        if (useBatchMode)
-        {
-            occlusionCullingManager.EndBatch();
-        }
+        endedPlacingTiles?.Invoke();
     }
 
     /// <summary>
@@ -186,7 +179,7 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
     /// <param name="tilePrefab"> The tile to spawn </param>
-    private void SpawnTileAt(Vector3Int hexCoordinates, GameObject tilePrefab)
+    private void SpawnTileAt(Vector3Int hexCoordinates, Material[] tileMaterials)
     {
         if(hexCoordinates.z >= maxHeight) // Prevents the tile from exceeding the maximum height
         {
@@ -199,7 +192,7 @@ public class TilemapManager : MonoBehaviour
 
             if (existingTile != null)
             {
-                Destroy(existingTile);
+                tilePool.ReleaseTile(existingTile);
             }
 
             tiles.Remove(hexCoordinates);
@@ -207,8 +200,11 @@ public class TilemapManager : MonoBehaviour
 
         Vector3 spawnPosition = HexAxialToWorld(hexCoordinates);
 
-        GameObject newTile = Instantiate(tilePrefab, spawnPosition, Quaternion.identity);
-        newTile.name = $"Tile_{tilePrefab.name}_({hexCoordinates.x}, {hexCoordinates.y}, {hexCoordinates.z})";
+        GameObject newTile = tilePool.GetTile();
+        newTile.transform.position = spawnPosition;
+        newTile.transform.rotation = Quaternion.identity;
+        newTile.GetComponent<Renderer>().sharedMaterials = tileMaterials;
+        newTile.name = $"Tile_({hexCoordinates.x}, {hexCoordinates.y}, {hexCoordinates.z})";
 
         tiles.Add(hexCoordinates, newTile);
 
@@ -220,10 +216,12 @@ public class TilemapManager : MonoBehaviour
             columnHeights[columnKey] = hexCoordinates.z;
         }
 
-        if (occlusionCullingManager != null)
+        columnModified.Invoke(hexCoordinates);
+
+        /*if (occlusionCullingManager != null)
         {
             occlusionCullingManager.UpdateOcclusionForColumn(hexCoordinates);
-        }
+        }*/
 
         cellChanged?.Invoke(new Vector3Int(hexCoordinates.x, 0, hexCoordinates.y));
     }
@@ -320,25 +318,29 @@ public class TilemapManager : MonoBehaviour
         lastClickTime = Time.time;
         var brushArea = brushSizeManager.GetBrushArea(currentHexCoordinates);
         
-        bool useBatchMode = brushArea.Length > 1 && occlusionCullingManager != null;
+        startedPlacingTiles.Invoke();
+        
+        /*bool useBatchMode = brushArea.Length > 1 && occlusionCullingManager != null;
         if (useBatchMode)
         {
             occlusionCullingManager.BeginBatch();
-        }
+        }*/
         
         foreach (var hexCoordinate in brushArea)
         {
             int columnHeight = GetColumnHeight(hexCoordinate);
-            if (columnHeight > 0)
+            if (columnHeights.ContainsKey(hexCoordinate))
             {
-                RemoveTileAt(new Vector3Int(hexCoordinate.x, hexCoordinate.y, columnHeight - 1));
+                RemoveTileAt(new Vector3Int(hexCoordinate.x, hexCoordinate.y, columnHeight));
             }
         }
         
-        if (useBatchMode)
+        /*if (useBatchMode)
         {
             occlusionCullingManager.EndBatch();
-        }
+        }*/
+        
+        endedPlacingTiles?.Invoke();
     }
     
     /// <summary>
@@ -352,7 +354,7 @@ public class TilemapManager : MonoBehaviour
 
         if (tileToRemove != null)
         {
-            Destroy(tileToRemove);
+            tilePool.ReleaseTile(tileToRemove);
         }
 
         tiles.Remove(hexCoordinates);
@@ -361,19 +363,19 @@ public class TilemapManager : MonoBehaviour
         
         if (columnHeights.TryGetValue(columnKey, out int currentMaxHeight))
         {
-            if (hexCoordinates.z == currentMaxHeight - 1)
+            if (hexCoordinates.z == currentMaxHeight)
             {
-                int newMaxHeight = 0;
+                int newMaxHeight = -1;
                 for (int heightLevel = hexCoordinates.z - 1; heightLevel >= 0; heightLevel--)
                 {
                     if (tiles.ContainsKey(new Vector3Int(hexCoordinates.x, hexCoordinates.y, heightLevel)))
                     {
-                        newMaxHeight = heightLevel + 1;
+                        newMaxHeight = heightLevel;
                         break;
                     }
                 }
 
-                if (newMaxHeight == 0)
+                if (newMaxHeight == -1)
                 {
                     columnHeights.Remove(columnKey);
                 }
@@ -384,10 +386,12 @@ public class TilemapManager : MonoBehaviour
             }
         }
         
-        if (occlusionCullingManager != null)
+        columnModified?.Invoke(hexCoordinates);
+        
+        /*if (occlusionCullingManager != null)
         {
             occlusionCullingManager.UpdateOcclusionForColumn(hexCoordinates);
-        }
+        }*/
 
         cellChanged?.Invoke(new Vector3Int(hexCoordinates.x, 0, hexCoordinates.y));
     }

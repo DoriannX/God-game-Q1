@@ -8,6 +8,7 @@ public class BrushPreview : MonoBehaviour
 
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private Material previewMaterialTemplate;
+    [SerializeField] private TilePool tilePool;
 
     [Header("Preview Settings")] [SerializeField]
     private Color previewColor = new Color(0f, 1f, 0f, 0.5f);
@@ -58,8 +59,8 @@ public class BrushPreview : MonoBehaviour
         Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
 
         // Convert to hexagonal coordinates
-        int currentBrushSize = brushManager.GetBrushSize();
-        int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
+        int currentBrushSize = brushManager.brushSize;
+        int currentTileIndex = tileSelector != null ? tileSelector.currentTileIndex : -1;
 
         // Check if we need to update (position/size/tile changed OR interval elapsed)
         bool positionChanged = TilemapManager.instance.currentHexCoordinates != lastCenterHex || currentBrushSize != lastBrushSize;
@@ -82,7 +83,7 @@ public class BrushPreview : MonoBehaviour
         Vector2Int[] brushArea = brushManager.GetBrushArea(centerHex);
 
         // Get current tile index
-        int currentTileIndex = tileSelector != null ? tileSelector.GetCurrentTileIndex() : -1;
+        int currentTileIndex = tileSelector != null ? tileSelector.currentTileIndex : -1;
 
         // If tile changed, destroy all existing objects to recreate with new prefab
         if (currentTileIndex != lastTileIndex && lastTileIndex != -1)
@@ -146,20 +147,9 @@ public class BrushPreview : MonoBehaviour
 
     private GameObject CreatePreviewObject(Vector3 position)
     {
-        // Get current prefab from TileSelector
-        GameObject tilePrefab = null;
-        if (tileSelector != null)
-        {
-            tilePrefab = tileSelector.GetCurrentTilePrefab();
-        }
-
-        if (tilePrefab == null)
-        {
-            return null;
-        }
 
         // Instantiate the prefab
-        GameObject previewObj = Instantiate(tilePrefab, position, Quaternion.identity);
+        GameObject previewObj = tilePool.GetTile();
         previewObj.name = "TilePreview";
         previewObj.transform.SetParent(transform);
 
