@@ -9,8 +9,12 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private Camera mainCamera;
 
     public Dictionary<Vector2Int, Chunk> logicalChunks = new();
-    public static ChunkManager Instance;
+    
+    [SerializeField] private int chunkViewRadius;  
+    private HashSet<Vector2Int> currentlyActiveChunks = new HashSet<Vector2Int>();
 
+    public static ChunkManager Instance;
+    
     private void Awake()
     {
         Instance = this;
@@ -35,7 +39,7 @@ public class ChunkManager : MonoBehaviour
     public void AddGameObjectToChunk(Vector3 worldPos, GameObject gameObjectToAdd)
     {
         Vector2Int chunkIndex = GetChunkIndexFromWorld(worldPos);
-
+        
         if (!logicalChunks.TryGetValue(chunkIndex, out Chunk chunk))
         {
             Vector3 chunkCenter = new Vector3(
@@ -56,26 +60,105 @@ public class ChunkManager : MonoBehaviour
         chunk.gameObjectsInChunk.Add(gameObjectToAdd);
     }
 
-    public void SetVisibilityOfChunk()
+    public void UpdateVisibleChunks()
     {
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(mainCamera);
-
-        foreach (var kvp in logicalChunks)
+        Vector2Int cameraChunk = GetChunkIndexFromWorld(mainCamera.transform.position);
+        
+        HashSet<Vector2Int> newActiveChunks = new HashSet<Vector2Int>();
+        Vector3 test = mainCamera.fieldOfView * chunkSize;
+        Debug.Log(test);
+        for (int dx = -chunkViewRadius; dx <= chunkViewRadius; dx++)
         {
-            Chunk chunk = kvp.Value;
-
-            bool isVisible = GeometryUtility.TestPlanesAABB(planes, chunk.bounds);
-
-            foreach (GameObject tile in chunk.gameObjectsInChunk)
+            for (int dy = -chunkViewRadius; dy <= chunkViewRadius; dy++)
             {
-                if (tile != null)
-                    tile.SetActive(isVisible);
+                Vector2Int index = new Vector2Int(cameraChunk.x + dx, cameraChunk.y + dy);
+
+                newActiveChunks.Add(index);
+
+                if (logicalChunks.TryGetValue(index, out Chunk chunk))
+                {
+                    if (!currentlyActiveChunks.Contains(index))
+                        SetChunkActive(chunk, true);
+                }
+            }
+        }
+        
+        foreach (Vector2Int old in currentlyActiveChunks)
+        {
+            if (!newActiveChunks.Contains(old))
+            {
+                if (logicalChunks.TryGetValue(old, out Chunk chunk))
+                    SetChunkActive(chunk, false);
+            }
+        }
+        
+        currentlyActiveChunks = newActiveChunks;
+    }
+
+
+    
+    private void SetChunkActive(Chunk chunk, bool active)
+    {
+        foreach (GameObject tile in chunk.gameObjectsInChunk)
+        {
+            if (tile != null)
+                tile.SetActive(active);
+        }
+    }
+
+
+    
+    public void SetInvisibleChunk(Vector3Int ChunkCoord)
+    {
+        Vector2Int targetIndex = new Vector2Int(0, 0);
+
+        if (logicalChunks.TryGetValue(targetIndex, out Chunk chunk))
+        {
+            foreach (var tile in chunk.gameObjectsInChunk)
+            {
+                if (tile == null)
+                {
+                    Debug.Log("Tile déjà détruit !");
+                    continue;
+                }
+
+                Debug.Log("Tile OK");
+                tile.SetActive(false);
+            }
+        }
+    }
+    
+    public void SetVisibleChunk(Vector3Int ChunkCoord)
+    {
+        Vector2Int targetIndex = new Vector2Int(0, 0);
+
+        if (logicalChunks.TryGetValue(targetIndex, out Chunk chunk))
+        {
+            foreach (var tile in chunk.gameObjectsInChunk)
+            {
+                if (tile == null)
+                {
+                    Debug.Log("Tile déjà détruit !");
+                    continue;
+                }
+
+                Debug.Log("Tile OK");
+                tile.SetActive(true);
             }
         }
     }
 
     private void Update()
     {
-        SetVisibilityOfChunk();
+        UpdateVisibleChunks();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SetInvisibleChunk(Vector3Int.zero);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            SetVisibleChunk(Vector3Int.zero);
+        }
     }
 }

@@ -208,7 +208,7 @@ public class TilemapManager : MonoBehaviour
 
         tiles.Add(hexCoordinates, newTile);
         
-        ChunkManager.Instance.AddGameObjectToChunk(hexCoordinates, newTile);
+        ChunkManager.Instance.AddGameObjectToChunk(newTile.transform.position, newTile);
 
         Vector2Int columnKey = new Vector2Int(hexCoordinates.x, hexCoordinates.y);
         
