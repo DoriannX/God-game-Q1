@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class ShovelComponent : MonoBehaviour
 {
-    private HeightManager heightManager;
+    //private HeightManager heightManager;
     private List<Vector3Int> modifiedCells = new();
 
     private void OnEnable()
@@ -16,7 +14,7 @@ public class ShovelComponent : MonoBehaviour
 
     private void Start()
     {
-        heightManager = HeightManager.instance;
+        //heightManager = HeightManager.instance;
     }
 
     public void Add()

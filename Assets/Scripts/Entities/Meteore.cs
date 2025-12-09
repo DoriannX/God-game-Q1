@@ -12,12 +12,12 @@ public class Meteore : DestructionObject
     [SerializeField] private GameObject meteoriteAnimationPrefab;
     private Collider2D[] results = new Collider2D[1000];
 
-    public override void Destroy(HeightManager heightManager, Vector2 pos)
+    public override void Destroy(Vector2 pos)
     {
-        StartCoroutine(DestroyAfterDelay(heightManager, pos));
+        StartCoroutine(DestroyAfterDelay(pos));
     }
 
-    private IEnumerator DestroyAfterDelay(HeightManager heightManager, Vector2 pos)
+    private IEnumerator DestroyAfterDelay(Vector2 pos)
     {
         //TODO: refaire
         /*float waitTime = Random.Range(minDelay, maxDelay);
