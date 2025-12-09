@@ -38,14 +38,16 @@ public class GhostIa : MonoBehaviour, ISaveable
     
     public void GoBy(Vector2 direction)
     {
-        targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
+        //TODO : refaire
+        /*targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
         usePathFinding = true;
-        ComputePath();
+        ComputePath();*/
     }
     
     public void GoByRandom()
     {
-        const int maxAttempts = 12;
+        //TODO : refiare
+        /*const int maxAttempts = 12;
         Vector2 origin = transform.position;
         
         // Cache frequently accessed instances
@@ -69,7 +71,7 @@ public class GhostIa : MonoBehaviour, ISaveable
             
             if (candidateHeight - 1 <= currentHeight)
             {
-                targetPosition = TilemapManager.instance.GetCellCenterWorld(candidateCell);
+                targetPosition = TilemapManager.instance.HexAxialToWorld(candidateCell);
                 usePathFinding = false;
                 currentPath = new List<Vector2> { origin, targetPosition };
                 return;
@@ -78,7 +80,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         
         // No valid position found
         targetPosition = origin;
-        currentPath = null;
+        currentPath = null;*/
     }
 
     private void Tick()

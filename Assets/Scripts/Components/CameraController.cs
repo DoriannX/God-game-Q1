@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
         inputHandler.mouseRightClickReleased += OnMouseClickReleased;
         inputHandler.mouseMiddleClickPressed += OnMouseClickPressed;
         inputHandler.mouseMiddleClickReleased += OnMouseClickReleased;
-        inputHandler.mouseScrollStarted += OnMouseScrollStarted;
+        //inputHandler.mouseScrollStarted += OnMouseScrollStarted;
     }
 
     private void OnMouseScrollStarted(float delta)
@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour
         inputHandler.mouseRightClickReleased -= OnMouseClickReleased;
         inputHandler.mouseMiddleClickPressed -= OnMouseClickPressed;
         inputHandler.mouseMiddleClickReleased -= OnMouseClickReleased;
-        inputHandler.mouseScrollStarted -= OnMouseScrollStarted;
+        //inputHandler.mouseScrollStarted -= OnMouseScrollStarted;
     }
 
     private void OnMouseClickPressed()

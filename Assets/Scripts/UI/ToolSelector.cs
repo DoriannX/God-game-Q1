@@ -6,6 +6,7 @@ public class ToolSelector : MonoBehaviour
 {
     [SerializeField] private Painter painter;
     [SerializeField] private Button brushButton;
+    [SerializeField] private Button upButton;
     [SerializeField] private Button shovelButton;
     [SerializeField] private Button bucketButton;
     [SerializeField] private Button objectButton;
@@ -38,6 +39,11 @@ public class ToolSelector : MonoBehaviour
         {
             painter.SetMode(PainterMode.Destruction);
             selector.Select(destructionButton);
+        });
+        upButton.onClick.AddListener(() =>
+        {
+            painter.SetMode(PainterMode.Up);
+            selector.Select(upButton);
         });
         brushButton.onClick?.Invoke();
     }

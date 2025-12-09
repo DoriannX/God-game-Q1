@@ -19,9 +19,13 @@ public class ShovelComponent : MonoBehaviour
         heightManager = HeightManager.instance;
     }
 
-    public void Add(Vector2 pos, float brushSize)
+    public void Add()
     {
-        Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
+        
+        TilemapManager.instance.RemoveTile();
+        
+        //TODO: refaire
+        /*Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
 
         int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
         int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
@@ -33,7 +37,7 @@ public class ShovelComponent : MonoBehaviour
             for (int y = -maxRadius; y <= maxRadius; y++)
             {
                 Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
+                Vector3 cellWorldPos = TilemapManager.instance.HexAxialToWorld(cell);
 
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize )
                 {
@@ -47,7 +51,7 @@ public class ShovelComponent : MonoBehaviour
                     WaterSystem.instance?.RemoveWater(cell);
                 }
             }
-        }
+        }*/
     }
 
     private void OnTick()

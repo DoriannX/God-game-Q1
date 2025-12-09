@@ -1,21 +1,19 @@
+/*
 using UnityEngine;
 using System.Collections.Generic;
 
 public class TileHeightManager : MonoBehaviour
 {
     [SerializeField] private TilePool tilePool; // Référence au pool de tiles
-    [SerializeField] private float tileHeight = .2f; // Hauteur d'une tile individuelle
     [SerializeField] private float clickCooldown = 0.1f; // Temps minimum entre deux clics (en secondes)
     [SerializeField] private BrushSizeManager brushManager; // Référence au BrushSizeManager
     [SerializeField] private TileSelector tileSelector; // Référence au TileSelector
     [SerializeField] private TileNeighborOcclusionCulling neighborOcclusion; // Référence au système d'occlusion par voisinage (optionnel)
     [SerializeField] private float hexSize = 1f; // Largeur de l'hexagone (doit correspondre à TilemapManagerCopy)
-    [SerializeField] private int maxHeight = 10; // Hauteur maximale d'une colonne (nombre de tiles)
     
     private Camera mainCamera;
     // Dictionnaire qui stocke les colonnes de tiles par coordonnées hexagonales
     // La clé est (q, r), la valeur est une liste de GameObjects empilés
-    private Dictionary<Vector3Int, List<GameObject>> tileColumns = new Dictionary<Vector3Int, List<GameObject>>();
     private float lastClickTime; // Temps du dernier clic
     private Dictionary<Vector3Int, float> lastPlacementTime = new Dictionary<Vector3Int, float>(); // Temps du dernier placement par coordonnée
     
@@ -41,19 +39,19 @@ public class TileHeightManager : MonoBehaviour
         // Shift + clic droit = baisser (géré par TilemapManagerCopy si nécessaire)
         
         // On garde la possibilité de shift+clic droit pour baisser directement depuis ce script
-        if (Input.GetMouseButton(1) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+        /*if (Input.GetMouseButton(1) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
         {
             if (Time.time >= lastClickTime + clickCooldown)
             {
                 DetectTileClickToLower();
                 lastClickTime = Time.time;
             }
-        }
+        }#1#
     }
     
     private void DetectTileClick()
     {
-        // Obtenir la position de la souris à l'écran
+        /#1#/ Obtenir la position de la souris à l'écran
         Vector3 mouseScreenPosition = Input.mousePosition;
         
         // Créer un raycast depuis la caméra vers la position de la souris
@@ -102,7 +100,7 @@ public class TileHeightManager : MonoBehaviour
         else
         {
             Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
-        }
+        }#1#
     }
     
     private void DetectTileClickToLower()
@@ -165,58 +163,6 @@ public class TileHeightManager : MonoBehaviour
         {
             Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
         }
-    }
-    
-    private void RaiseColumn(Vector3Int hexCoords)
-    {
-        if (tilePool == null)
-        {
-            Debug.LogWarning("Tile pool is not assigned!");
-            return;
-        }
-        
-        // Vérifier que la colonne existe (qu'il y a une tile de base)
-        if (!tileColumns.ContainsKey(hexCoords))
-        {
-            return;
-        }
-        
-        List<GameObject> column = tileColumns[hexCoords];
-        
-        // Vérifier si la hauteur maximale est atteinte
-        if (column.Count >= maxHeight)
-        {
-            return; // Ne pas monter plus haut que maxHeight
-        }
-        
-        // Obtenir la position de la tile de base pour avoir les bonnes coordonnées X et Z
-        GameObject baseTile = column[0];
-        if (baseTile == null)
-        {
-            Debug.LogWarning($"Base tile at hex ({hexCoords.x}, {hexCoords.y}) is null. Cannot raise column.");
-            return;
-        }
-        
-        Vector3 basePosition = baseTile.transform.position;
-        
-        // Calculer la hauteur Y pour la nouvelle tile
-        // La tile de base (index 0) est à basePosition.y, les tiles suivantes sont empilées au-dessus
-        float newTileY = basePosition.y + (column.Count) * tileHeight;
-        
-        // Utiliser la position X et Z de la base, mais avec la nouvelle hauteur Y
-        Vector3 spawnPosition = new Vector3(basePosition.x, newTileY, basePosition.z);
-        
-        // Obtenir une tile du pool au lieu de l'instancier
-        GameObject newTile = tilePool.GetTile();
-        newTile.transform.position = spawnPosition;
-        newTile.transform.rotation = Quaternion.identity;
-        newTile.name = $"Tile_({hexCoords.x}, {hexCoords.y})_H{column.Count}";
-        
-        // Ajouter la tile à la colonne
-        column.Add(newTile);
-        
-        // Debug.Log désactivé pour éviter le spam
-        // Debug.Log($"Raised column at hex ({hexCoords.x}, {hexCoords.y}) to height {column.Count}. Spawned at Y={newTileY}");
     }
     
     private void LowerColumn(Vector3Int hexCoords)
@@ -489,6 +435,8 @@ public class TileHeightManager : MonoBehaviour
         // Ajouter la tile à la colonne
         column.Add(newTile);
         
+        ChunkManager.Instance.AddGameObjectToChunk(hexCoords, newTile);
+        
         // Enregistrer le temps du placement pour cette coordonnée
         lastPlacementTime[hexCoords] = Time.time;
         
@@ -560,3 +508,4 @@ public class TileHeightManager : MonoBehaviour
         return new List<GameObject>();
     }
 }
+*/
