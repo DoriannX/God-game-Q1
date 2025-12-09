@@ -14,8 +14,6 @@ public class WanderComponent : MonoBehaviour
 
         if (!canWander) return;
         canWander = false;
-        Debug.Log("Wandering");
         ghostMovement.GoByRandom();
-
     }
 }
