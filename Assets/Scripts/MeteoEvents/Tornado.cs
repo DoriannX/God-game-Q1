@@ -10,13 +10,7 @@ public class Tornado : MeteoEvent
     private void OnEnable()
     {
         //TickSystem.ticked += OnTicked;
-        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            transform.position = hit.point;
-        }
+        PlaceAtCameraCenter();
     }
 
     private void Update()
@@ -41,8 +35,32 @@ public class Tornado : MeteoEvent
         }
     }
 
-    /*private void OnDisable()
+    private void PlaceAtCameraCenter()
     {
-        TickSystem.ticked -= OnTicked;
-    }*/
+        Vector2 screenCenter;
+        screenCenter.x = Screen.width / 2;
+        screenCenter.y = Screen.height / 2;
+        Ray ray = mainCamera.ScreenPointToRay(screenCenter);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            transform.position = hit.point;
+        }
+        else
+        {
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            float distance;
+
+            if (groundPlane.Raycast(ray, out distance))
+            {
+                transform.position = ray.GetPoint(distance);
+            }
+            else
+            {
+                Debug.LogWarning("Could not calculate world position");
+                return;
+            }
+        }
+    }
 }
