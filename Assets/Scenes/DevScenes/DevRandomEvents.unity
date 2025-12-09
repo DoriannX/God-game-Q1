@@ -868,13 +868,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BrushPreview
   brushManager: {fileID: 1107755941}
-  heightManager: {fileID: 1940396472}
   tileSelector: {fileID: 1339345712}
   previewMaterialTemplate: {fileID: 2100000, guid: 17b6afd5f4138a5a997013c46e2df612, type: 2}
+  tilePool: {fileID: 0}
+  prefab: {fileID: 0}
   previewColor: {r: 0, g: 1, b: 0, a: 0.5}
   hexSize: 1
   tileHeight: 0.2
-  previewHeight: 0.01
   showPreview: 1
 --- !u!1 &212775426
 GameObject:
@@ -1119,13 +1119,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilemapManager
   tilePool: {fileID: 2137906315}
-  hexSize: 1
-  heightManager: {fileID: 1940396472}
-  brushManager: {fileID: 1107755941}
+  brushSizeManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
-  neighborOcclusion: {fileID: 602190066}
+  <tileHeight>k__BackingField: 0.2
+  hexSize: 1
+  maxHeight: 10
   clickCooldown: 0.1
-  allowReplacement: 1
 --- !u!1 &251075737
 GameObject:
   m_ObjectHideFlags: 0
@@ -2235,9 +2234,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8213672ae419034d0a465186808432b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  paintComponent: {fileID: 1721150293}
-  waterTile: {fileID: 11400000, guid: 2ed132e2702e814eea109af7171d674a, type: 2}
-  heightManager: {fileID: 631957070}
 --- !u!4 &394630592
 Transform:
   m_ObjectHideFlags: 0
@@ -2814,6 +2810,55 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OverlayInfo
   title: Bucket
   description: Remove water
+--- !u!1 &512642068
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 512642069}
+  - component: {fileID: 512642070}
+  m_Layer: 0
+  m_Name: ChunkManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &512642069
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512642068}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.5, y: 0, z: 2.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1729402428}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &512642070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512642068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b208c1f10b472bc46941818872c2adea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
+  chunkSize: {x: 35, y: 0, z: 35}
+  changeValueMinFromFov: 15
+  changeValueMaxFromFov: 70
+  mainCamera: {fileID: 519420031}
+  chunkViewRadius: 2
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3376,10 +3421,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1f8db326253499fa72b7504dd20b66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileNeighborOcclusionCulling
+  tilemapManager: {fileID: 0}
   enableOcclusion: 1
   occludeBaseTiles: 1
   occludeHeightTiles: 1
-  heightManager: {fileID: 1940396472}
   showDebugInfo: 1
 --- !u!1 &616852648
 GameObject:
@@ -3750,19 +3795,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6135614d5d6883b229c063f4c2df6a97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  heightCells:
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
 --- !u!4 &631957071
 Transform:
   m_ObjectHideFlags: 0
@@ -6985,9 +7017,6 @@ MonoBehaviour:
   - tileName: Tile2
     tileIcon: {fileID: 0}
     tilePrefab: {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
-  <CurrentTileIndex>k__BackingField: 0
-  scrollSensitivity: 1
-  showTileInfo: 1
 --- !u!1 &1363590074
 GameObject:
   m_ObjectHideFlags: 0
@@ -8189,12 +8218,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d0d65c13cbcf757adab2b11e9b8822, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexPathfinding2D
-  walkableTiles:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!4 &1607100319
 Transform:
   m_ObjectHideFlags: 0
@@ -8917,8 +8940,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022875549017a4b34a708709e285ca57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Painter
+  brushSizeManager: {fileID: 0}
   inputHandler: {fileID: 1083190373}
-  brushSize: 1
 --- !u!114 &1721150295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9203,6 +9226,7 @@ Transform:
   - {fileID: 1339345711}
   - {fileID: 602190065}
   - {fileID: 181693177}
+  - {fileID: 512642069}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &1807003483 stripped
@@ -9489,6 +9513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   painter: {fileID: 1721150294}
   brushButton: {fileID: 318763792}
+  upButton: {fileID: 0}
   shovelButton: {fileID: 526590904}
   bucketButton: {fileID: 722651673}
   objectButton: {fileID: 1663404636}
@@ -9522,7 +9547,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1ac496942cbcc3cbaa0a41341842e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  tileToCheck: {fileID: 0}
 --- !u!4 &1883704223
 Transform:
   m_ObjectHideFlags: 0
@@ -9684,14 +9708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5565b57f98284d568e128febfee42590, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileHeightManager
-  tilePool: {fileID: 2137906315}
-  tileHeight: 0.2
-  clickCooldown: 0.1
-  brushManager: {fileID: 1107755941}
-  tileSelector: {fileID: 1339345712}
-  neighborOcclusion: {fileID: 602190066}
-  hexSize: 1
-  maxHeight: 10
 --- !u!1 &1977219130
 GameObject:
   m_ObjectHideFlags: 0
@@ -9768,6 +9784,7 @@ MonoBehaviour:
   selector: {fileID: 896708423}
   shovelButton: {fileID: 2057620074}
   bucketButton: {fileID: 463130122}
+  upButton: {fileID: 0}
   objectButtons:
   - {fileID: 829496460}
   - {fileID: 289649677}
@@ -10529,7 +10546,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 975c60404aa64c07b0e5278e3db77b9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilePool
-  tilePrefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
   defaultCapacity: 500
   maxSize: 500
   prewarmOnStart: 1

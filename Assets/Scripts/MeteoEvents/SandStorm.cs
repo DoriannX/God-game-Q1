@@ -26,6 +26,10 @@ public class SandStorm : MeteoEvent
             timer = 0;
         }
         Vector3Int hexDest = TilemapManager.instance.WorldToHexAxial(destination);
+        if (TilemapManager.instance == null)
+        {
+            Debug.Log("J'en ai marre de ce projet de con");
+        }
         TilemapManager.instance.SpawnTileAt(hexDest, sandPrefab);
         timer += Time.deltaTime;
     }
