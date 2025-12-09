@@ -10,10 +10,10 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private int changeValueMaxFromFov;
     [SerializeField] private Camera mainCamera;
 
-    private Dictionary<Vector2Int, Chunk> logicalChunks = new();
+    public Dictionary<Vector2Int, Chunk> logicalChunks = new();
     
     [SerializeField] private int chunkViewRadius;  
-    private HashSet<Vector2Int> currentlyActiveChunks = new HashSet<Vector2Int>();
+    public HashSet<Vector2Int> currentlyActiveChunks = new HashSet<Vector2Int>();
 
     public static ChunkManager Instance;
     
@@ -116,6 +116,43 @@ public class ChunkManager : MonoBehaviour
                 tile.SetActive(active);
         }
     }
+
+    public void RemoveOneHeightForChunk(Vector2Int chunkIndex)
+    {
+        if (!logicalChunks.TryGetValue(chunkIndex, out Chunk chunk))
+            return;
+
+        // Copie des tiles pour éviter la modification pendant l'itération
+        List<GameObject> tiles = new List<GameObject>(chunk.gameObjectsInChunk);
+
+        // Liste temporaire pour supprimer uniquement les tiles du niveau supérieur
+        List<GameObject> tilesToRemove = new List<GameObject>();
+
+        foreach (GameObject tile in tiles)
+        {
+            if (tile == null)
+                continue;
+
+            Vector3Int coord = TilemapManager.instance.WorldToHexAxial(tile.transform.position);
+
+            // On récupère la hauteur max de cette colonne
+            int topZ = TilemapManager.instance.GetColumnTopCoordinate(new Vector2Int(coord.x, coord.y));
+
+            // Si la tile est bien celle du haut → on la marque pour suppression
+            if (coord.z == topZ)
+                tilesToRemove.Add(tile);
+        }
+
+        // Suppression propre : UNE SEULE couche
+        foreach (GameObject tile in tilesToRemove)
+        {
+            Vector3Int coord = TilemapManager.instance.WorldToHexAxial(tile.transform.position);
+
+            TilemapManager.instance.RemoveTileAt(coord);
+            chunk.gameObjectsInChunk.Remove(tile);
+        }
+    }
+
 
     private void Update()
     {
