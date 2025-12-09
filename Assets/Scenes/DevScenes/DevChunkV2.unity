@@ -5222,7 +5222,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b208c1f10b472bc46941818872c2adea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChunkManager
-  chunkSize: {x: 35, y: 0, z: 25}
+  chunkSize: {x: 35, y: 0, z: 35}
+  changeValueMinFromFov: 15
+  changeValueMaxFromFov: 70
   mainCamera: {fileID: 519420031}
   chunkViewRadius: 2
 --- !u!1 &1284310821

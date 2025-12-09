@@ -6,9 +6,11 @@ using UnityEngine.Serialization;
 public class ChunkManager : MonoBehaviour
 {
     [SerializeField] private Vector3 chunkSize;
+    [SerializeField] private int changeValueMinFromFov;
+    [SerializeField] private int changeValueMaxFromFov;
     [SerializeField] private Camera mainCamera;
 
-    public Dictionary<Vector2Int, Chunk> logicalChunks = new();
+    private Dictionary<Vector2Int, Chunk> logicalChunks = new();
     
     [SerializeField] private int chunkViewRadius;  
     private HashSet<Vector2Int> currentlyActiveChunks = new HashSet<Vector2Int>();
@@ -60,13 +62,15 @@ public class ChunkManager : MonoBehaviour
         chunk.gameObjectsInChunk.Add(gameObjectToAdd);
     }
 
-    public void UpdateVisibleChunks()
+    private void UpdateVisibleChunks()
     {
+        if (mainCamera.fieldOfView >= changeValueMaxFromFov) chunkViewRadius = 3; //Change if the zoom is not with FOV
+        else if (mainCamera.fieldOfView <= changeValueMinFromFov) chunkViewRadius = 1;
+        else chunkViewRadius = 2;
+        
         Vector2Int cameraChunk = GetChunkIndexFromWorld(mainCamera.transform.position);
         
         HashSet<Vector2Int> newActiveChunks = new HashSet<Vector2Int>();
-        Vector3 test = mainCamera.fieldOfView * chunkSize;
-        Debug.Log(test);
         for (int dx = -chunkViewRadius; dx <= chunkViewRadius; dx++)
         {
             for (int dy = -chunkViewRadius; dy <= chunkViewRadius; dy++)
@@ -106,59 +110,8 @@ public class ChunkManager : MonoBehaviour
         }
     }
 
-
-    
-    public void SetInvisibleChunk(Vector3Int ChunkCoord)
-    {
-        Vector2Int targetIndex = new Vector2Int(0, 0);
-
-        if (logicalChunks.TryGetValue(targetIndex, out Chunk chunk))
-        {
-            foreach (var tile in chunk.gameObjectsInChunk)
-            {
-                if (tile == null)
-                {
-                    Debug.Log("Tile déjà détruit !");
-                    continue;
-                }
-
-                Debug.Log("Tile OK");
-                tile.SetActive(false);
-            }
-        }
-    }
-    
-    public void SetVisibleChunk(Vector3Int ChunkCoord)
-    {
-        Vector2Int targetIndex = new Vector2Int(0, 0);
-
-        if (logicalChunks.TryGetValue(targetIndex, out Chunk chunk))
-        {
-            foreach (var tile in chunk.gameObjectsInChunk)
-            {
-                if (tile == null)
-                {
-                    Debug.Log("Tile déjà détruit !");
-                    continue;
-                }
-
-                Debug.Log("Tile OK");
-                tile.SetActive(true);
-            }
-        }
-    }
-
     private void Update()
     {
-        UpdateVisibleChunks();
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SetInvisibleChunk(Vector3Int.zero);
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            SetVisibleChunk(Vector3Int.zero);
-        }
+        UpdateVisibleChunks(); //Need to remove this and put it in the script of the movement of the camera
     }
 }
