@@ -8,7 +8,7 @@ public class TileSelector : MonoBehaviour
     {
         public string tileName;
         public Sprite tileIcon;
-        public Material[] tileMaterials;
+        public GameObject tilePrefab;
     }
 
     [field: Header("Tile Selection")]
@@ -44,18 +44,14 @@ public class TileSelector : MonoBehaviour
     }
     
     /// <summary>
-    ///  Returns the materials of the currently selected tile. Because the tile is the same for all painted tiles,
-    /// we return the materials only.
+    ///  Returns the currently selected tile data.
     /// </summary>
-    public Material[] GetCurrentTileMaterials()
+    /// <returns></returns>
+    public GameObject GetCurrentTile()
     {
-        if (AvailableTiles == null || AvailableTiles.Length == 0)
-        {
-            return null;
-        }
-        
-        currentTileIndex = Mathf.Clamp(currentTileIndex, 0, AvailableTiles.Length - 1);
-        return AvailableTiles[currentTileIndex].tileMaterials;
+        return  AvailableTiles is { Length: > 0 }
+            ? AvailableTiles[currentTileIndex].tilePrefab
+            : null;
     }
     
     /// <summary>

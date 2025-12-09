@@ -9,6 +9,7 @@ public class BrushPreview : MonoBehaviour
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private Material previewMaterialTemplate;
     [SerializeField] private TilePool tilePool;
+    [SerializeField] private GameObject prefab;
 
     [Header("Preview Settings")] [SerializeField]
     private Color previewColor = new Color(0f, 1f, 0f, 0.5f);
@@ -55,9 +56,6 @@ public class BrushPreview : MonoBehaviour
         if (!showPreview || brushManager == null)
             return;
 
-        // Calculate intersection with Y = 0 plane
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-
         // Convert to hexagonal coordinates
         int currentBrushSize = brushManager.brushSize;
         int currentTileIndex = tileSelector != null ? tileSelector.currentTileIndex : -1;
@@ -85,14 +83,14 @@ public class BrushPreview : MonoBehaviour
         // Get current tile index
         int currentTileIndex = tileSelector != null ? tileSelector.currentTileIndex : -1;
 
-        // If tile changed, destroy all existing objects to recreate with new prefab
+        // If tile changed, release all existing objects back to pool to recreate with new prefab
         if (currentTileIndex != lastTileIndex && lastTileIndex != -1)
         {
             foreach (GameObject obj in previewObjects)
             {
                 if (obj != null)
                 {
-                    Destroy(obj);
+                    tilePool.ReleaseTile(obj);
                 }
             }
 
@@ -105,10 +103,10 @@ public class BrushPreview : MonoBehaviour
             Vector2Int coord = brushArea[i];
 
             // Get column height using TilemapManager
-            int height = TilemapManager.instance.GetColumnHeight(coord);
+            int topCoordinate = TilemapManager.instance.GetColumnTopCoordinate(coord);
 
             // Calculate world position
-            Vector3Int hexCoords = new Vector3Int(coord.x, coord.y, height + 1);
+            Vector3Int hexCoords = new Vector3Int(coord.x, coord.y, topCoordinate + 1);
             Vector3 hexWorldPos = HexAxialToWorld(hexCoords);
 
             if (i < previewObjects.Count && previewObjects[i] != null)
@@ -147,11 +145,25 @@ public class BrushPreview : MonoBehaviour
 
     private GameObject CreatePreviewObject(Vector3 position)
     {
+        // Get the current tile data
+        GameObject currentTile = tileSelector != null ? tileSelector.GetCurrentTile() : null;
+        if (currentTile == null || prefab == null)
+        {
+            Debug.LogWarning("No tile prefab available for preview!");
+            return null;
+        }
 
         // Instantiate the prefab
-        GameObject previewObj = tilePool.GetTile();
+        GameObject previewObj = tilePool.GetTile(prefab);
+        if (previewObj == null)
+        {
+            Debug.LogError("Failed to get tile from pool for preview!");
+            return null;
+        }
+        
         previewObj.name = "TilePreview";
         previewObj.transform.SetParent(transform);
+        previewObj.transform.position = position;
 
         // Disable colliders to avoid raycast interactions
         Collider[] colliders = previewObj.GetComponentsInChildren<Collider>();
@@ -270,13 +282,17 @@ public class BrushPreview : MonoBehaviour
     {
         if (!Application.isPlaying) return;
 
-        // Clean up preview objects
+        // Release all preview objects back to the pool
         foreach (GameObject obj in previewObjects)
         {
-            if (obj != null)
-                Destroy(obj);
+            if (obj != null && tilePool != null)
+            {
+                tilePool.ReleaseTile(obj);
+            }
         }
+        previewObjects.Clear();
 
+        // Clean up preview material
         if (previewMaterial != null)
             Destroy(previewMaterial);
     }
