@@ -19,17 +19,13 @@ public class SandStorm : MeteoEvent
         {
             PlaceAtCameraCenter();
 
-            destination = Random.insideUnitCircle * mainCamera.fieldOfView;
+            destination = Random.insideUnitCircle * GetFOVRadius();
             float temp = destination.y;
             destination.y = 0;
             destination.z = temp;
             timer = 0;
         }
         Vector3Int hexDest = TilemapManager.instance.WorldToHexAxial(destination);
-        if (TilemapManager.instance == null)
-        {
-            Debug.Log("J'en ai marre de ce projet de con");
-        }
         TilemapManager.instance.SpawnTileAt(hexDest, sandPrefab);
         timer += Time.deltaTime;
     }
@@ -60,6 +56,37 @@ public class SandStorm : MeteoEvent
                 Debug.LogWarning("Could not calculate world position");
                 return;
             }
+        }
+    }
+
+    private float GetFOVRadius()
+    {
+        Vector2 screenCenter;
+        screenCenter.x = Screen.width / 2;
+        screenCenter.y = Screen.height / 2;
+        Ray ray = mainCamera.ScreenPointToRay(screenCenter);
+
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float distance;
+
+        if (groundPlane.Raycast(ray, out distance))
+        {
+            Vector3 point1 = ray.GetPoint(distance);
+            Vector2 screenTop = new Vector2(Screen.width / 2, Screen.height);
+            ray = mainCamera.ScreenPointToRay(screenTop);
+            if (groundPlane.Raycast(ray, out distance))
+            {
+                Vector3 point2 = ray.GetPoint(distance);
+                return Vector3.Distance(point1, point2);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        else
+        {
+            return 0;
         }
     }
 }
