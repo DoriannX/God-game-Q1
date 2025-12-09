@@ -16,7 +16,7 @@ public class PaintComponent : MonoBehaviour
 
     public void Add()
     {
-        TilemapManager.instance.PlaceTiles(TileSelector.instance.GetCurrentTileMaterials());
+        TilemapManager.instance.PlaceTiles(TileSelector.instance.GetCurrentTile());
     }
     public void SetCurrentTile(int index)
     {

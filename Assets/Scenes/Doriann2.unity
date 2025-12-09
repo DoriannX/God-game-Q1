@@ -766,6 +766,7 @@ MonoBehaviour:
   tileSelector: {fileID: 1339345712}
   previewMaterialTemplate: {fileID: 2100000, guid: 17b6afd5f4138a5a997013c46e2df612, type: 2}
   tilePool: {fileID: 2137906315}
+  prefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
   previewColor: {r: 0, g: 1, b: 0, a: 0.5}
   hexSize: 1
   tileHeight: 0.2
@@ -834,9 +835,9 @@ MonoBehaviour:
   tilePool: {fileID: 2137906315}
   brushSizeManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
-  tileHeight: 0.2
+  <tileHeight>k__BackingField: 0.2
   hexSize: 1
-  maxHeight: 10
+  maxHeight: 10000
   clickCooldown: 0.1
 --- !u!1 &253952808
 GameObject:
@@ -1571,9 +1572,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8213672ae419034d0a465186808432b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  paintComponent: {fileID: 1721150293}
-  waterTile: {fileID: 11400000, guid: 2ed132e2702e814eea109af7171d674a, type: 2}
-  heightManager: {fileID: 631957070}
 --- !u!4 &394630592
 Transform:
   m_ObjectHideFlags: 0
@@ -2643,63 +2641,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 623247253}
   m_CullTransparentMesh: 1
---- !u!1 &631957069
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 631957071}
-  - component: {fileID: 631957070}
-  m_Layer: 0
-  m_Name: HeightManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &631957070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 631957069}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6135614d5d6883b229c063f4c2df6a97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  heightCells:
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
-  - tile: {fileID: 0}
-    previousHeightTile: {fileID: 0}
---- !u!4 &631957071
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 631957069}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1729402428}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &633778361
 GameObject:
   m_ObjectHideFlags: 0
@@ -5226,14 +5167,10 @@ MonoBehaviour:
   <AvailableTiles>k__BackingField:
   - tileName: Tile1
     tileIcon: {fileID: 0}
-    tileMaterials:
-    - {fileID: 2100000, guid: 22f60806bc766ebf1bac04501221a315, type: 2}
-    - {fileID: 2100000, guid: 6a9e877050beec100a568920122a5f7a, type: 2}
-  - tileName: Tile2
+    tilePrefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
+  - tileName: Water
     tileIcon: {fileID: 0}
-    tileMaterials:
-    - {fileID: 1703768709389746576, guid: e236498470db82900a802103fa7922c0, type: 3}
-    - {fileID: 6339727405671095630, guid: e236498470db82900a802103fa7922c0, type: 3}
+    tilePrefab: {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
 --- !u!1 &1389629590
 GameObject:
   m_ObjectHideFlags: 0
@@ -6270,12 +6207,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d0d65c13cbcf757adab2b11e9b8822, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HexPathfinding2D
-  walkableTiles:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!4 &1607100319
 Transform:
   m_ObjectHideFlags: 0
@@ -7052,7 +6983,6 @@ Transform:
   - {fileID: 181535787}
   - {fileID: 1637303651}
   - {fileID: 394630592}
-  - {fileID: 631957071}
   - {fileID: 1721150292}
   - {fileID: 1038888351}
   - {fileID: 1083190374}
@@ -7274,7 +7204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1ac496942cbcc3cbaa0a41341842e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  tileToCheck: {fileID: 0}
 --- !u!4 &1883704223
 Transform:
   m_ObjectHideFlags: 0
@@ -7995,7 +7924,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 975c60404aa64c07b0e5278e3db77b9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilePool
-  tilePrefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
   defaultCapacity: 500
   maxSize: 500
   prewarmOnStart: 1

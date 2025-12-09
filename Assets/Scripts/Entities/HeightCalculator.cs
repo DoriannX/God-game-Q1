@@ -1,3 +1,4 @@
+/*
 using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -32,3 +33,4 @@ public class HeightCalculator : MonoBehaviour
         print(heightManager.GetHeightIndex(tileToCheck));
     }
 }
+*/

@@ -32,34 +32,5 @@ public class PosableObject : MonoBehaviour
         house = GetComponent<House>();
     }
 
-    private void OnEnable()
-    {
-        TickSystem.ticked += OnTick;
-    }
-
-    private void OnTick()
-    {
-        if (WaterSystem.instance.IsOnWater(transform.position))
-        {
-            if (ghostIa != null)
-            {
-                GhostManager.instance.RemoveGhost(gameObject);
-            }
-            else if (house != null)
-            {
-                GhostManager.instance.UnregisterGhostInHouse(house);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
-    }
-
     [field: SerializeField] public List<GameObject> allowedTiles { get; private set; } = new();
-
-    private void OnDisable()
-    {
-        TickSystem.ticked -= OnTick;
-    }
 }

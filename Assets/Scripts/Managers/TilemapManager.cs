@@ -8,7 +8,7 @@ public class TilemapManager : MonoBehaviour
     [SerializeField] private BrushSizeManager brushSizeManager;
     [SerializeField] private TileSelector tileSelector;
 
-    [SerializeField] private float tileHeight = 0.2f;
+    [field: SerializeField] public float tileHeight { get; private set; } = 0.2f;
     [SerializeField] private float hexSize = 1f;
     [SerializeField] private int maxHeight = 10;
 
@@ -19,8 +19,8 @@ public class TilemapManager : MonoBehaviour
     private float lastClickTime;
     private float lastRightClickTime;
 
-    public Dictionary<Vector3Int, GameObject> tiles { get; private set; } = new();
-    private Dictionary<Vector2Int, int> columnHeights = new();
+    public Dictionary<Vector3Int, GameObject> tiles { get; } = new();
+    private Dictionary<Vector2Int, int> columnTopCoordinate = new();
     public event Action<Vector3Int> columnModified;
     public event Action startedPlacingTiles;
     public event Action endedPlacingTiles;
@@ -28,8 +28,9 @@ public class TilemapManager : MonoBehaviour
     public Vector3Int currentHexCoordinates { get; private set; }
 
     public static TilemapManager instance { get; private set; }
-
-    public event Action<Vector3Int> cellChanged;
+    
+    public event Action<Vector3Int> tilePlaced;
+    public event Action<Vector3Int> tileRemoved;
 
     public BoundsInt cellBounds
     {
@@ -115,9 +116,7 @@ public class TilemapManager : MonoBehaviour
 
         if (Physics.Raycast(mouseRay, out rayHit))
         {
-            worldPosition = rayHit.point;
-
-            //Debug.DrawRay(mouseRay.origin, mouseRay.direction * rayHit.distance, Color.green, 2f);
+            worldPosition = rayHit.collider.transform.position;
         }
         else
         {
@@ -127,20 +126,25 @@ public class TilemapManager : MonoBehaviour
             if (groundPlane.Raycast(mouseRay, out rayDistance))
             {
                 worldPosition = mouseRay.GetPoint(rayDistance);
-
-                //Debug.DrawRay(mouseRay.origin, mouseRay.direction * rayDistance, Color.cyan, 2f);
+                DrawDebugCross(worldPosition, 0.5f, Color.cyan);
             }
             else
             {
-                //Debug.DrawRay(mouseRay.origin, mouseRay.direction * 100f, Color.red, 2f);
-                //Debug.LogWarning("Could not calculate world position for mouse cursor");
                 return;
             }
         }
 
         currentHexCoordinates = WorldToHexAxial(worldPosition);
     }
-    
+
+    private void DrawDebugCross(Vector3 center, float size, Color color)
+    {
+        float halfSize = size / 2f;
+        Debug.DrawLine(center + Vector3.left * halfSize, center + Vector3.right * halfSize, color);
+        Debug.DrawLine(center + Vector3.forward * halfSize, center + Vector3.back * halfSize, color);
+        Debug.DrawLine(center + Vector3.up * halfSize, center + Vector3.down * halfSize, color);
+    }
+
     /// <summary>
     /// Updates the mouse position from the input to be used for tile placement.
     /// </summary>
@@ -154,21 +158,23 @@ public class TilemapManager : MonoBehaviour
     /// Places tiles in brush area at the current mouse hex coordinates and updates the occlusion culling.
     /// </summary>
     /// <param name="tilePrefab"> The tile to place </param>
-    public void PlaceTiles(Material[] tileMaterials)
+    public void PlaceTiles(GameObject prefab)
     {
-        if(Time.time - lastClickTime < clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
+        if (Time.time - lastClickTime <
+            clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
         {
             return;
         }
+
         lastClickTime = Time.time;
         var brushArea = brushSizeManager.GetBrushArea(currentHexCoordinates);
         startedPlacingTiles?.Invoke();
-        
+
         foreach (var hexCoordinate in brushArea)
         {
-            int columnHeight = GetColumnHeight(hexCoordinate);
-            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, columnHeight + 1);
-            SpawnTileAt(tilePosition, tileMaterials);
+            int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
+            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate+1);
+            SpawnTileAt(tilePosition, prefab);
         }
 
         endedPlacingTiles?.Invoke();
@@ -178,15 +184,16 @@ public class TilemapManager : MonoBehaviour
     /// Places a tile at the specified hexagonal coordinates, replacing any existing tile and updating occlusion culling
     /// </summary>
     /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
-    /// <param name="tilePrefab"> The tile to spawn </param>
-    private void SpawnTileAt(Vector3Int hexCoordinates, Material[] tileMaterials)
+    /// <param name="tileData"> The tile data associated with the tile </param>
+    public void SpawnTileAt(Vector3Int hexCoordinates, GameObject prefab)
     {
-        if(hexCoordinates.z >= maxHeight) // Prevents the tile from exceeding the maximum height
+        if (hexCoordinates.z >= maxHeight) // Prevents the tile from exceeding the maximum height
         {
             return;
         }
+
         if (tiles.ContainsKey(hexCoordinates)) // Check if a tile already exists at the specified coordinates
-                                               // because otherwise the tile will be replaced without being destroyed
+            // because otherwise the tile will be replaced without being destroyed
         {
             GameObject existingTile = tiles[hexCoordinates];
 
@@ -200,10 +207,15 @@ public class TilemapManager : MonoBehaviour
 
         Vector3 spawnPosition = HexAxialToWorld(hexCoordinates);
 
-        GameObject newTile = tilePool.GetTile();
+        GameObject newTile = tilePool.GetTile(prefab);
+        if (newTile == null)
+        {
+            Debug.LogError("Failed to get tile from pool!");
+            return;
+        }
+
         newTile.transform.position = spawnPosition;
         newTile.transform.rotation = Quaternion.identity;
-        newTile.GetComponent<Renderer>().sharedMaterials = tileMaterials;
         newTile.name = $"Tile_({hexCoordinates.x}, {hexCoordinates.y}, {hexCoordinates.z})";
 
         tiles.Add(hexCoordinates, newTile);
@@ -211,21 +223,15 @@ public class TilemapManager : MonoBehaviour
         ChunkManager.Instance.AddGameObjectToChunk(newTile.transform.position, newTile);
 
         Vector2Int columnKey = new Vector2Int(hexCoordinates.x, hexCoordinates.y);
-        
-        if (!columnHeights.ContainsKey(columnKey) || columnHeights[columnKey] < hexCoordinates.z) 
-            // Add the tile to a separate dictionary to keep track of the column heights for better calculation performance
+
+        if (!columnTopCoordinate.TryAdd(columnKey, 1))
         {
-            columnHeights[columnKey] = hexCoordinates.z;
+            columnTopCoordinate[columnKey] = hexCoordinates.z;
         }
 
-        columnModified.Invoke(hexCoordinates);
+        columnModified?.Invoke(hexCoordinates);
 
-        /*if (occlusionCullingManager != null)
-        {
-            occlusionCullingManager.UpdateOcclusionForColumn(hexCoordinates);
-        }*/
-
-        cellChanged?.Invoke(new Vector3Int(hexCoordinates.x, 0, hexCoordinates.y));
+        tilePlaced?.Invoke(hexCoordinates);
     }
 
     /// <summary>
@@ -240,8 +246,9 @@ public class TilemapManager : MonoBehaviour
 
         float hexColumn = (2f / 3f * worldX) / hexInternalRadius;
         float hexRow = (-1f / 3f * worldX + Mathf.Sqrt(3f) / 3f * worldZ) / hexInternalRadius;
+        float heightLevel = worldPosition.y / tileHeight;
 
-        return RoundToHexCoordinates(hexColumn, hexRow);
+        return RoundToHexCoordinates(hexColumn, hexRow, heightLevel);
     }
 
     /// <summary>
@@ -249,18 +256,21 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     /// <param name="fractionalHexColumn"> x coordinate </param>
     /// <param name="fractionalHexRow"> y coordinate </param>
+    /// <param name"heightLevel"> z coordinate </param>
     /// <returns></returns>
-    private Vector3Int RoundToHexCoordinates(float fractionalHexColumn, float fractionalHexRow)
+    private Vector3Int RoundToHexCoordinates(float fractionalHexColumn, float fractionalHexRow, float heightLevel)
     {
         float cubicS = -fractionalHexColumn - fractionalHexRow;
 
         int roundedHexColumn = Mathf.RoundToInt(fractionalHexColumn);
         int roundedHexRow = Mathf.RoundToInt(fractionalHexRow);
         int roundedCubicS = Mathf.RoundToInt(cubicS);
+        int roundedHeightLevel = Mathf.RoundToInt(heightLevel);
 
         float columnRoundingError = Mathf.Abs(roundedHexColumn - fractionalHexColumn);
         float rowRoundingError = Mathf.Abs(roundedHexRow - fractionalHexRow);
         float cubicSRoundingError = Mathf.Abs(roundedCubicS - cubicS);
+
 
         if (columnRoundingError > rowRoundingError && columnRoundingError > cubicSRoundingError)
         {
@@ -271,9 +281,9 @@ public class TilemapManager : MonoBehaviour
             roundedHexRow = -roundedHexColumn - roundedCubicS;
         }
 
-        return new Vector3Int(roundedHexColumn, roundedHexRow, 0); // Ignore z coordinate for axial representation because it is used for height levels
+        return new Vector3Int(roundedHexColumn, roundedHexRow, roundedHeightLevel);
     }
-    
+
     /// <summary>
     /// Converts hexagonal axial coordinates to world position.
     /// </summary>
@@ -283,9 +293,9 @@ public class TilemapManager : MonoBehaviour
 
         float worldX = hexInternalRadius * (3f / 2f * hexCoordinates.x);
         float worldZ = hexInternalRadius * (Mathf.Sqrt(3f) / 2f * hexCoordinates.x + Mathf.Sqrt(3f) * hexCoordinates.y);
-        
+
         float worldY = hexCoordinates.z * tileHeight;
-        
+
         //The y coordinate is calculated based on the height level of the tile
         return new Vector3(worldX, worldY, worldZ);
     }
@@ -303,9 +313,14 @@ public class TilemapManager : MonoBehaviour
     /// Returns the current height of the column at the specified hexagonal axial coordinates to place the next tile correctly.
     /// </summary>
     /// <param name="hexCoordinates"> The coordinates in 2D space of the column </param>
-    public int GetColumnHeight(Vector2Int hexCoordinates)
+    public int GetColumnTopCoordinate(Vector2Int hexCoordinates)
     {
-        return columnHeights.GetValueOrDefault(hexCoordinates, 0);
+        if( columnTopCoordinate.TryGetValue(hexCoordinates, out int height))
+        {
+            return height;
+        }
+        columnTopCoordinate[hexCoordinates] = 0;
+        return 0;
     }
 
     /// <summary>
@@ -313,38 +328,36 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     public void RemoveTile()
     {
-        if(Time.time - lastClickTime < clickCooldown)
+        if (Time.time - lastClickTime < clickCooldown)
         {
             return;
         }
+
         lastClickTime = Time.time;
         var brushArea = brushSizeManager.GetBrushArea(currentHexCoordinates);
-        
-        startedPlacingTiles.Invoke();
-        
+
+        startedPlacingTiles?.Invoke();
+
         /*bool useBatchMode = brushArea.Length > 1 && occlusionCullingManager != null;
         if (useBatchMode)
         {
             occlusionCullingManager.BeginBatch();
         }*/
-        
+
         foreach (var hexCoordinate in brushArea)
         {
-            int columnHeight = GetColumnHeight(hexCoordinate);
-            if (columnHeights.ContainsKey(hexCoordinate))
-            {
-                RemoveTileAt(new Vector3Int(hexCoordinate.x, hexCoordinate.y, columnHeight));
-            }
+            int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
+            RemoveTileAt(new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate));
         }
-        
+
         /*if (useBatchMode)
         {
             occlusionCullingManager.EndBatch();
         }*/
-        
+
         endedPlacingTiles?.Invoke();
     }
-    
+
     /// <summary>
     ///  Removes the tile at the specified hexagonal coordinates, updates column height and occlusion culling.
     /// </summary>
@@ -362,40 +375,19 @@ public class TilemapManager : MonoBehaviour
         tiles.Remove(hexCoordinates);
 
         Vector2Int columnKey = new Vector2Int(hexCoordinates.x, hexCoordinates.y);
-        
-        if (columnHeights.TryGetValue(columnKey, out int currentMaxHeight))
+        columnTopCoordinate[columnKey] = hexCoordinates.z-1;
+        if (columnTopCoordinate[columnKey] < 0)
         {
-            if (hexCoordinates.z == currentMaxHeight)
-            {
-                int newMaxHeight = -1;
-                for (int heightLevel = hexCoordinates.z - 1; heightLevel >= 0; heightLevel--)
-                {
-                    if (tiles.ContainsKey(new Vector3Int(hexCoordinates.x, hexCoordinates.y, heightLevel)))
-                    {
-                        newMaxHeight = heightLevel;
-                        break;
-                    }
-                }
-
-                if (newMaxHeight == -1)
-                {
-                    columnHeights.Remove(columnKey);
-                }
-                else
-                {
-                    columnHeights[columnKey] = newMaxHeight;
-                }
-            }
+            columnTopCoordinate.Remove(columnKey);
         }
-        
+
         columnModified?.Invoke(hexCoordinates);
-        
+
         /*if (occlusionCullingManager != null)
         {
             occlusionCullingManager.UpdateOcclusionForColumn(hexCoordinates);
         }*/
 
-        cellChanged?.Invoke(new Vector3Int(hexCoordinates.x, 0, hexCoordinates.y));
+        tileRemoved?.Invoke(hexCoordinates);
     }
 }
-

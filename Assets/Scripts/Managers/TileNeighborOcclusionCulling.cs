@@ -121,42 +121,41 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
             return;
         
         // Get column height by finding the max z coordinate for this q,r position
-        int columnHeight = TilemapManager.instance.GetColumnHeight(hexCoords);
+        int topCoordinate = TilemapManager.instance.GetColumnTopCoordinate(hexCoords);
         
-        if (columnHeight == 0)
+        if (topCoordinate == 0)
             return; // No tiles in this column
         
         // Check each tile in the column
-        for (int height = 0; height < columnHeight; height++)
+        for (int tileHeight = 0; tileHeight < topCoordinate; tileHeight++)
         {
-            bool shouldOcclude = ShouldOccludeTile(hexCoords, height, columnHeight);
-            ApplyOcclusion(hexCoords, height, shouldOcclude);
+            bool shouldOcclude = ShouldOccludeTile(hexCoords, tileHeight, topCoordinate);
+            ApplyOcclusion(hexCoords, tileHeight, shouldOcclude);
         }
     }
     
     /// <summary>
     /// Determines if a tile should be occluded
     /// </summary>
-    private bool ShouldOccludeTile(Vector2Int hexCoords, int tileHeight, int columnHeight)
+    private bool ShouldOccludeTile(Vector2Int hexCoords, int tileHeight, int topCoordinate)
     {
         // Don't occlude the top tile (always visible)
-        if (tileHeight == columnHeight - 1)
+        if (tileHeight == topCoordinate)
             return false;
         
         // Check tile type
-        if (tileHeight == 0 && !occludeBaseTiles)
+        if (tileHeight == 1 && !occludeBaseTiles)
             return false;
         
-        if (tileHeight > 0 && !occludeHeightTiles)
+        if (tileHeight > 1 && !occludeHeightTiles)
             return false;
         
-        // Check if all horizontal neighbors have at least the same height
         bool allNeighborsHigherOrEqual = true;
         
         foreach (Vector2Int direction in hexDirections)
         {
             Vector2Int neighborCoords = hexCoords + direction;
-            int neighborHeight = TilemapManager.instance.GetColumnHeight(neighborCoords);
+            int neighborHeight = TilemapManager.instance.GetColumnTopCoordinate(neighborCoords);
             
             // If neighbor is not tall enough, this tile is visible
             if (neighborHeight <= tileHeight)
@@ -167,7 +166,7 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
         }
         
         // Check that there is a tile above (also occluded from above)
-        bool hasTileAbove = tileHeight < columnHeight - 1;
+        bool hasTileAbove = tileHeight < topCoordinate;
         
         // Occlude only if completely surrounded AND there's a tile above
         return allNeighborsHigherOrEqual && hasTileAbove;

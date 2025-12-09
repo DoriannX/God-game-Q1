@@ -105,7 +105,7 @@ public class GhostIa : MonoBehaviour, ISaveable
 
     private void ComputePath()
     {
-        currentPath = HexPathfinding2D.instance.FindPath(transform.position, targetPosition);
+        //currentPath = HexPathfinding2D.instance.FindPath(transform.position, targetPosition);
     }
 
     private void OnDrawGizmos()
