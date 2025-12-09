@@ -28,7 +28,7 @@ public abstract class WorkTask : MonoBehaviour
 
     public virtual void Work()
     {
-        print("working");
+        /*print("working");*/
         progress += progressIncrement;
         if (progress >= 1f)
         {

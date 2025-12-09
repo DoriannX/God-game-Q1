@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WanderComponent : MonoBehaviour
@@ -16,6 +14,7 @@ public class WanderComponent : MonoBehaviour
 
         if (!canWander) return;
         canWander = false;
+        Debug.Log("Wandering");
         ghostMovement.GoByRandom();
 
     }

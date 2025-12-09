@@ -94,7 +94,7 @@ public class HexPathfinding3D : MonoBehaviour
     }
 
     public List<Vector3> FindPath(Vector3 startWorld, Vector3 goalWorld, int startHeight = 0, int goalHeight = 0) {
-        Debug.Log("Finding path from " + startWorld + " to " + goalWorld);
+        
         // Convert world positions to grid coordinates
         Vector3Int startCell = tilemapManager.WorldToHexAxial(startWorld);
         startCell.z = startHeight;

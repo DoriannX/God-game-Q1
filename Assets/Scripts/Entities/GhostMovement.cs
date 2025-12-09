@@ -6,20 +6,16 @@ public class GhostMovement : MonoBehaviour
 {
     private Vector3 currentTarget;
     private Vector3 startPosition;
-    private float targetHeight;
 
     private void Start()
     {
         currentTarget = transform.position;
         startPosition = transform.position;
-        targetHeight = transform.position.z;
     }
 
-    public void GoTo(Vector2 position, int newHeight)
-    {
+    public void GoTo(Vector3 position) {
         startPosition = transform.position;
-        currentTarget = new Vector3(position.x, position.y, newHeight);
-        targetHeight = newHeight;
+        currentTarget = position;
     }
 
     private void Update()

@@ -50,10 +50,10 @@ public class TaskManager : MonoBehaviour
             }
         }
 
-        if (task != null)
+        /*if (task != null)
         {
             Debug.Log("nearest task: " + task.transform.position);
-        }
+        }*/
         return task;
     }
     
