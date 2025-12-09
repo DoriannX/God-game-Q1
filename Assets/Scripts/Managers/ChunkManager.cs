@@ -19,6 +19,11 @@ public class ChunkManager : MonoBehaviour
     
     private void Awake()
     {
+        if (ChunkManager.Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
     }
 
@@ -112,6 +117,6 @@ public class ChunkManager : MonoBehaviour
 
     private void Update()
     {
-        UpdateVisibleChunks(); //Need to remove this and put it in the script of the movement of the camera
+        UpdateVisibleChunks(); //Need to remove this and put it in the script of the movement and the zoom of the camera
     }
 }
