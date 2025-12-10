@@ -13,16 +13,16 @@ GameObject:
   - component: {fileID: 1683318007217553828}
   - component: {fileID: 2381022741083699884}
   - component: {fileID: 3884330384959931589}
-  - component: {fileID: 7676501364616398555}
   - component: {fileID: 3234770281780568274}
   - component: {fileID: 7957398275529141594}
   - component: {fileID: 7471173993042387809}
   - component: {fileID: 4077641912464904975}
-  - component: {fileID: 4552284087110041515}
+  - component: {fileID: 3526314780886667151}
   - component: {fileID: 1857299742354842865}
   - component: {fileID: 303491999226953158}
   - component: {fileID: 5805087815445507371}
   - component: {fileID: 6701740305892963349}
+  - component: {fileID: 4552284087110041515}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
@@ -128,32 +128,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
   <workComponent>k__BackingField: {fileID: 4077641912464904975}
+  <breedComponent>k__BackingField: {fileID: 3526314780886667151}
   <houseRetriever>k__BackingField: {fileID: 1857299742354842865}
   <scareComponent>k__BackingField: {fileID: 5805087815445507371}
   <entityIa>k__BackingField: {fileID: 7957398275529141594}
   <entityGrow>k__BackingField: {fileID: 7471173993042387809}
   workProbability: 0.05
-  fuckProbability: 0.01
---- !u!114 &7676501364616398555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e04beb0635e54632afc4fe68666eae0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  wanderComponent: {fileID: 3234770281780568274}
-  workComponent: {fileID: 4077641912464904975}
-  houseRetriever: {fileID: 1857299742354842865}
-  growComponent: {fileID: 2022015165024604261}
-  scareComponent: {fileID: 5805087815445507371}
-  ghostIA: {fileID: 7957398275529141594}
-  workProbability: 0.05
-  fuckProbability: 0.01
+  breedProbability: 0.01
 --- !u!114 &3234770281780568274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,42 +188,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   workRange: 2
---- !u!58 &4552284087110041515
-CircleCollider2D:
+--- !u!114 &3526314780886667151
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2450070678407865498}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.09}
-  m_Radius: 0.11
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818ed45c439d4939b0341081132e7010, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BreedComponent
 --- !u!114 &1857299742354842865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +254,42 @@ MonoBehaviour:
   m_childID: 
   m_prefabID: Ghost
   m_saveTransform: 1
+--- !u!58 &4552284087110041515
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0.09}
+  m_Radius: 0.11
 --- !u!1 &8484147219461251418
 GameObject:
   m_ObjectHideFlags: 0

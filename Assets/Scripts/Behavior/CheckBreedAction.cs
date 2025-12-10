@@ -9,19 +9,11 @@ using Unity.Properties;
 public partial class CheckBreedAction : Action
 {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
+    [SerializeReference] public BlackboardVariable<bool> result;
 
-    protected override Status OnStart()
-    {
-        return Status.Running;
-    }
-
-    protected override Status OnUpdate()
-    {
+    protected override Status OnStart() {
+        result.Value = AI.Value.CheckBreed();
         return Status.Success;
-    }
-
-    protected override void OnEnd()
-    {
     }
 }
 

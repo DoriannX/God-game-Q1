@@ -11,16 +11,8 @@ public partial class BreedAction : Action {
 
     protected override Status OnStart()
     {
+        
         return Status.Running;
-    }
-
-    protected override Status OnUpdate()
-    {
-        return Status.Success;
-    }
-
-    protected override void OnEnd()
-    {
     }
 }
 

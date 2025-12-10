@@ -4,14 +4,14 @@ using UnityEngine;
 public class WorkComponent : MonoBehaviour
 {
     
+    public event Action onWork;
     public bool isWorkDone { get; private set; }
+    [SerializeField] private float workRange = 5f;
     private void Awake()
     {
         onWork += () => isWorkDone = true;
     }
 
-    [SerializeField] private float workRange = 5f;
-    public event Action onWork;
     public void Work()
     {
         GetTask()?.Work();
