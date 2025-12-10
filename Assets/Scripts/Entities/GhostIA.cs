@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SaveLoadSystem;
 using UnityEngine;
 
-public class GhostIa : MonoBehaviour, ISaveable 
+public class GhostIa : EntityIA
 {
     [Serializable]
     public struct GhostData
@@ -12,128 +12,23 @@ public class GhostIa : MonoBehaviour, ISaveable
         public SaveableEntity.Vector2Data targetPosition;
         public List<SaveableEntity.Vector2Data> currentPath;
     }
-    [SerializeField] private GhostMovement ghostMovement;
     [SerializeField] private GrowComponent growComponent;
-
-    public Vector3 targetPosition { get; private set; }
-    private List<Vector3> currentPath;
-    private bool usePathFinding = false;
-    private int currentHeight;
     
-    private void OnEnable()
-    {
+    private void OnEnable() {
         TickSystem.ticked += Tick;
     }
     
-    private void OnDisable()
-    {
+    private void OnDisable() {
         TickSystem.ticked -= Tick;
-    }
-
-    public void GoTo(Vector3 position)
-    {
-        Debug.Log("Go using pathfinding to " + position);
-        usePathFinding = true;
-        targetPosition = position;
-        ComputePath();
-    }
-    
-    public void GoBy(Vector3 direction)
-    {
-
-        /*targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
-        targetPosition = transform.position +
-                         Vector3.Scale(direction.normalized, TilemapManager.instance.GetHexCellSize());
-
-        usePathFinding = true;
-        ComputePath();*/
-    }
-    
-    public void GoByRandom() {
-        const int maxAttempts = 12;
-        Vector3 origin = transform.position;
-        
-        // Cache frequently accessed instances
-        var tilemapManager = TilemapManager.instance;
-        var waterSystem = WaterSystem.instance;
-        Vector3 cellSize = tilemapManager.GetHexCellSize();
-        
-        Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
-        if(currentCell.z > 1) {
-            currentCell.z --;
-        }
-        
-        if(tilemapManager.GetTile(currentCell) == null) {
-            return;
-        }
-        
-        for (int i = 0; i < maxAttempts; i++) {
-            Vector3 dir = UnityEngine.Random.insideUnitCircle.normalized;
-            Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
-            
-            Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
-            /*if(waterSystem.waterTiles.Contains(candidateCell))
-                continue;*/
-            
-            if(candidateCell.z > 1) {
-                candidateCell.z --;
-            }
-
-            if (tilemapManager.GetTile(candidateCell) == null || candidateCell == currentCell) {
-                continue;
-            }
-
-            if (tilemapManager.GetTile(candidateCell + Vector3Int.forward) != null) {
-                if (tilemapManager.GetTile(candidateCell + Vector3Int.forward * 2) == null) {
-                    candidateCell += Vector3Int.forward;
-                }
-                else {
-                    continue;
-                }
-            }
-            
-            targetPosition = TilemapManager.instance.HexAxialToWorld(candidateCell);
-            usePathFinding = false;
-            currentPath = new List<Vector3> { origin, targetPosition };
-            return;
-        }
-        
-        // No valid position found
-        targetPosition = origin;
-        currentPath = null;
     }
 
     private void Tick() {
         growComponent.Grow();
-        if (ghostMovement.isMoving) {
-            return;
-        }
-
-        if (usePathFinding) {
-            ComputePath();
-        }
-
-        if ( currentPath == null || currentPath.Count < 2) {
-            return;
-        }
-        
-        ghostMovement.GoTo(currentPath[1]);
     }
-
-    public bool isMoving =>
-        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath != null && currentPath.Count > 1;
-
+    
     public void ForceRepath() => ComputePath();
-    private void ComputePath() {
-        Vector3Int currentCell = TilemapManager.instance.WorldToHexAxial(transform.position);
-        Vector3Int targetCell = TilemapManager.instance.WorldToHexAxial(targetPosition);
-        
-        currentPath = HexPathfinding3D.instance.FindPath(transform.position, targetPosition, currentCell.z, targetCell.z);
-    }
-
-
-    private void OnDrawGizmos()
-    {
+    
+    private void OnDrawGizmos() {
         if (currentPath == null || currentPath.Count == 0) return;
         Gizmos.color = Color.red;
         for (int i = 0; i < currentPath.Count - 1; i++)
@@ -141,18 +36,9 @@ public class GhostIa : MonoBehaviour, ISaveable
             Gizmos.DrawLine(currentPath[i], currentPath[i + 1]);
         }
     }
+    
 
-    public bool NeedsToBeSaved()
-    {
-        return true;
-    }
-
-    public bool NeedsReinstantiation()
-    {
-        return true;
-    }
-
-    public object SaveState()
+    public override object SaveState()
     {
         var data = new GhostData
         {
@@ -170,7 +56,7 @@ public class GhostIa : MonoBehaviour, ISaveable
         return data;
     }
 
-    public void LoadState(object state)
+    public override void LoadState(object state)
     {
         var data = (GhostData)state;
         transform.position = data.position.ToVector2();
@@ -190,13 +76,4 @@ public class GhostIa : MonoBehaviour, ISaveable
         GhostManager.instance.RegisterGhost(this);
     }
 
-    public void PostInstantiation(object state)
-    {
-    }
-
-    public void GotAddedAsChild(GameObject obj, GameObject hisParent)
-    {
-    }
-    
-    
 }

@@ -2,7 +2,7 @@ using System;
 using SaveLoadSystem;
 using UnityEngine;
 
-public class GhostMovement : MonoBehaviour
+public class EntityMovement : MonoBehaviour
 {
     private Vector3 currentTarget;
     private Vector3 startPosition;

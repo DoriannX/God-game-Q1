@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class WanderComponent : MonoBehaviour
 {
-    [SerializeField] private GhostIa ghostMovement;
+    [SerializeField] private EntityIA entityAI;
     private bool canWander = true;
 
-    public void Wander()
-    {
-        if (!ghostMovement.isMoving)
-        {
+    public void Wander() {
+        if (!entityAI.isMoving) {
             canWander = true;
         }
 
-        if (!canWander) return;
+        if (!canWander) {
+            return;
+        }
         canWander = false;
-        ghostMovement.GoByRandom();
+        entityAI.GoByRandom();
     }
 }

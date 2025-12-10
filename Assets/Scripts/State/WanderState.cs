@@ -16,7 +16,7 @@ public class WanderState : State
     public override void OnLogic()
     {
         base.OnLogic();
-        wanderComponent.Wander();
+        
     }
         
     public override void OnExit()

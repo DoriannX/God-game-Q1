@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 2733767584711712636}
   - component: {fileID: 8695087590091800227}
   - component: {fileID: 1683318007217553828}
+  - component: {fileID: 2381022741083699884}
   - component: {fileID: 7676501364616398555}
+  - component: {fileID: 3884330384959931589}
   - component: {fileID: 3234770281780568274}
   - component: {fileID: 7957398275529141594}
   - component: {fileID: 4077641912464904975}
@@ -20,7 +22,6 @@ GameObject:
   - component: {fileID: 303491999226953158}
   - component: {fileID: 5805087815445507371}
   - component: {fileID: 6701740305892963349}
-  - component: {fileID: 2381022741083699884}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
@@ -74,7 +75,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
---- !u!114 &7676501364616398555
+--- !u!114 &2381022741083699884
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,6 +83,44 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2450070678407865498}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
+  m_Graph: {fileID: -2408727451260807960, guid: 0b0622df942431d44a51c2b36f71c94e, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 8232502288690970635
+  - rid: 8232502288690970902
+  m_OriginalGraph: {fileID: -2408727451260807960, guid: 0b0622df942431d44a51c2b36f71c94e, type: 2}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 8232502288690970635
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 2450070678407865498}
+    - rid: 8232502288690970902
+      type: {class: 'BlackboardVariable`1[[BehaviorData, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 5338653673600316953
+          m_Value1: 12772432390362345236
+        Name: AI
+        m_Value: {fileID: 3884330384959931589}
+--- !u!114 &7676501364616398555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e04beb0635e54632afc4fe68666eae0, type: 3}
   m_Name: 
@@ -94,6 +133,27 @@ MonoBehaviour:
   ghostIA: {fileID: 7957398275529141594}
   workProbability: 0.05
   fuckProbability: 0.01
+--- !u!114 &3884330384959931589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62921c38b6e96444995a0d1039aadca7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
+  <workComponent>k__BackingField: {fileID: 4077641912464904975}
+  <houseRetriever>k__BackingField: {fileID: 1857299742354842865}
+  <growComponent>k__BackingField: {fileID: 2022015165024604261}
+  <scareComponent>k__BackingField: {fileID: 5805087815445507371}
+  <entityIa>k__BackingField: {fileID: 7957398275529141594}
+  workProbability: 0.05
+  fuckProbability: 0.01
+  isFullyGrown: 0
 --- !u!114 &3234770281780568274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,7 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c01bf5be8b4db18f868eebd31ebd0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderComponent
-  ghostMovement: {fileID: 7957398275529141594}
+  entityAI: {fileID: 7957398275529141594}
 --- !u!114 &7957398275529141594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfcbb4388d9e832c1a6289626295ec9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ghostMovement: {fileID: 8695087590091800227}
+  entityMovement: {fileID: 8695087590091800227}
   growComponent: {fileID: 2022015165024604261}
 --- !u!114 &4077641912464904975
 MonoBehaviour:
@@ -224,26 +284,6 @@ MonoBehaviour:
   m_childID: 
   m_prefabID: Ghost
   m_saveTransform: 1
---- !u!114 &2381022741083699884
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
-  m_Graph: {fileID: 0}
-  m_BlackboardVariableOverridesList: []
-  m_OriginalGraph: {fileID: 0}
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds: []
 --- !u!1 &8484147219461251418
 GameObject:
   m_ObjectHideFlags: 0
