@@ -834,7 +834,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TilemapManager
   tilePool: {fileID: 2137906315}
-  brushSizeManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
   <tileHeight>k__BackingField: 0.2
   hexSize: 1
@@ -7512,7 +7511,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1977219131
 RectTransform:
   m_ObjectHideFlags: 0
