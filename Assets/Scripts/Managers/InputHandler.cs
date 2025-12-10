@@ -22,7 +22,7 @@ public class InputHandler : MonoBehaviour
     public event Action mouseScrollStopped;
     
     public event Action pausePressed;
-    [NonSerialized] public bool isShiftPressed = false;
+    [NonSerialized] public bool isCtrlPressed = false;
     
     public void HandleMouseDeltaMoveInput(InputAction.CallbackContext ctx)
     {
@@ -108,11 +108,23 @@ public class InputHandler : MonoBehaviour
     {
         if (ctx.performed)
         {
-            isShiftPressed = true;
+            isCtrlPressed = true;
         }
         else if (ctx.canceled)
         {
-            isShiftPressed = false;
+            isCtrlPressed = false;
+        }
+    }
+    
+    public void HandleControlInput(InputAction.CallbackContext ctx)
+    {
+        if (ctx.performed)
+        {
+            isCtrlPressed = true;
+        }
+        else if (ctx.canceled)
+        {
+            isCtrlPressed = false;
         }
     }
 }

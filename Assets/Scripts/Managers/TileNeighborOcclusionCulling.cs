@@ -1,85 +1,94 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// Système d'occlusion culling basé sur les voisins
-/// Désactive les tiles complètement entourées par d'autres tiles (pas de raycast, ultra-performant)
+/// Neighbor-based occlusion culling system
+/// Disables tiles completely surrounded by other tiles (no raycast, ultra-performant)
 /// </summary>
 public class TileNeighborOcclusionCulling : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private TilemapManager tilemapManager;
+    
     [Header("Settings")]
     [SerializeField] private bool enableOcclusion = true;
-    [SerializeField] private bool occludeBaseTiles = true; // Occlure les tiles de base entourées
-    [SerializeField] private bool occludeHeightTiles = true; // Occlure les tiles en hauteur entourées
-    
-    [Header("References")]
-    [SerializeField] private TileHeightManager heightManager;
+    [SerializeField] private bool occludeBaseTiles = true;
+    [SerializeField] private bool occludeHeightTiles = true;
     
     [Header("Debug")]
-    [SerializeField] private bool showDebugInfo = false;
+    [SerializeField] private bool showDebugInfo;
     
-    // Cache des états d'occlusion par coordonnée et hauteur
-    private Dictionary<Vector3Int, bool> occlusionCache = new Dictionary<Vector3Int, bool>();
+    // Cache of occlusion states by coordinate
+    private Dictionary<Vector3Int, bool> occlusionCache = new();
     
     // Batch processing
-    private bool isBatchMode = false;
-    private HashSet<Vector3Int> batchedColumns = new HashSet<Vector3Int>();
+    private bool isBatchMode;
+    private HashSet<Vector2Int> batchedColumns = new();
     
     // Stats
-    private int totalOccludedTiles = 0;
-    private int totalVisibleTiles = 0;
+    private int totalOccludedTiles;
+    private int totalVisibleTiles;
     
-    // Les 6 directions hexagonales (flat-top)
+    // The 6 hexagonal directions (flat-top)
     private readonly Vector2Int[] hexDirections = new Vector2Int[]
     {
-        new Vector2Int(1, 0),   // Est
-        new Vector2Int(-1, 0),  // Ouest
-        new Vector2Int(0, 1),   // Nord-Est
-        new Vector2Int(0, -1),  // Sud-Ouest
-        new Vector2Int(1, -1),  // Sud-Est
-        new Vector2Int(-1, 1)   // Nord-Ouest
+        new(1, 0),   // East
+        new(-1, 0),  // West
+        new(0, 1),   // North-East
+        new(0, -1),  // South-West
+        new(1, -1),  // South-East
+        new(-1, 1)   // North-West
     };
-    
-    private void Start()
+
+    private void OnEnable()
     {
-        if (heightManager == null)
-        {
-            Debug.LogWarning("TileNeighborOcclusionCulling: HeightManager not assigned!");
-        }
+        tilemapManager.columnModified += UpdateOcclusionForColumn;
+        tilemapManager.startedPlacingTiles += BeginBatch;
+        tilemapManager.endedPlacingTiles += EndBatch;
     }
-    
+
+    private void OnDisable()
+    {
+        tilemapManager.columnModified -= UpdateOcclusionForColumn;
+        tilemapManager.startedPlacingTiles -= BeginBatch;
+        tilemapManager.endedPlacingTiles -= EndBatch;
+    }
+
     /// <summary>
-    /// Vérifie et met à jour l'occlusion pour une colonne et ses voisins
+    /// Checks and updates occlusion for a column and its neighbors
     /// </summary>
     public void UpdateOcclusionForColumn(Vector3Int hexCoords)
     {
-        if (!enableOcclusion || heightManager == null)
+        if (!enableOcclusion || tilemapManager == null)
             return;
         
-        // En mode batch, on accumule juste les colonnes à traiter
+        Vector2Int coords2D = new Vector2Int(hexCoords.x, hexCoords.y);
+        
+        // In batch mode, accumulate columns to process
         if (isBatchMode)
         {
-            batchedColumns.Add(hexCoords);
-            foreach (Vector3Int direction in hexDirections)
+            batchedColumns.Add(coords2D);
+            foreach (Vector2Int direction in hexDirections)
             {
-                batchedColumns.Add(hexCoords + direction);
+                batchedColumns.Add(coords2D + direction);
             }
             return;
         }
         
-        // Mettre à jour la colonne elle-même
-        UpdateColumnOcclusion(hexCoords);
+        // Update the column itself
+        UpdateColumnOcclusion(coords2D);
         
-        // Mettre à jour les 6 voisins (car cette colonne peut maintenant les occlure)
-        foreach (Vector3Int direction in hexDirections)
+        // Update the 6 neighbors (as this column may now occlude them)
+        foreach (Vector2Int direction in hexDirections)
         {
-            Vector3Int neighborCoords = hexCoords + direction;
+            Vector2Int neighborCoords = coords2D + direction;
             UpdateColumnOcclusion(neighborCoords);
         }
     }
     
     /// <summary>
-    /// Démarre le mode batch pour optimiser les updates massifs
+    /// Starts batch mode to optimize massive updates
     /// </summary>
     public void BeginBatch()
     {
@@ -88,14 +97,14 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
     }
     
     /// <summary>
-    /// Termine le mode batch et traite toutes les colonnes accumulées
+    /// Ends batch mode and processes all accumulated columns
     /// </summary>
     public void EndBatch()
     {
         isBatchMode = false;
         
-        // Traiter toutes les colonnes accumulées
-        foreach (Vector3Int coords in batchedColumns)
+        // Process all accumulated columns
+        foreach (Vector2Int coords in batchedColumns)
         {
             UpdateColumnOcclusion(coords);
         }
@@ -104,47 +113,51 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
     }
     
     /// <summary>
-    /// Met à jour l'occlusion d'une colonne complète
+    /// Updates occlusion for a complete column
     /// </summary>
-    private void UpdateColumnOcclusion(Vector3Int hexCoords)
+    private void UpdateColumnOcclusion(Vector2Int hexCoords)
     {
-        int columnHeight = heightManager.GetColumnHeight(hexCoords);
-        if (columnHeight == 0)
+        if (tilemapManager == null)
             return;
         
-        // Vérifier chaque tile de la colonne
-        for (int height = 0; height < columnHeight; height++)
+        // Get column height by finding the max z coordinate for this q,r position
+        int topCoordinate = TilemapManager.instance.GetColumnTopCoordinate(hexCoords);
+        
+        if (topCoordinate == 0)
+            return; // No tiles in this column
+        
+        // Check each tile in the column
+        for (int tileHeight = 0; tileHeight < topCoordinate; tileHeight++)
         {
-            bool shouldOcclude = ShouldOccludeTile(hexCoords, height, columnHeight);
-            ApplyOcclusion(hexCoords, height, shouldOcclude);
+            bool shouldOcclude = ShouldOccludeTile(hexCoords, tileHeight, topCoordinate);
+            ApplyOcclusion(hexCoords, tileHeight, shouldOcclude);
         }
     }
     
     /// <summary>
-    /// Détermine si une tile devrait être occludée
+    /// Determines if a tile should be occluded
     /// </summary>
-    private bool ShouldOccludeTile(Vector3Int hexCoords, int tileHeight, int columnHeight)
+    private bool ShouldOccludeTile(Vector2Int hexCoords, int tileHeight, int topCoordinate)
     {
-        // Ne pas occlure la tile du dessus (toujours visible)
-        if (tileHeight == columnHeight - 1)
+        // Don't occlude the top tile (always visible)
+        if (tileHeight == topCoordinate)
             return false;
         
-        // Vérifier le type de tile
-        if (tileHeight == 0 && !occludeBaseTiles)
+        // Check tile type
+        if (tileHeight == 1 && !occludeBaseTiles)
             return false;
         
-        if (tileHeight > 0 && !occludeHeightTiles)
+        if (tileHeight > 1 && !occludeHeightTiles)
             return false;
         
-        // Vérifier si tous les voisins horizontaux ont au moins la même hauteur
         bool allNeighborsHigherOrEqual = true;
         
-        foreach (Vector3Int direction in hexDirections)
+        foreach (Vector2Int direction in hexDirections)
         {
-            Vector3Int neighborCoords = hexCoords + direction;
-            int neighborHeight = heightManager.GetColumnHeight(neighborCoords);
+            Vector2Int neighborCoords = hexCoords + direction;
+            int neighborHeight = TilemapManager.instance.GetColumnTopCoordinate(neighborCoords);
             
-            // Si le voisin n'est pas assez haut, cette tile est visible
+            // If neighbor is not tall enough, this tile is visible
             if (neighborHeight <= tileHeight)
             {
                 allNeighborsHigherOrEqual = false;
@@ -152,106 +165,81 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
             }
         }
         
-        // Vérifier qu'il y a une tile au-dessus (occlusionée par le dessus aussi)
-        bool hasTileAbove = tileHeight < columnHeight - 1;
+        // Check that there is a tile above (also occluded from above)
+        bool hasTileAbove = tileHeight < topCoordinate;
         
-        // Occlure seulement si complètement entourée ET qu'il y a une tile au-dessus
+        // Occlude only if completely surrounded AND there's a tile above
         return allNeighborsHigherOrEqual && hasTileAbove;
     }
     
     /// <summary>
-    /// Applique ou retire l'occlusion d'une tile
+    /// Applies or removes occlusion from a tile
     /// </summary>
-    private void ApplyOcclusion(Vector3Int hexCoords, int height, bool shouldOcclude)
+    private void ApplyOcclusion(Vector2Int hexCoords, int height, bool shouldOcclude)
     {
-        Vector3Int key = new Vector3Int(hexCoords.x, height, hexCoords.y);
+        if (tilemapManager == null)
+            return;
         
-        // Vérifier si l'état a changé
+        Vector3Int key = new Vector3Int(hexCoords.x, hexCoords.y, height);
+        
+        // Check if state has changed
         if (occlusionCache.TryGetValue(key, out bool cachedState))
         {
             if (cachedState == shouldOcclude)
-                return; // Pas de changement
+                return; // No change
         }
         
-        // Obtenir la tile
-        List<GameObject> columnTiles = heightManager.GetColumnTiles(hexCoords);
-        if (height >= columnTiles.Count || columnTiles[height] == null)
+        // Get the tile from the dictionary
+        if (!tilemapManager.tiles.TryGetValue(key, out GameObject tile) || tile == null)
             return;
         
-        GameObject tile = columnTiles[height];
-        
-        // Désactiver/activer les renderers
+        // Disable/enable renderers
         Renderer[] renderers = tile.GetComponentsInChildren<Renderer>();
-        foreach (Renderer renderer in renderers)
+        foreach (var rend in renderers)
         {
-            if (renderer != null)
+            if (rend != null)
             {
-                renderer.enabled = !shouldOcclude;
+                rend.enabled = !shouldOcclude;
             }
         }
         
-        // Mettre à jour le cache et les stats
+        // Update cache and stats
         occlusionCache[key] = shouldOcclude;
         
         if (shouldOcclude)
         {
             totalOccludedTiles++;
-            if (cachedState == false) totalVisibleTiles--;
+            if (!cachedState) totalVisibleTiles--;
         }
         else
         {
-            if (cachedState == true) totalOccludedTiles--;
+            if (cachedState) totalOccludedTiles--;
             totalVisibleTiles++;
         }
     }
     
     /// <summary>
-    /// Retire une colonne du système d'occlusion
-    /// </summary>
-    public void RemoveColumn(Vector3Int hexCoords)
-    {
-        int columnHeight = heightManager.GetColumnHeight(hexCoords);
-        
-        // Nettoyer le cache
-        for (int height = 0; height < columnHeight; height++)
-        {
-            Vector3Int key = new Vector3Int(hexCoords.x, height, hexCoords.y);
-            if (occlusionCache.ContainsKey(key))
-            {
-                if (occlusionCache[key] == true)
-                    totalOccludedTiles--;
-                else
-                    totalVisibleTiles--;
-                    
-                occlusionCache.Remove(key);
-            }
-        }
-        
-        // Mettre à jour les voisins (ils ne sont peut-être plus occludés)
-        foreach (Vector3Int direction in hexDirections)
-        {
-            Vector3Int neighborCoords = hexCoords + direction;
-            UpdateColumnOcclusion(neighborCoords);
-        }
-    }
-    
-    /// <summary>
-    /// Recalcule l'occlusion de toutes les colonnes
+    /// Recalculates occlusion for all columns
     /// </summary>
     public void RecalculateAllOcclusion()
     {
-        if (heightManager == null)
+        if (tilemapManager == null || tilemapManager.tiles == null)
             return;
         
-        // Réinitialiser le cache
+        // Reset cache
         occlusionCache.Clear();
         totalOccludedTiles = 0;
         totalVisibleTiles = 0;
         
-        // Obtenir toutes les colonnes
-        List<Vector3Int> allCoords = heightManager.GetAllColumnCoordinates();
+        // Get all unique column coordinates (q,r only)
+        HashSet<Vector2Int> allCoords = new();
+        foreach (var kvp in tilemapManager.tiles)
+        {
+            Vector3Int key = kvp.Key;
+            allCoords.Add(new Vector2Int(key.x, key.y));
+        }
         
-        foreach (Vector3Int coords in allCoords)
+        foreach (Vector2Int coords in allCoords)
         {
             UpdateColumnOcclusion(coords);
         }
@@ -263,34 +251,34 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
     }
     
     /// <summary>
-    /// Active/désactive l'occlusion culling
+    /// Enables/disables occlusion culling
     /// </summary>
-    public void SetOcclusionEnabled(bool enabled)
+    public void SetOcclusionEnabled(bool isEnabled)
     {
-        if (enableOcclusion == enabled)
+        if (enableOcclusion == isEnabled)
             return;
         
-        enableOcclusion = enabled;
+        enableOcclusion = isEnabled;
         
-        if (enabled)
+        if (isEnabled)
         {
             RecalculateAllOcclusion();
         }
         else
         {
-            // Réactiver toutes les tiles
+            // Re-enable all tiles
             foreach (var kvp in occlusionCache)
             {
                 Vector3Int key = kvp.Key;
-                Vector3Int hexCoords = new Vector3Int(key.x, key.z);
-                int height = key.y;
+                Vector2Int hexCoords = new Vector2Int(key.x, key.y);
+                int height = key.z;
                 
                 ApplyOcclusion(hexCoords, height, false);
             }
         }
     }
     
-    // Afficher les stats en haut à droite
+    // Display stats in top right
     private void OnGUI()
     {
         if (showDebugInfo && enableOcclusion)

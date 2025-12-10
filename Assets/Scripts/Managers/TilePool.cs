@@ -1,86 +1,79 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections;
+using System.Collections.Generic;
 
+/// <summary>
+/// A pool manager for tile GameObjects supporting multiple prefab types
+/// </summary>
 public class TilePool : MonoBehaviour
 {
-    [SerializeField] private GameObject tilePrefab;
     [SerializeField] private int defaultCapacity = 50;
     [SerializeField] private int maxSize = 500;
-    [SerializeField] private bool prewarmOnStart = false; // Désactiver le prewarming par défaut pour tester
+    [SerializeField] private bool prewarmOnStart = false;
     
-    private ObjectPool<GameObject> pool;
+    private Dictionary<GameObject, ObjectPool<GameObject>> pools = new();
+    private Dictionary<GameObject, GameObject> tileToOriginalPrefab = new();
     private bool isQuitting = false;
     
     private void Awake()
     {
-        // Créer le pool avec Unity's ObjectPool
-        pool = new ObjectPool<GameObject>(
-            createFunc: CreateTile,
-            actionOnGet: OnGetTile,
-            actionOnRelease: OnReleaseTile,
-            actionOnDestroy: OnDestroyTile,
-            collectionCheck: true,
-            defaultCapacity: defaultCapacity,
-            maxSize: maxSize
-        );
-        
-        // Pré-instancier defaultCapacity tiles (optionnel)
         if (prewarmOnStart)
         {
-            StartCoroutine(PrewarmPoolGradually());
+            StartCoroutine(PrewarmPoolsGradually());
         }
     }
     
-    // Pré-instancier les tiles progressivement pour éviter le freeze
-    private IEnumerator PrewarmPoolGradually()
+    /// <summary>
+    /// Instantiate tiles gradually to avoid frame drops
+    /// </summary>
+    private IEnumerator PrewarmPoolsGradually()
     {
-        GameObject[] prewarmTiles = new GameObject[defaultCapacity];
-        
-        // Créer par petits lots de 10 tiles par frame
-        int batchSize = 10;
-        for (int i = 0; i < defaultCapacity; i++)
+        foreach (var poolPair in pools)
         {
-            prewarmTiles[i] = pool.Get();
+            GameObject[] prewarmTiles = new GameObject[defaultCapacity];
             
-            // Attendre une frame après chaque lot
-            if ((i + 1) % batchSize == 0)
+            int batchSize = 10;
+            for (int i = 0; i < defaultCapacity; i++)
             {
-                yield return null;
+                prewarmTiles[i] = poolPair.Value.Get();
+                
+                if ((i + 1) % batchSize == 0)
+                {
+                    yield return null;
+                }
+            }
+            
+            for (int i = 0; i < defaultCapacity; i++)
+            {
+                poolPair.Value.Release(prewarmTiles[i]);
             }
         }
-        
-        // Retourner toutes les tiles au pool
-        for (int i = 0; i < defaultCapacity; i++)
-        {
-            pool.Release(prewarmTiles[i]);
-        }
     }
     
-    // Créer une nouvelle tile
-    private GameObject CreateTile()
+    private GameObject CreateTile(GameObject prefab)
     {
-        GameObject tile = Instantiate(tilePrefab);
-        tile.transform.SetParent(transform); // Organiser dans la hiérarchie
+        GameObject tile = Instantiate(prefab);
+        tile.transform.SetParent(transform);
+        tileToOriginalPrefab[tile] = prefab;
         return tile;
     }
     
-    // Quand une tile est prise du pool
     private void OnGetTile(GameObject tile)
     {
         tile.SetActive(true);
     }
     
-    // Quand une tile est retournée au pool
     private void OnReleaseTile(GameObject tile)
     {
         tile.SetActive(false);
     }
     
-    // Quand une tile est détruite (pool plein)
     private void OnDestroyTile(GameObject tile)
     {
         if (tile == null || isQuitting) return;
+        
+        tileToOriginalPrefab.Remove(tile);
         
         if (Application.isPlaying)
         {
@@ -102,22 +95,42 @@ public class TilePool : MonoBehaviour
         isQuitting = true;
     }
     
-    // Méthodes publiques pour obtenir/retourner des tiles
-    public GameObject GetTile()
+    private ObjectPool<GameObject> GetOrCreatePool(GameObject prefab)
     {
-        if (isQuitting) return null;
+        if (!pools.ContainsKey(prefab))
+        {
+            pools[prefab] = new ObjectPool<GameObject>(
+                createFunc: () => CreateTile(prefab),
+                actionOnGet: OnGetTile,
+                actionOnRelease: OnReleaseTile,
+                actionOnDestroy: OnDestroyTile,
+                collectionCheck: true,
+                defaultCapacity: defaultCapacity,
+                maxSize: maxSize
+            );
+        }
+        return pools[prefab];
+    }
+    
+    public GameObject GetTile(GameObject prefab)
+    {
+        if (isQuitting || prefab == null) return null;
+        
+        ObjectPool<GameObject> pool = GetOrCreatePool(prefab);
         return pool.Get();
     }
     
     public void ReleaseTile(GameObject tile)
     {
         if (isQuitting || tile == null) return;
-        pool.Release(tile);
+        
+        if (tileToOriginalPrefab.TryGetValue(tile, out GameObject prefab))
+        {
+            if (pools.TryGetValue(prefab, out ObjectPool<GameObject> pool))
+            {
+                pool.Release(tile);
+            }
+        }
     }
-    
-    // Pour le debug
-    public int CountActive => pool.CountActive;
-    public int CountInactive => pool.CountInactive;
-    public int CountAll => pool.CountAll;
 }
 

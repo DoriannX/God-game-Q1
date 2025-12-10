@@ -25,7 +25,7 @@ public class TaskManager : MonoBehaviour
         if(completedTasks.Contains(cell))
             return null;
         int taskType = Random.Range(0, taskPrefabs.Count);
-        WorkTask task = Instantiate(taskPrefabs[taskType], TilemapManager.instance.GetCellCenterWorld(cell), Quaternion.identity);
+        WorkTask task = Instantiate(taskPrefabs[taskType], TilemapManager.instance.HexAxialToWorld(cell), Quaternion.identity);
         task.onComplete += () =>
         {
             availableTasks.Remove(task);

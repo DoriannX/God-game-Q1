@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -138,10 +138,10 @@ public class HexPathfinding2D : MonoBehaviour
                 var path = new List<Vector2>();
                 while (parentCell.TryGetValue(currentCell, out Vector3Int previousCell))
                 {
-                    path.Add(tilemapManager.GetCellCenterWorld(currentCell));
+                    path.Add(tilemapManager.HexAxialToWorld(currentCell));
                     currentCell = previousCell;
                 }
-                path.Add(tilemapManager.GetCellCenterWorld(currentCell));
+                path.Add(tilemapManager.HexAxialToWorld(currentCell));
                 path.Reverse();
                 openSet.Dispose();
                 return path;
@@ -217,4 +217,4 @@ public class HexPathfinding2D : MonoBehaviour
         path.Reverse();
         return path;
     }
-}
+}*/

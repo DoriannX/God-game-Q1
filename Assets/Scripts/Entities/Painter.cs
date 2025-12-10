@@ -4,6 +4,7 @@ using UnityEngine;
 public enum PainterMode
 {
     Paint,
+    Up,
     Shovel,
     Bucket,
     Object,
@@ -21,11 +22,12 @@ public class Painter : MonoBehaviour
     private ShovelComponent shovelComponent;
     private BucketComponent bucketComponent;
     private DestructionComponent destructionComponent;
+    [SerializeField] private BrushSizeManager brushSizeManager;
+
     public PainterMode currentMode { get; private set; } = PainterMode.Paint;
     [SerializeField] private InputHandler inputHandler;
     private bool isPainting;
     private Vector2 mousePos;
-    [SerializeField] private float brushSize = 1;
 
     private void Awake()
     {
@@ -38,7 +40,12 @@ public class Painter : MonoBehaviour
 
     public void SetBrushSize(float size)
     {
-        brushSize = size;
+        print("SetBrushSize called with size: " + size);
+        if (inputHandler.isCtrlPressed)
+        {
+            print("Ctrl pressed");
+            brushSizeManager.ChangeBrushSize(size);
+        }
     }
 
     public void SetMode(PainterMode mode)
@@ -51,11 +58,13 @@ public class Painter : MonoBehaviour
         inputHandler.mouseClickPressed += OnMouseClickPressed;
         inputHandler.mouseMoved += OnMouseMoved;
         inputHandler.mouseClickReleased += OnMouseClickReleased;
+        inputHandler.mouseScrollStarted += SetBrushSize;
     }
 
     private void OnMouseMoved(Vector2 position)
     {
         mousePos = position;
+        TilemapManager.instance.SetMousePos(mousePos);
     }
 
     private void Update()
@@ -64,32 +73,25 @@ public class Painter : MonoBehaviour
         {
             if (currentMode == PainterMode.Shovel)
             {
-                shovelComponent.Add(mousePos, brushSize);
-                poserComponent.Remove(mousePos, brushSize);
+                shovelComponent.Add();
+                //poserComponent.Remove(mousePos, brushSize);
             }
             else if (currentMode == PainterMode.Paint)
             {
-                bucketComponent.Remove(mousePos, brushSize);
-                if (!inputHandler.isShiftPressed)
-                {
-                    paintComponent.Add(mousePos, brushSize);
-                }
-                else
-                {
-                    paintComponent.Up(mousePos, brushSize);
-                }
+                //bucketComponent.Remove(mousePos, brushSize);
+                paintComponent.Add();
             }
             else if (currentMode == PainterMode.Bucket)
             {
-                bucketComponent.Remove(mousePos, brushSize);
+                //bucketComponent.Remove(mousePos, brushSize);
             }
             else if (currentMode == PainterMode.Object)
             {
-                poserComponent.Add(mousePos, brushSize);
+                //poserComponent.Add(mousePos, brushSize);
             }
             else if (currentMode == PainterMode.Destruction)
             {
-                destructionComponent.Add(mousePos, brushSize);
+                //destructionComponent.Add(mousePos, brushSize);
             }
         }
     }

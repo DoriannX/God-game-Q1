@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class ShovelComponent : MonoBehaviour
 {
-    private HeightManager heightManager;
+    //private HeightManager heightManager;
     private List<Vector3Int> modifiedCells = new();
 
     private void OnEnable()
@@ -16,12 +14,16 @@ public class ShovelComponent : MonoBehaviour
 
     private void Start()
     {
-        heightManager = HeightManager.instance;
+        //heightManager = HeightManager.instance;
     }
 
-    public void Add(Vector2 pos, float brushSize)
+    public void Add()
     {
-        Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
+        
+        TilemapManager.instance.RemoveTile();
+        
+        //TODO: refaire
+        /*Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
 
         int cellRadiusX = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.x);
         int cellRadiusY = Mathf.CeilToInt(brushSize * 1.5f / TilemapManager.instance.cellSize.y);
@@ -33,7 +35,7 @@ public class ShovelComponent : MonoBehaviour
             for (int y = -maxRadius; y <= maxRadius; y++)
             {
                 Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = TilemapManager.instance.GetCellCenterWorld(cell);
+                Vector3 cellWorldPos = TilemapManager.instance.HexAxialToWorld(cell);
 
                 if (Vector2.Distance(pos, cellWorldPos) <= brushSize )
                 {
@@ -47,7 +49,7 @@ public class ShovelComponent : MonoBehaviour
                     WaterSystem.instance?.RemoveWater(cell);
                 }
             }
-        }
+        }*/
     }
 
     private void OnTick()
