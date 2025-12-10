@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -9,29 +10,88 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private SaveLoadManager saveLoadManager;
     [SerializeField] private Button newGameButton;
     [SerializeField] private Button continueButton;
+    [SerializeField] private Button OptionsButton;
+    [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
+
+    // Noms de scènes — utilisez exactement les noms présents dans vos Build Settings.
+    private const string SampleSceneName = "SampleScene";
+    private const string OptionsSceneName = "Options";
+    private const string CreditsSceneName = "Credits";
+    private const string MainMenuSceneName = "mainMenu";
 
     private void Awake()
     {
-        newGameButton.onClick.AddListener(LoadGame);
+        // Ajoute les listeners de manière sûre (évite les NRE si un champ n'est pas assigné)
+        SafeAddListener(newGameButton, LoadGame, nameof(newGameButton));
+        SafeAddListener(OptionsButton, Options, nameof(OptionsButton));
+        SafeAddListener(creditsButton, Credits, nameof(creditsButton));
 
-        continueButton.onClick.AddListener(() =>
+        if (continueButton != null)
         {
-            saveLoadManager.LoadSave();
-            LoadGame();
-        });
+            if (saveLoadManager != null)
+            {
+                continueButton.onClick.AddListener(() =>
+                {
+                    saveLoadManager.LoadSave();
+                    LoadGame();
+                });
+            }
+            else
+            {
+                continueButton.interactable = false;
+                Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(saveLoadManager)} non assigné : {nameof(continueButton)} désactivé.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(continueButton)} non assigné.");
+        }
 
-        quitButton.onClick.AddListener(() =>
+        if (quitButton != null)
         {
-            Application.Quit();
+            quitButton.onClick.AddListener(() =>
+            {
+                Application.Quit();
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
+                UnityEditor.EditorApplication.isPlaying = false;
 #endif
-        });
+            });
+        }
+        else
+        {
+            Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(quitButton)} non assigné.");
+        }
+    }
+
+    private void SafeAddListener(Button btn, UnityAction action, string fieldName)
+    {
+        if (btn == null)
+        {
+            Debug.LogWarning($"[{nameof(MainMenuManager)}] {fieldName} non assigné.");
+            return;
+        }
+
+        btn.onClick.AddListener(action);
     }
 
     private void LoadGame()
     {
-        SceneManager.LoadScene("Scenes/SampleScene");
+        SceneManager.LoadScene(SampleSceneName);
+    }
+
+    private void Options()
+    {
+        SceneManager.LoadScene(OptionsSceneName);
+    }
+
+    private void Credits()
+    {
+        SceneManager.LoadScene(CreditsSceneName);
+    }
+
+    public void Back()
+    {
+        SceneManager.LoadScene(MainMenuSceneName);
     }
 }
