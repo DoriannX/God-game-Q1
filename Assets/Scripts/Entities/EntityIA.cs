@@ -31,7 +31,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         }
         
         for (int i = 0; i < maxAttempts; i++) {
-            Vector3 dir = UnityEngine.Random.insideUnitCircle.normalized;
+            Vector3 dir = Random.insideUnitCircle.normalized;
             Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
             
             Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
@@ -81,7 +81,15 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         ComputePath();*/
     }
     
-    protected void Tick() {
+    private void OnEnable() {
+        TickSystem.ticked += Tick;
+    }
+    
+    private void OnDisable() {
+        TickSystem.ticked -= Tick;
+    }
+    
+    private void Tick() {
         if (entityMovement.isMoving) {
             return;
         }

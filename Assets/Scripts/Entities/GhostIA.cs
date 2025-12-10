@@ -12,19 +12,6 @@ public class GhostIa : EntityIA
         public SaveableEntity.Vector2Data targetPosition;
         public List<SaveableEntity.Vector2Data> currentPath;
     }
-    [SerializeField] private GrowComponent growComponent;
-    
-    private void OnEnable() {
-        TickSystem.ticked += Tick;
-    }
-    
-    private void OnDisable() {
-        TickSystem.ticked -= Tick;
-    }
-
-    private void Tick() {
-        growComponent.Grow();
-    }
     
     public void ForceRepath() => ComputePath();
     
@@ -36,41 +23,32 @@ public class GhostIa : EntityIA
             Gizmos.DrawLine(currentPath[i], currentPath[i + 1]);
         }
     }
-    
 
-    public override object SaveState()
-    {
-        var data = new GhostData
-        {
+    public override object SaveState() {
+        var data = new GhostData {
             position = new SaveableEntity.Vector2Data(transform.position),
             targetPosition = new SaveableEntity.Vector2Data(targetPosition),
             currentPath = new List<SaveableEntity.Vector2Data>()
         };
-        if (currentPath != null)
-        {
-            foreach (var pos in currentPath)
-            {
+        if (currentPath != null) {
+            foreach (var pos in currentPath) {
                 data.currentPath.Add(new SaveableEntity.Vector2Data(pos));
             }
         }
         return data;
     }
 
-    public override void LoadState(object state)
-    {
+    public override void LoadState(object state) {
         var data = (GhostData)state;
         transform.position = data.position.ToVector2();
         targetPosition = data.targetPosition.ToVector2();
         currentPath = new List<Vector3>();
-        if (data.currentPath != null)
-        {
-            foreach (var pos in data.currentPath)
-            {
+        if (data.currentPath != null) {
+            foreach (var pos in data.currentPath) {
                 currentPath.Add(pos.ToVector2());
             }
         }
-        else
-        {
+        else {
             currentPath = null;
         }
         GhostManager.instance.RegisterGhost(this);
