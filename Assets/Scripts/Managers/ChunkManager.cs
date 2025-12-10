@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -117,15 +118,13 @@ public class ChunkManager : MonoBehaviour
         }
     }
 
-    public void RemoveOneHeightForChunk(Vector2Int chunkIndex)
+    public IEnumerator RemoveOneHeightForChunk(Vector2Int chunkIndex, float timeBetweenTileDestroy)
     {
         if (!logicalChunks.TryGetValue(chunkIndex, out Chunk chunk))
-            return;
-
-        // Copie des tiles pour éviter la modification pendant l'itération
+            yield break;
+        
         List<GameObject> tiles = new List<GameObject>(chunk.gameObjectsInChunk);
-
-        // Liste temporaire pour supprimer uniquement les tiles du niveau supérieur
+        
         List<GameObject> tilesToRemove = new List<GameObject>();
 
         foreach (GameObject tile in tiles)
@@ -134,22 +133,20 @@ public class ChunkManager : MonoBehaviour
                 continue;
 
             Vector3Int coord = TilemapManager.instance.WorldToHexAxial(tile.transform.position);
-
-            // On récupère la hauteur max de cette colonne
+            
             int topZ = TilemapManager.instance.GetColumnTopCoordinate(new Vector2Int(coord.x, coord.y));
-
-            // Si la tile est bien celle du haut → on la marque pour suppression
+            
             if (coord.z == topZ)
                 tilesToRemove.Add(tile);
         }
-
-        // Suppression propre : UNE SEULE couche
+        
         foreach (GameObject tile in tilesToRemove)
         {
             Vector3Int coord = TilemapManager.instance.WorldToHexAxial(tile.transform.position);
 
             TilemapManager.instance.RemoveTileAt(coord);
             chunk.gameObjectsInChunk.Remove(tile);
+            yield return new WaitForSeconds(timeBetweenTileDestroy);
         }
     }
 

@@ -1,9 +1,11 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class EarthQuake : MeteoEvent
 {
+    [SerializeField] private float timeBetweenTileDestroy;
     private void OnEnable()
     {
         StartCoroutine(RemoveOneHeightForTile());
@@ -11,32 +13,19 @@ public class EarthQuake : MeteoEvent
 
     private IEnumerator RemoveOneHeightForTile()
     {
-        // Si aucun chunk, on arrête
         if (ChunkManager.Instance.logicalChunks.Count == 0)
             yield break;
-
-        // On récupère un chunk valide (actif + contient des tiles)
+        
         Vector2Int randomIndex = GetRandomValidChunk();
 
-        // Aucun chunk valide trouvé → on stoppe là
-        if (randomIndex == INVALID_CHUNK)
-        {
-            Debug.LogWarning("Aucun chunk valide trouvé (actif + avec tiles)");
-            yield break;
-        }
-
-        ChunkManager.Instance.RemoveOneHeightForChunk(randomIndex);
-        yield return new WaitForSeconds(5);
-        StartCoroutine(RemoveOneHeightForTile());
+        StartCoroutine(ChunkManager.Instance.RemoveOneHeightForChunk(randomIndex, timeBetweenTileDestroy));
     }
-
-    // Constante pour signaler un échec proprement
+    
     private static readonly Vector2Int INVALID_CHUNK = new Vector2Int(int.MinValue, int.MinValue);
 
     private Vector2Int GetRandomValidChunk()
     {
-        // On filtre : actifs + non vides
-        var validChunks = ChunkManager.Instance.logicalChunks
+        List<Vector2Int> validChunks = ChunkManager.Instance.logicalChunks
             .Where(kv => ChunkManager.Instance.currentlyActiveChunks.Contains(kv.Key))
             .Where(kv => kv.Value.gameObjectsInChunk.Count > 0)
             .Select(kv => kv.Key)

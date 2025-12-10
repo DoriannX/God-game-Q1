@@ -3360,6 +3360,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EarthQuake
   state: 4
   chance: 50
+  timeBetweenTileDestroy: 0.075
 --- !u!4 &596904895
 Transform:
   m_ObjectHideFlags: 0
