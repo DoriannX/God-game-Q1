@@ -8,13 +8,13 @@ public class EarthQuake : MeteoEvent
     [SerializeField] private float timeBetweenTileDestroy;
     private void OnEnable()
     {
-        StartCoroutine(RemoveOneHeightForTile());
+        RemoveOneHeightForTile();
     }
 
-    private IEnumerator RemoveOneHeightForTile()
+    private void RemoveOneHeightForTile()
     {
         if (ChunkManager.Instance.logicalChunks.Count == 0)
-            yield break;
+            return;
         
         Vector2Int randomIndex = GetRandomValidChunk();
 
