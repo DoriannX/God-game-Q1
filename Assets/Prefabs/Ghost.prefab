@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 303491999226953158}
   - component: {fileID: 5805087815445507371}
   - component: {fileID: 6701740305892963349}
+  - component: {fileID: 2381022741083699884}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
@@ -223,6 +224,26 @@ MonoBehaviour:
   m_childID: 
   m_prefabID: Ghost
   m_saveTransform: 1
+--- !u!114 &2381022741083699884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.BehaviorGraphAgent
+  m_Graph: {fileID: 0}
+  m_BlackboardVariableOverridesList: []
+  m_OriginalGraph: {fileID: 0}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &8484147219461251418
 GameObject:
   m_ObjectHideFlags: 0
