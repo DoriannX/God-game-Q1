@@ -5,30 +5,25 @@ using Action = Unity.Behavior.Action;
 using Unity.Properties;
 
 [Serializable, GeneratePropertyBag]
-[NodeDescription(name: "Work", story: "[IA] go work", category: "Action", id: "15790155747800ad5ee970caaa9f8431")]
+[NodeDescription(name: "Work", story: "[AI] go working", category: "Action", id: "15790155747800ad5ee970caaa9f8431")]
 public partial class WorkAction : Action {
-    [SerializeReference] public BlackboardVariable<BehaviorData> IA;
-
+    [SerializeReference] public BlackboardVariable<BehaviorData> AI;
     protected override Status OnStart() {
-        WorkTask task = IA.Value.workComponent.GetTask();
+        WorkTask task = AI.Value.workComponent.GetTask();
         if (task == null) {
-            IA.Value.workComponent.Work();
+            AI.Value.workComponent.Work();
             return Status.Running;
         }
-        IA.Value.entityIa.GoTo(task.transform.position);
-        if(Vector2.Distance( IA.Value.entityIa.transform.position, IA.Value.workComponent.GetTask().transform.position) < 0.1f)
+        AI.Value.entityIa.GoTo(task.transform.position);
+        if(Vector2.Distance( AI.Value.entityIa.transform.position, AI.Value.workComponent.GetTask().transform.position) < 0.1f)
         {
-            IA.Value.workComponent.Work();
+            AI.Value.workComponent.Work();
         }
         return Status.Running;
     }
 
-    protected override Status OnUpdate()
-    {
-        return Status.Success;
-    }
-
-    protected override void OnEnd() {
+    protected override Status OnUpdate() {
+        return AI.Value.CheckWorkFinished() ? Status.Success : Status.Running;
     }
 }
 

@@ -129,12 +129,11 @@ MonoBehaviour:
   <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
   <workComponent>k__BackingField: {fileID: 4077641912464904975}
   <houseRetriever>k__BackingField: {fileID: 1857299742354842865}
-  <growComponent>k__BackingField: {fileID: 2022015165024604261}
   <scareComponent>k__BackingField: {fileID: 5805087815445507371}
   <entityIa>k__BackingField: {fileID: 7957398275529141594}
+  <entityGrow>k__BackingField: {fileID: 7471173993042387809}
   workProbability: 0.05
   fuckProbability: 0.01
-  isFullyGrown: 0
 --- !u!114 &7676501364616398555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityGrow
   growComponent: {fileID: 2022015165024604261}
+  isFullyGrown: 0
 --- !u!114 &4077641912464904975
 MonoBehaviour:
   m_ObjectHideFlags: 0
