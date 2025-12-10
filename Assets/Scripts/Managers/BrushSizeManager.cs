@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,20 @@ public class BrushSizeManager : MonoBehaviour
     public delegate void BrushSizeChangedDelegate(int newSize);
     public event BrushSizeChangedDelegate onBrushSizeChanged;
     
+    public static BrushSizeManager instance { get; private set; }
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
     private void Start()
     {
         brushSize = defaultBrushSize;

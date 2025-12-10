@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Components;
 
 public class TilemapManager : MonoBehaviour
 {
     [SerializeField] private TilePool tilePool;
-    [SerializeField] private BrushSizeManager brushSizeManager;
     [SerializeField] private TileSelector tileSelector;
 
     [field: SerializeField] public float tileHeight { get; private set; } = 0.2f;
@@ -21,6 +21,9 @@ public class TilemapManager : MonoBehaviour
 
     public Dictionary<Vector3Int, GameObject> tiles { get; } = new();
     private Dictionary<Vector2Int, int> columnTopCoordinate = new();
+    private Dictionary<Vector3Int, PosableObject> placedObjects = new();
+    private Dictionary<GameObject, bool> prefabHasWaterSystem = new();
+    private HashSet<Vector3Int> waterTilePositions = new(); // Tracks positions with water tiles for O(1) lookups
     public event Action<Vector3Int> columnModified;
     public event Action startedPlacingTiles;
     public event Action endedPlacingTiles;
@@ -28,7 +31,7 @@ public class TilemapManager : MonoBehaviour
     public Vector3Int currentHexCoordinates { get; private set; }
 
     public static TilemapManager instance { get; private set; }
-    
+
     public event Action<Vector3Int> tilePlaced;
     public event Action<Vector3Int> tileRemoved;
 
@@ -155,10 +158,26 @@ public class TilemapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Checks if a prefab has a WaterSystem component (cached for performance)
+    /// </summary>
+    /// <param name="prefab">The prefab to check</param>
+    /// <returns>True if the prefab has a WaterSystem component</returns>
+    private bool PrefabHasWaterSystem(GameObject prefab)
+    {
+        if (!prefabHasWaterSystem.TryGetValue(prefab, out bool hasWaterSystem))
+        {
+            hasWaterSystem = prefab.GetComponent<WaterComponent>() != null;
+            prefabHasWaterSystem[prefab] = hasWaterSystem;
+        }
+
+        return hasWaterSystem;
+    }
+
+    /// <summary>
     /// Places tiles in brush area at the current mouse hex coordinates and updates the occlusion culling.
     /// </summary>
     /// <param name="tilePrefab"> The tile to place </param>
-    public void PlaceTiles(GameObject prefab)
+    public void PlaceTilesAtMouse(GameObject prefab)
     {
         if (Time.time - lastClickTime <
             clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
@@ -167,13 +186,13 @@ public class TilemapManager : MonoBehaviour
         }
 
         lastClickTime = Time.time;
-        var brushArea = brushSizeManager.GetBrushArea(currentHexCoordinates);
+        var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
         startedPlacingTiles?.Invoke();
 
         foreach (var hexCoordinate in brushArea)
         {
             int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
-            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate+1);
+            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate + 1);
             SpawnTileAt(tilePosition, prefab);
         }
 
@@ -192,6 +211,26 @@ public class TilemapManager : MonoBehaviour
             return;
         }
 
+        bool isWaterPrefab = PrefabHasWaterSystem(prefab);
+
+        switch (!isWaterPrefab)
+        {
+            case true when placedObjects.ContainsKey(hexCoordinates):
+            {
+                var newPosition = hexCoordinates + new Vector3Int(0, 0, 1);
+                placedObjects[newPosition] = placedObjects[hexCoordinates];
+                placedObjects.Remove(hexCoordinates);
+                placedObjects[newPosition].transform.position = HexAxialToWorld(newPosition);
+                break;
+            }
+            case false when placedObjects.ContainsKey(hexCoordinates):
+            {
+                Destroy(placedObjects[hexCoordinates].gameObject);
+                placedObjects.Remove(hexCoordinates);
+                break;
+            }
+        }
+
         if (tiles.ContainsKey(hexCoordinates)) // Check if a tile already exists at the specified coordinates
             // because otherwise the tile will be replaced without being destroyed
         {
@@ -203,9 +242,12 @@ public class TilemapManager : MonoBehaviour
             }
 
             tiles.Remove(hexCoordinates);
+            // Remove from water positions if the existing tile was water
+            waterTilePositions.Remove(hexCoordinates);
         }
 
         Vector3 spawnPosition = HexAxialToWorld(hexCoordinates);
+
 
         GameObject newTile = tilePool.GetTile(prefab);
         if (newTile == null)
@@ -219,8 +261,12 @@ public class TilemapManager : MonoBehaviour
         newTile.name = $"Tile_({hexCoordinates.x}, {hexCoordinates.y}, {hexCoordinates.z})";
 
         tiles.Add(hexCoordinates, newTile);
-        
-        ChunkManager.Instance.AddGameObjectToChunk(newTile.transform.position, newTile);
+
+        // Track water tile positions for efficient water-on-water checks
+        if (isWaterPrefab)
+        {
+            waterTilePositions.Add(hexCoordinates);
+        }
 
         Vector2Int columnKey = new Vector2Int(hexCoordinates.x, hexCoordinates.y);
 
@@ -232,6 +278,139 @@ public class TilemapManager : MonoBehaviour
         columnModified?.Invoke(hexCoordinates);
 
         tilePlaced?.Invoke(hexCoordinates);
+    }
+
+    /// <summary>
+    ///  Tries to spawn an object at the current mouse hex coordinates if the underlying tile is allowed.
+    /// </summary>
+    /// <param name="objectPrefab"></param>
+    /// <returns></returns>
+    public bool TrySpawnObjectAtMouse(PosableObject objectPrefab)
+    {
+        if (Time.time - lastClickTime <
+            clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
+        {
+            return false;
+        }
+
+        lastClickTime = Time.time;
+        SpawnObjectAtMouse(objectPrefab);
+        return true;
+    }
+
+    /// <summary>
+    ///  Tries to spawn an entity at the current mouse hex coordinates if the underlying tile is allowed.
+    /// </summary>
+    /// <param name="entityPrefab"></param>
+    /// <returns></returns>
+    public bool TrySpawnEntityAtMouse(PosableEntity entityPrefab)
+    {
+        if (Time.time - lastClickTime <
+            clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
+        {
+            return false;
+        }
+
+        lastClickTime = Time.time;
+        SpawnEntityAtMouse(entityPrefab);
+        return true;
+    }
+
+    /// <summary>
+    ///  Tries to remove an entity at the current mouse hex coordinates.
+    /// </summary>
+    /// <returns> Whether it actually removed the entity or not </returns>
+    public bool TryRemoveEntityAtMouse()
+    {
+        if (Time.time - lastClickTime <
+            clickCooldown) // Simple click cooldown to prevent multiple placements on a single click
+        {
+            return false;
+        }
+
+        lastClickTime = Time.time;
+        RemoveEntityAtMouse();
+        return true;
+    }
+
+    /// <summary>
+    ///  Removes an object at the current mouse hex coordinates.
+    /// </summary>
+    private void RemoveEntityAtMouse()
+    {
+        var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
+
+        foreach (var hexCoordinate in brushArea)
+        {
+            int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
+            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate + 1);
+
+            if (placedObjects.TryGetValue(tilePosition, out var posableObject))
+            {
+                Destroy(posableObject.gameObject);
+                placedObjects.Remove(tilePosition);
+            }
+        }
+    }
+
+    /// <summary>
+    ///  Spawns an object at the current mouse hex coordinates.
+    /// </summary>
+    public void SpawnObjectAtMouse(PosableObject objectPrefab)
+    {
+        SpawnPosableAtMouse(objectPrefab, true);
+    }
+
+    /// <summary>
+    ///  Spawns an entity at the current mouse hex coordinates.
+    /// </summary>
+    public void SpawnEntityAtMouse(PosableEntity entityPrefab)
+    {
+        SpawnPosableAtMouse(entityPrefab, false);
+    }
+
+    /// <summary>
+    ///  Spawns a posable (object or entity) at the current mouse hex coordinates.
+    /// </summary>
+    /// <param name="posablePrefab">The posable prefab to spawn</param>
+    /// <param name="storeInDictionary">Whether to store the spawned posable in the placedObjects dictionary</param>
+    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary)
+    {
+        var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
+
+        foreach (var hexCoordinate in brushArea)
+        {
+            int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
+            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate);
+            GameObject tileAtPosition = GetTile(tilePosition);
+
+            if (tileAtPosition != null)
+            {
+                // Check if trying to place a PosableObject and one already exists at this position
+                if (posablePrefab is PosableObject && placedObjects.ContainsKey(tilePosition))
+                {
+                    continue; // Skip this position
+                }
+
+                tilePosition.z += 1; // Place on top of the tile
+                Vector3 spawnPosition = HexAxialToWorld(tilePosition);
+                spawnPosition.y += tileHeight / 2f; // Adjust Y position to sit on top of the tile
+                GameObject tilePrefab = tilePool.GetOriginalPrefab(tileAtPosition);
+
+                if (tilePrefab != null && posablePrefab.allowedTiles.Contains(tilePrefab))
+                {
+                    Posable newPosable = Instantiate(posablePrefab, spawnPosition, Quaternion.identity);
+                    string typeName = storeInDictionary ? "Object" : "Entity";
+                    newPosable.name =
+                        $"{typeName}_({currentHexCoordinates.x}, {currentHexCoordinates.y}, {currentHexCoordinates.z})";
+
+                    if (storeInDictionary && newPosable is PosableObject posableObject)
+                    {
+                        placedObjects[tilePosition] = posableObject;
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -315,10 +494,11 @@ public class TilemapManager : MonoBehaviour
     /// <param name="hexCoordinates"> The coordinates in 2D space of the column </param>
     public int GetColumnTopCoordinate(Vector2Int hexCoordinates)
     {
-        if( columnTopCoordinate.TryGetValue(hexCoordinates, out int height))
+        if (columnTopCoordinate.TryGetValue(hexCoordinates, out int height))
         {
             return height;
         }
+
         columnTopCoordinate[hexCoordinates] = 0;
         return 0;
     }
@@ -326,7 +506,7 @@ public class TilemapManager : MonoBehaviour
     /// <summary>
     /// Removes tiles in brush area at the current mouse hex coordinates and updates the occlusion culling.
     /// </summary>
-    public void RemoveTile()
+    public void RemoveTileAtMouse()
     {
         if (Time.time - lastClickTime < clickCooldown)
         {
@@ -334,7 +514,7 @@ public class TilemapManager : MonoBehaviour
         }
 
         lastClickTime = Time.time;
-        var brushArea = brushSizeManager.GetBrushArea(currentHexCoordinates);
+        var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
 
         startedPlacingTiles?.Invoke();
 
@@ -359,6 +539,88 @@ public class TilemapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Removes non-water tiles in brush area at the current mouse hex coordinates. Skips water tiles.
+    /// </summary>
+    public void RemoveTileAtMouseExceptWater()
+    {
+        if (Time.time - lastClickTime < clickCooldown)
+        {
+            return;
+        }
+
+        lastClickTime = Time.time;
+        var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
+
+        startedPlacingTiles?.Invoke();
+
+        /*bool useBatchMode = brushArea.Length > 1 && occlusionCullingManager != null;
+        if (useBatchMode)
+        {
+            occlusionCullingManager.BeginBatch();
+        }*/
+
+        foreach (var hexCoordinate in brushArea)
+        {
+            int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
+            Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate);
+
+            // Skip water tiles using O(1) HashSet lookup
+            if (!waterTilePositions.Contains(tilePosition))
+            {
+                RemoveTileAt(tilePosition);
+            }
+        }
+
+        /*if (useBatchMode)
+        {
+            occlusionCullingManager.EndBatch();
+        }*/
+
+        endedPlacingTiles?.Invoke();
+    }
+
+    /// <summary>
+    ///  Removes all water tiles at the current mouse hex coordinates.
+    /// </summary>
+    public void RemoveAllWaterAtMouse()
+    {
+        if (Time.time - lastClickTime < clickCooldown)
+        {
+            return;
+        }
+
+        lastClickTime = Time.time;
+        Vector2Int[] brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
+        foreach (var hexCoordinate in brushArea)
+        {
+            RemoveAllWaterAt(new Vector3Int(hexCoordinate.x, hexCoordinate.y, 0));
+        }
+    }
+
+
+    /// <summary>
+    ///  Removes all water tiles at the specified hexagonal coordinates.
+    /// </summary>
+    /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
+    public void RemoveAllWaterAt(Vector3Int hexCoordinates)
+    {
+        int topCoordinate = GetColumnTopCoordinate(new Vector2Int(hexCoordinates.x, hexCoordinates.y));
+
+        for (int z = topCoordinate; z >= 0; z--)
+        {
+            Vector3Int tilePosition = new Vector3Int(hexCoordinates.x, hexCoordinates.y, z);
+            if (waterTilePositions.Contains(tilePosition))
+            {
+                RemoveTileAt(tilePosition);
+            }
+            else
+            {
+                break; // Stop if a non-water tile is encountered
+            }
+        }
+    }
+
+    /// <summary>
     ///  Removes the tile at the specified hexagonal coordinates, updates column height and occlusion culling.
     /// </summary>
     /// <param name="hexCoordinates"></param>
@@ -374,8 +636,11 @@ public class TilemapManager : MonoBehaviour
 
         tiles.Remove(hexCoordinates);
 
+        // Remove from water positions set if it was a water tile
+        waterTilePositions.Remove(hexCoordinates);
+
         Vector2Int columnKey = new Vector2Int(hexCoordinates.x, hexCoordinates.y);
-        columnTopCoordinate[columnKey] = hexCoordinates.z-1;
+        columnTopCoordinate[columnKey] = hexCoordinates.z - 1;
         if (columnTopCoordinate[columnKey] < 0)
         {
             columnTopCoordinate.Remove(columnKey);

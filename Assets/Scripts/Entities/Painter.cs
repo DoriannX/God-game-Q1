@@ -83,11 +83,11 @@ public class Painter : MonoBehaviour
             }
             else if (currentMode == PainterMode.Bucket)
             {
-                //bucketComponent.Remove(mousePos, brushSize);
+                bucketComponent.Remove();
             }
             else if (currentMode == PainterMode.Object)
             {
-                //poserComponent.Add(mousePos, brushSize);
+                poserComponent.Add();
             }
             else if (currentMode == PainterMode.Destruction)
             {

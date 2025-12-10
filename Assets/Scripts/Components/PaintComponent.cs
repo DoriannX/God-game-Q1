@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -16,7 +17,7 @@ public class PaintComponent : MonoBehaviour
 
     public void Add()
     {
-        TilemapManager.instance.PlaceTiles(TileSelector.instance.GetCurrentTile());
+        TilemapManager.instance.PlaceTilesAtMouse(TileSelector.instance.GetCurrentTile());
     }
     public void SetCurrentTile(int index)
     {

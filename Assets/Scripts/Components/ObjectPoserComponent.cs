@@ -1,39 +1,31 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using Random = UnityEngine.Random;
 
 public class ObjectPoserComponent : MonoBehaviour
 {
-    [field: SerializeField] public PosableObject[] posableObjects { get; private set; }
+    [field: SerializeField] public Posable[] posableObjects { get; private set; }
     [SerializeField] private float maxObject = 100f;
     public int objectIndex { get; private set; }
     private Vector2 lastPos;
     private Vector2 lastHitPos;
     private bool canPlace = true;
-    private Camera camera1;
-    private int ghostIndex;
-
-    private void Start()
-    {
-        camera1 = Camera.main;
-        ghostIndex = Array.FindIndex(posableObjects, obj => obj.GetComponent<GhostIa>() != null);
-    }
 
     private void OnEnable()
     {
         TickSystem.ticked += ResetAdd;
     }
 
-    public void Add(Vector2 pos, float brushSize)
+    public void Add()
     {
-        Add(pos, brushSize, posableObjects[objectIndex]);
-    }
-
-    private void Add(Vector2 pos, float brushSize, PosableObject posableObject)
-    {
-        if (!canPlace) return;
+        if (posableObjects[objectIndex] is PosableObject posableObject)
+        {
+            TilemapManager.instance.TrySpawnObjectAtMouse(posableObject);
+        }
+        else
+        {
+             TilemapManager.instance.SpawnEntityAtMouse( posableObjects[objectIndex] as PosableEntity);
+        }
+        /*if (!canPlace) return;
         var worldPos = new Vector3(pos.x, pos.y, 0);
         var allowedTiles = posableObject.allowedTiles;
 
@@ -48,13 +40,13 @@ public class ObjectPoserComponent : MonoBehaviour
         {
             var offset = new Vector3(Random.Range(-brushSize, brushSize), Random.Range(-brushSize, brushSize), 0);
             TryPlace(worldPos + offset, allowedTiles, posableObject);
-        }
+        }*/
     }
 
     private void TryPlace(Vector3 worldPos, List<GameObject> allowedTiles,
         PosableObject prefab)
     {
-        var cellPos = TilemapManager.instance.WorldToHexAxial(worldPos);
+        /*var cellPos = TilemapManager.instance.WorldToHexAxial(worldPos);
         var baseTile = TilemapManager.instance.GetTile(cellPos);
         if (baseTile == null || !allowedTiles.Contains(baseTile)) return;
 
@@ -67,11 +59,12 @@ public class ObjectPoserComponent : MonoBehaviour
         {
             Instantiate(prefab, TilemapManager.instance.HexAxialToWorld(cellPos), Quaternion.identity);
         }
-        canPlace = false;
+        canPlace = false;*/
     }
 
     public void Remove(Vector2 pos, float brushSize)
     {
+        /*
         lastPos = pos;
         var worldPos = new Vector3(pos.x, pos.y, 0);
 
@@ -116,7 +109,7 @@ public class ObjectPoserComponent : MonoBehaviour
                     Destroy(col.gameObject);
                 }
             }
-        }
+        }*/
     }
 
     private void ResetAdd()
