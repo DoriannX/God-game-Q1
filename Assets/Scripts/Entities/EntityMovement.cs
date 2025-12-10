@@ -1,9 +1,6 @@
-using System;
-using SaveLoadSystem;
 using UnityEngine;
 
-public class EntityMovement : MonoBehaviour
-{
+public class EntityMovement : MonoBehaviour {
     private Vector3 currentTarget;
     private Vector3 startPosition;
 

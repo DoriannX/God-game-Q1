@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7676501364616398555}
   - component: {fileID: 3234770281780568274}
   - component: {fileID: 7957398275529141594}
+  - component: {fileID: 7471173993042387809}
   - component: {fileID: 4077641912464904975}
   - component: {fileID: 4552284087110041515}
   - component: {fileID: 1857299742354842865}
@@ -180,6 +181,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   entityMovement: {fileID: 8695087590091800227}
+--- !u!114 &7471173993042387809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8c42a8b4014f8f82d0e400eed6eb80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityGrow
+  growComponent: {fileID: 2022015165024604261}
 --- !u!114 &4077641912464904975
 MonoBehaviour:
   m_ObjectHideFlags: 0

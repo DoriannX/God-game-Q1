@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class WorkComponent : MonoBehaviour
 {
+    
+    public bool isWorkDone { get; private set; }
+    private void Awake()
+    {
+        onWork += () => isWorkDone = true;
+    }
+
     [SerializeField] private float workRange = 5f;
     public event Action onWork;
     public void Work()
@@ -10,6 +17,8 @@ public class WorkComponent : MonoBehaviour
         GetTask()?.Work();
         onWork?.Invoke();
     }
+    
+    
 
     public WorkTask GetTask()
     {
