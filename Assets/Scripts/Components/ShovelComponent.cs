@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ShovelComponent : MonoBehaviour
 {
@@ -19,8 +20,9 @@ public class ShovelComponent : MonoBehaviour
 
     public void Add()
     {
+        //Check if the tiles are water first
         
-        TilemapManager.instance.RemoveTile();
+        TilemapManager.instance.RemoveTileAtMouseExceptWater();
         
         //TODO: refaire
         /*Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);

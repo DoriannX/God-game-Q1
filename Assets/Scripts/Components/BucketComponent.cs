@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 /// <summary>
 /// TEMPORARILY DISABLED - Water removal component incompatible with new hexagonal TilemapManager.
@@ -6,10 +7,8 @@ using UnityEngine;
 /// </summary>
 public class BucketComponent : MonoBehaviour
 {
-    public void Remove(Vector2 pos, float brushSize)
+    public void Remove()
     {
-        // DISABLED: Water removal temporarily disabled
-        Debug.LogWarning("BucketComponent.Remove() is DISABLED - Water system not available");
         
         /* ORIGINAL CODE - Disabled until water system is re-implemented
         Vector3Int centerCell = TilemapManager.instance.WorldToWaterCell(pos);
@@ -33,5 +32,8 @@ public class BucketComponent : MonoBehaviour
             }
         }
         */
+        
+        
+        TilemapManager.instance.RemoveAllWaterAtMouse();
     }
 }
