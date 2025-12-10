@@ -785,6 +785,9 @@ namespace Unity.VisualScripting.Generated.Aot
 	// TileSelector.op_Implicit
 	// TileSelector.op_Equality
 	// TileSelector.op_Inequality
+	// ToolbarManager.op_Implicit
+	// ToolbarManager.op_Equality
+	// ToolbarManager.op_Inequality
 	// WaterSystem.op_Implicit
 	// WaterSystem.op_Equality
 	// WaterSystem.op_Inequality
@@ -827,6 +830,9 @@ namespace Unity.VisualScripting.Generated.Aot
 	// ButtonHandler.op_Implicit
 	// ButtonHandler.op_Equality
 	// ButtonHandler.op_Inequality
+	// CategoryButtonUI.op_Implicit
+	// CategoryButtonUI.op_Equality
+	// CategoryButtonUI.op_Inequality
 	// DestructionUIMaker.op_Implicit
 	// DestructionUIMaker.op_Equality
 	// DestructionUIMaker.op_Inequality
@@ -10212,6 +10218,41 @@ namespace Unity.VisualScripting.Generated.Aot
 			optimized.Invoke(default(object[]));
 		}
 		
+		// ToolbarManager.op_Implicit
+		[global::UnityEngine.Scripting.PreserveAttribute()]
+		public static void ToolbarManager_op_Implicit()
+		{
+			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
+			bool conversion = ((bool)(arg0));
+			global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, bool> optimized = new global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, bool>(default(global::System.Reflection.MethodInfo));
+			optimized.Invoke(null, arg0);
+			optimized.Invoke(default(object[]));
+		}
+		
+		// ToolbarManager.op_Equality
+		[global::UnityEngine.Scripting.PreserveAttribute()]
+		public static void ToolbarManager_op_Equality()
+		{
+			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
+			global::UnityEngine.Object arg1 = default(global::UnityEngine.Object);
+			bool @operator = (arg0 == arg1);
+			global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool> optimized = new global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool>(default(global::System.Reflection.MethodInfo));
+			optimized.Invoke(null, arg0, arg1);
+			optimized.Invoke(default(object[]));
+		}
+		
+		// ToolbarManager.op_Inequality
+		[global::UnityEngine.Scripting.PreserveAttribute()]
+		public static void ToolbarManager_op_Inequality()
+		{
+			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
+			global::UnityEngine.Object arg1 = default(global::UnityEngine.Object);
+			bool @operator = (arg0 != arg1);
+			global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool> optimized = new global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool>(default(global::System.Reflection.MethodInfo));
+			optimized.Invoke(null, arg0, arg1);
+			optimized.Invoke(default(object[]));
+		}
+		
 		// WaterSystem.op_Implicit
 		[global::UnityEngine.Scripting.PreserveAttribute()]
 		public static void WaterSystem_op_Implicit()
@@ -10693,6 +10734,41 @@ namespace Unity.VisualScripting.Generated.Aot
 		// ButtonHandler.op_Inequality
 		[global::UnityEngine.Scripting.PreserveAttribute()]
 		public static void ButtonHandler_op_Inequality()
+		{
+			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
+			global::UnityEngine.Object arg1 = default(global::UnityEngine.Object);
+			bool @operator = (arg0 != arg1);
+			global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool> optimized = new global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool>(default(global::System.Reflection.MethodInfo));
+			optimized.Invoke(null, arg0, arg1);
+			optimized.Invoke(default(object[]));
+		}
+		
+		// CategoryButtonUI.op_Implicit
+		[global::UnityEngine.Scripting.PreserveAttribute()]
+		public static void CategoryButtonUI_op_Implicit()
+		{
+			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
+			bool conversion = ((bool)(arg0));
+			global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, bool> optimized = new global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, bool>(default(global::System.Reflection.MethodInfo));
+			optimized.Invoke(null, arg0);
+			optimized.Invoke(default(object[]));
+		}
+		
+		// CategoryButtonUI.op_Equality
+		[global::UnityEngine.Scripting.PreserveAttribute()]
+		public static void CategoryButtonUI_op_Equality()
+		{
+			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
+			global::UnityEngine.Object arg1 = default(global::UnityEngine.Object);
+			bool @operator = (arg0 == arg1);
+			global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool> optimized = new global::Unity.VisualScripting.StaticFunctionInvoker<UnityEngine.Object, UnityEngine.Object, bool>(default(global::System.Reflection.MethodInfo));
+			optimized.Invoke(null, arg0, arg1);
+			optimized.Invoke(default(object[]));
+		}
+		
+		// CategoryButtonUI.op_Inequality
+		[global::UnityEngine.Scripting.PreserveAttribute()]
+		public static void CategoryButtonUI_op_Inequality()
 		{
 			global::UnityEngine.Object arg0 = default(global::UnityEngine.Object);
 			global::UnityEngine.Object arg1 = default(global::UnityEngine.Object);
