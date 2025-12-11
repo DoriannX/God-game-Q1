@@ -16,6 +16,14 @@ public class ChunkManager : MonoBehaviour
 
     private void OnEnable()
     {
+        if (ChunkManager.Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         TilemapManager.instance.tilePlaced += OnTilePlaced;
         TilemapManager.instance.tileRemoved += OnTileRemoved;
     }

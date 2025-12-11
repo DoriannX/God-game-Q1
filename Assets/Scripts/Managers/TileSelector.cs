@@ -63,6 +63,7 @@ public class TileSelector : MonoBehaviour
         if (AvailableTiles != null && AvailableTiles.Length > 0)
         {
             currentTileIndex = Mathf.Clamp(index, 0, AvailableTiles.Length - 1);
+
         }
     }
 }

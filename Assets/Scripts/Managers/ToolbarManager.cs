@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 public class CategoryItemsConfig
@@ -17,6 +18,10 @@ public class ToolbarManager : MonoBehaviour
     [Header("Catégories")]
     [SerializeField] private CategoryItemsConfig[] categories;
 
+    [Header("Références")]
+    [SerializeField] private PaletteSelector paletteSelector;
+
+
     private GameObject currentItemsBar;
     private string currentCategoryId;
 
@@ -25,6 +30,7 @@ public class ToolbarManager : MonoBehaviour
         
         if (currentItemsBar != null && currentCategoryId == categoryId)
         {
+            Debug.Log($"ToolbarManager: fermeture de la catégorie '{categoryId}'");
             Destroy(currentItemsBar);
             currentItemsBar = null;
             currentCategoryId = null;
@@ -34,6 +40,7 @@ public class ToolbarManager : MonoBehaviour
         
         if (currentItemsBar != null)
         {
+
             Destroy(currentItemsBar);
             currentItemsBar = null;
         }
@@ -61,6 +68,13 @@ public class ToolbarManager : MonoBehaviour
 
         currentItemsBar = barInstance;
         currentCategoryId = categoryId;
+
+        var content = barInstance.GetComponent<ItemsBarContent>();
+
+        if (content != null && paletteSelector != null)
+        {
+            paletteSelector.ConnectDynamicButtons(content.buttons, content.mode);
+        }
     }
 
     private CategoryItemsConfig GetConfigForCategory(string categoryId)

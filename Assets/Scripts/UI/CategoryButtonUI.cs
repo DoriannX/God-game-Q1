@@ -11,7 +11,7 @@ public class CategoryButtonUI : MonoBehaviour
     private void Awake()
     {
         button = GetComponent<Button>();
-        toolbarManager = FindObjectOfType<ToolbarManager>();
+        toolbarManager = Object.FindFirstObjectByType<ToolbarManager>();
         button.onClick.AddListener(OnClickCategory);
     }
 
