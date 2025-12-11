@@ -18,7 +18,7 @@ public class ShovelComponent : MonoBehaviour
         //heightManager = HeightManager.instance;
     }
 
-    public void Add()
+    public void Shovel()
     {
         //Check if the tiles are water first
         

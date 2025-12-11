@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public abstract class DestructionObject : MonoBehaviour
+public abstract class DestructionObject : Posable
 {
-    public abstract void Destroy(Vector2 pos);
+    public abstract void Destroy();
     [field: SerializeField] public Sprite sprite { get; private set; }
 }

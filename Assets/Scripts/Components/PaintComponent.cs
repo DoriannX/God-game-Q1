@@ -15,7 +15,7 @@ public class PaintComponent : MonoBehaviour
     // Event kept for compatibility but not invoked
     public event Action<Vector3Int> paintedWater;
 
-    public void Add()
+    public void Paint()
     {
         TilemapManager.instance.PlaceTilesAtMouse(TileSelector.instance.GetCurrentTile());
     }

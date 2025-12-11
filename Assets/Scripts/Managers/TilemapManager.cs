@@ -353,6 +353,11 @@ public class TilemapManager : MonoBehaviour
         }
     }
 
+    public void SpawnDestructionAtMouse(DestructionObject objectPrefab)
+    {
+        SpawnPosableAtMouse(objectPrefab, false);
+    }
+
     /// <summary>
     ///  Spawns an object at the current mouse hex coordinates.
     /// </summary>
@@ -383,7 +388,6 @@ public class TilemapManager : MonoBehaviour
             int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
             Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate);
             GameObject tileAtPosition = GetTile(tilePosition);
-
             if (tileAtPosition != null)
             {
                 // Check if trying to place a PosableObject and one already exists at this position
@@ -654,5 +658,27 @@ public class TilemapManager : MonoBehaviour
         }*/
 
         tileRemoved?.Invoke(hexCoordinates);
+    }
+
+    /// <summary>
+    /// Gets the placed object at the specified position, if any.
+    /// </summary>
+    /// <param name="position">The position to check</param>
+    /// <returns>The PosableObject at that position, or null if none exists</returns>
+    public PosableObject GetPlacedObjectAt(Vector3Int position)
+    {
+        placedObjects.TryGetValue(position, out var placedObject);
+        return placedObject;
+    }
+
+    /// <summary>
+    /// Removes a placed object at the specified position from the dictionary.
+    /// Does NOT destroy the GameObject - caller is responsible for that.
+    /// </summary>
+    /// <param name="position">The position to remove from</param>
+    /// <returns>True if an object was removed, false otherwise</returns>
+    public bool RemovePlacedObjectAt(Vector3Int position)
+    {
+        return placedObjects.Remove(position);
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
 
 public class Meteore : DestructionObject
@@ -10,86 +9,90 @@ public class Meteore : DestructionObject
     [SerializeField] private float minDelay = 1f;
     [SerializeField] private float maxDelay = 3f;
     [SerializeField] private GameObject meteoriteAnimationPrefab;
-    private Collider2D[] results = new Collider2D[1000];
 
-    public override void Destroy(Vector2 pos)
+    private void OnEnable()
     {
-        StartCoroutine(DestroyAfterDelay(pos));
+        Destroy();
     }
 
-    private IEnumerator DestroyAfterDelay(Vector2 pos)
+    public override void Destroy()
     {
-        //TODO: refaire
-        /*float waitTime = Random.Range(minDelay, maxDelay);
+        StartCoroutine(DestroyAfterDelay());
+    }
+
+    /// <summary>
+    ///  Destroy the meteorite after a random delay, creating a spherical impact on tiles and objects
+    /// </summary>
+    private IEnumerator DestroyAfterDelay()
+    {
+        print("éclate dans " + gameObject.name);
+        float waitTime = Random.Range(minDelay, maxDelay);
         Instantiate(meteoriteAnimationPrefab, transform.position, Quaternion.identity).GetComponent<MeteoriteAnimation>().SetDuration(waitTime);
         yield return new WaitForSeconds(waitTime);
 
-        // Impact visuel
-        Vector3Int centerCell = TilemapManager.instance.WorldToHexAxial(pos);
+        // Simple spherical impact - use OverlapSphere to detect everything
+        Vector3 impactCenter = transform.position;
         float meteoriteSize = Random.Range(minSize, maxSize);
 
-        int cellRadiusX = Mathf.CeilToInt(meteoriteSize * 1.5f / TilemapManager.instance.cellSize.x);
-        int cellRadiusY = Mathf.CeilToInt(meteoriteSize * 1.5f / TilemapManager.instance.cellSize.y);
-        int maxRadius = Mathf.Max(cellRadiusX, cellRadiusY);
-
-        for (int x = -maxRadius; x <= maxRadius; x++)
+        // Get all colliders in the impact sphere
+        Collider[] hitColliders = Physics.OverlapSphere(impactCenter, meteoriteSize);
+        
+        foreach (Collider hitCol in hitColliders)
         {
-            for (int y = -maxRadius; y <= maxRadius; y++)
+            // Check if it's a tile
+            GameObject hitObject = hitCol.gameObject;
+            Vector3Int tileCoords = TilemapManager.instance.WorldToHexAxial(hitObject.transform.position);
+            
+            // Try to get the tile at this position
+            GameObject tile = TilemapManager.instance.GetTile(tileCoords);
+            if (tile == hitObject)
             {
-                Vector3Int cell = centerCell + new Vector3Int(x, y, 0);
-                Vector3 cellWorldPos = TilemapManager.instance.HexAxialToWorld(cell);
-
-                if (Vector2.Distance(pos, cellWorldPos) <= meteoriteSize)
-                {
-                    float dist = Vector2.Distance(new Vector2(x, y), Vector2.zero);
-                    float level = Mathf.Clamp01(1f - dist / maxRadius);
-                    GameObject previousTile = heightManager.GetUnderHeightTile(
-                        TilemapManager.instance.GetTile(cell),
-                        (int)(level * 3)
-                    );
-
-                    if (previousTile == null) continue;
-                    TilemapManager.instance.SpawnTileAt(cell, previousTile);
-                    WaterSystem.instance.RemoveWater(cell);
-                }
-            }
-        }
-
-        // Destruction des objets touchés
-        ContactFilter2D contactFilter = new()
-        {
-            useTriggers = true,
-            useLayerMask = false,
-            useDepth = false,
-            useOutsideDepth = false,
-            useNormalAngle = false,
-            useOutsideNormalAngle = false
-        };
-        int hitCount = Physics2D.OverlapCircle(transform.position, meteoriteSize, contactFilter, results);
-        print(hitCount);
-        for (int i = 0; i < hitCount; i++)
-        {
-            var destructible = results[i].GetComponent<PosableObject>();
-            if (destructible != null)
-            {
-                if( destructible.GetComponent<GhostIa>() != null)
-                {
-                    GhostManager.instance.RemoveGhost(destructible.gameObject);
-                }
-                else if (destructible.GetComponent<House>() != null)
-                {
-                    GhostManager.instance.UnregisterGhostInHouse(destructible.GetComponent<House>());
-                }
-                else
-                {
-                    Destroy(destructible.gameObject);
-                }
-            }
+                // It's a tile - remove it from the tilemap
+                TilemapManager.instance.RemoveTileAt(tileCoords);
                 
+                // Also check for placed objects one level above
+                Vector3Int objectPos = tileCoords + new Vector3Int(0, 0, 1);
+                var placedObject = TilemapManager.instance.GetPlacedObjectAt(objectPos);
+                if (placedObject != null)
+                {
+                    HandlePosableDestruction(placedObject);
+                    TilemapManager.instance.RemovePlacedObjectAt(objectPos);
+                }
+            }
+            else
+            {
+                // It's an entity or placed object - handle destruction
+                var posable = hitObject.GetComponent<Posable>();
+                if (posable != null)
+                {
+                    HandlePosableDestruction(posable);
+                }
+            }
         }
 
         // Destruction du météore lui-même
-        Destroy(gameObject);*/
+        Destroy(gameObject);
         yield return null;
     }
+
+    /// <summary>
+    /// Handles the destruction of posable objects (ghosts, houses, etc.)
+    /// </summary>
+    private void HandlePosableDestruction(Posable posable)
+    {
+        if (posable.GetComponent<GhostIa>() != null)
+        {
+            GhostManager.instance.RemoveGhost(posable.gameObject);
+        }
+        else if (posable.GetComponent<House>() != null)
+        {
+            GhostManager.instance.UnregisterGhostInHouse(posable.GetComponent<House>());
+            Destroy(posable.gameObject);
+        }
+        else
+        {
+            Destroy(posable.gameObject);
+        }
+    }
 }
+

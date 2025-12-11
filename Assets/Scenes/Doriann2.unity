@@ -2303,8 +2303,6 @@ MonoBehaviour:
   inputHandler: {fileID: 1083190373}
   speed: 0.01
   zoomSpeed: 10
-  moveXLimit: 25
-  moveYLimit: 13
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2329,8 +2327,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e4493afeeb358022b86476be0f8ff29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  minY: 35
-  maxY: 300
+  minZ: 5
+  maxZ: 50
+  zoomPlaneDistance: 0
 --- !u!1 &523872008
 GameObject:
   m_ObjectHideFlags: 0
