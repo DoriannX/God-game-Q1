@@ -7,8 +7,7 @@ public class BehaviorData : MonoBehaviour {
     [field : SerializeField] public WanderComponent wanderComponent { get; private set; }
     [field : SerializeField] public WorkComponent workComponent { get; private set; }
     [field : SerializeField] public BreedComponent breedComponent { get; private set; }
-    [field : SerializeField] public HouseRetriever houseRetriever { get; private set; }
-    [field : SerializeField] public ScareComponent scareComponent { get; private set; }
+    /*[field : SerializeField] public ScareComponent scareComponent { get; private set; }*/
     [field : SerializeField] public EntityIA entityIa { get; private set; }
     [field : SerializeField] public EntityGrow entityGrow { get; private set; }
     [SerializeField] private float workProbability;

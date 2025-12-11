@@ -11,7 +11,7 @@ public class WorkState : State
         this.ghostIA = ghostIA;
     }
 
-    public override void OnLogic()
+    /*public override void OnLogic()
     {
         base.OnLogic();
         WorkTask task = workComponent.GetTask();
@@ -24,5 +24,5 @@ public class WorkState : State
         {
             workComponent.Work();
         }
-    }
+    }*/
 }

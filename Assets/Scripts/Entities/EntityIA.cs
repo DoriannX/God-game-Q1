@@ -3,6 +3,7 @@ using SaveLoadSystem;
 using UnityEngine;
 
 public abstract class EntityIA : MonoBehaviour, ISaveable {
+    public virtual EntityType entityType { get; protected set; } = EntityType.Ghost;
     
     public Vector3 targetPosition { get; protected set; }
     

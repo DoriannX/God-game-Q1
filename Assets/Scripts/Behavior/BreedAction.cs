@@ -9,9 +9,8 @@ using Unity.Properties;
 public partial class BreedAction : Action {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
 
-    protected override Status OnStart()
-    {
-        
+    protected override Status OnStart() {
+        AI.Value.breedComponent.GoBreed();
         return Status.Running;
     }
     

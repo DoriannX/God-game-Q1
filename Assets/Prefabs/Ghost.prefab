@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2733767584711712636}
   - component: {fileID: 8695087590091800227}
-  - component: {fileID: 1683318007217553828}
   - component: {fileID: 2381022741083699884}
   - component: {fileID: 3884330384959931589}
   - component: {fileID: 3234770281780568274}
@@ -18,7 +17,7 @@ GameObject:
   - component: {fileID: 7471173993042387809}
   - component: {fileID: 4077641912464904975}
   - component: {fileID: 3526314780886667151}
-  - component: {fileID: 1857299742354842865}
+  - component: {fileID: 1683318007217553828}
   - component: {fileID: 303491999226953158}
   - component: {fileID: 5805087815445507371}
   - component: {fileID: 6701740305892963349}
@@ -58,24 +57,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e7a2f9f230141ce83d91e029519da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
---- !u!114 &1683318007217553828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51c02fbf1ee3b56a7ab5f776dec9880e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PosableObject
-  <allowedTiles>k__BackingField:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &2381022741083699884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -129,7 +110,7 @@ MonoBehaviour:
   <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
   <workComponent>k__BackingField: {fileID: 4077641912464904975}
   <breedComponent>k__BackingField: {fileID: 3526314780886667151}
-  <houseRetriever>k__BackingField: {fileID: 1857299742354842865}
+  <houseRetriever>k__BackingField: {fileID: 0}
   <scareComponent>k__BackingField: {fileID: 5805087815445507371}
   <entityIa>k__BackingField: {fileID: 7957398275529141594}
   <entityGrow>k__BackingField: {fileID: 7471173993042387809}
@@ -200,7 +181,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 818ed45c439d4939b0341081132e7010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreedComponent
---- !u!114 &1857299742354842865
+  entityIa: {fileID: 7957398275529141594}
+  range: 10
+--- !u!114 &1683318007217553828
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -209,10 +192,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2450070678407865498}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0ef1a372cd662dd38eff449ce6263b8, type: 3}
+  m_Script: {fileID: 11500000, guid: 51c02fbf1ee3b56a7ab5f776dec9880e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  range: 10
+  m_EditorClassIdentifier: Assembly-CSharp::PosableObject
+  <allowedTiles>k__BackingField:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &303491999226953158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +208,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c91a1ad27e348dc0282c799117690fd7, type: 3}
   m_Name: 
@@ -233,7 +221,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51f21de9c1b79a6ffa94737036e59770, type: 3}
   m_Name: 

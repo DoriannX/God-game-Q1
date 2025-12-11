@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GhostIa : EntityIA
 {
+    public override EntityType entityType { get; protected set; } = EntityType.Ghost ;
+    
     [Serializable]
     public struct GhostData
     {

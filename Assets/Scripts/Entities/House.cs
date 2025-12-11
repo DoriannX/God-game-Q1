@@ -17,7 +17,7 @@ public class House : WorkTask, ISaveable
         
     }
 
-    public HashSet<GhostIa> fuckingGhosts = new();
+    public HashSet<EntityIA> fuckingGhosts = new();
     private GrowComponent growComponent;
     private float fuckProgress = 0;
     [SerializeField] private float fuckIncrement = 0.1f;
@@ -28,7 +28,7 @@ public class House : WorkTask, ISaveable
     private int ticksAlone = 0;
     private bool isFucking = false;
     public bool isFull => fuckingGhosts.Count >= 2;
-    public event Action onFuckFinished;
+    public event Action onBreedFinished;
 
 
     private void Awake()
@@ -53,10 +53,10 @@ public class House : WorkTask, ISaveable
         
     }
 
-    public void Enter(GhostIa ghost)
+    public void Enter(EntityIA entityIa)
     {
-        fuckingGhosts.Add(ghost);
-        ghost.gameObject.SetActive(false);
+        fuckingGhosts.Add(entityIa);
+        entityIa.gameObject.SetActive(false);
         if (fuckingGhosts.Count == 2)
             StartFucking();
     }
@@ -106,17 +106,17 @@ public class House : WorkTask, ISaveable
         isFucking = false;
 
         animator.Play("Idle");
-        foreach (GhostIa ghost in fuckingGhosts.ToList())
+        foreach (EntityIA ghost in fuckingGhosts.ToList())
         {
             Exit(ghost);
         }
     }
 
-    private void Exit(GhostIa ghost)
+    private void Exit(EntityIA entity)
     {
-        fuckingGhosts.Remove(ghost);
-        ghost.gameObject.SetActive(true);
-        onFuckFinished?.Invoke();
+        fuckingGhosts.Remove(entity);
+        entity.gameObject.SetActive(true);
+        onBreedFinished?.Invoke();
     }
     
     private void OnDisable()
