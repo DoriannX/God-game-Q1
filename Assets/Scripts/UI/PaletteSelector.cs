@@ -4,13 +4,13 @@ using UnityEngine.UI;
 
 public class PaletteSelector : MonoBehaviour
 {
+    [Header("Outils Fixes")]
     [SerializeField] private Selector selector;
     [SerializeField] private Button shovelButton;
     [SerializeField] private Button bucketButton;
     [SerializeField] private Button upButton;
-    [SerializeField] private List<Button> objectButtons;
-    [SerializeField] private List<Button> destructionButtons;
-    [SerializeField] private List<Button> tileButtons;
+
+    [Header("Components")]
     [SerializeField] private Painter painter;
     [SerializeField] private ObjectPoserComponent poserComponent;
     [SerializeField] private DestructionComponent destructionComponent;
@@ -18,56 +18,38 @@ public class PaletteSelector : MonoBehaviour
 
     private void Awake()
     {
-        
-        shovelButton.onClick.AddListener(() =>
+    }
+
+    public void ConnectDynamicButtons(List<Button> buttons, PainterMode mode)
+    {
+        for (int i = 0; i < buttons.Count; i++)
         {
-            painter.SetMode(PainterMode.Shovel);
-            selector.Select(shovelButton);
-        });
-        bucketButton.onClick.AddListener(() =>
-        {
-            painter.SetMode(PainterMode.Bucket);
-            selector.Select(bucketButton);
-        });
-        upButton.onClick.AddListener(() =>
-        {
-            painter.SetMode(PainterMode.Up);
-            selector.Select(upButton);
-        });
-        
-        for (var i = 0; i < objectButtons.Count; i++)
-        {
-            Button button = objectButtons[i];
+            Button btn = buttons[i];
             int index = i;
-            button.onClick.AddListener(() =>
+
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() =>
             {
-                painter.SetMode(PainterMode.Object);
-                poserComponent.SetCurrentObject(index);
-                selector.Select(button);
+                painter.SetMode(mode);
+
+                switch (mode)
+                {
+                    case PainterMode.Object:
+                        poserComponent.SetCurrentObject(index);
+                        break;
+                    case PainterMode.Destruction:
+                        break;
+                    case PainterMode.Paint:
+                        paintComponent.SetCurrentTile(index);
+                        break;
+                }
             });
         }
-        for (var i = 0; i < destructionButtons.Count; i++)
-        {
-            Button button = destructionButtons[i];
-            int index = i;
-            button.onClick.AddListener(() =>
-            {
-                painter.SetMode(PainterMode.Destruction);
-                destructionComponent.SetCurrentObject(index);
-                selector.Select(button);
-            });
-        }
-        for (var i = 0; i < tileButtons.Count; i++)
-        {
-            Button button = tileButtons[i];
-            int index = i;
-            button.onClick.AddListener(() =>
-            {
-                painter.SetMode(PainterMode.Paint);
-                paintComponent.SetCurrentTile(index);
-                selector.Select(button);
-            });
-        }
-        tileButtons[0].onClick?.Invoke();
+    }
+
+    private void SetStaticTool(PainterMode mode, Button btn)
+    {
+        painter.SetMode(mode);
+        selector.Select(btn);
     }
 }

@@ -19,12 +19,14 @@ public class ChunkManager : MonoBehaviour
     
     private void Awake()
     {
-        if (ChunkManager.Instance != this)
+        if (ChunkManager.Instance == null)
+        {
+            Instance = this;
+        }
+        else
         {
             Destroy(gameObject);
-            return;
         }
-        Instance = this;
     }
 
     [Serializable]
