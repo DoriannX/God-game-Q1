@@ -151,7 +151,6 @@ RectTransform:
   m_Children:
   - {fileID: 829496457}
   - {fileID: 289649674}
-  - {fileID: 794960595}
   m_Father: {fileID: 1977219131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.11547917, y: 0.036000002}
@@ -4130,7 +4129,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 776282}
+  m_Father: {fileID: 1566710037}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -8003,6 +8002,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbfaa96b105e3134bafbc20fbacb3ab7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireManager
+  whereFireSpawn: {x: 0, y: 0, z: 12}
   firePrefab: {fileID: 7639966695351093242, guid: 7fee34ec6e1ef7446a32a2b22e1f47f9, type: 3}
   fireList: []
 --- !u!1 &1553780558
@@ -8069,6 +8069,7 @@ RectTransform:
   m_Children:
   - {fileID: 125594580}
   - {fileID: 1747666046}
+  - {fileID: 794960595}
   m_Father: {fileID: 1977219131}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.194, y: 0.036000002}

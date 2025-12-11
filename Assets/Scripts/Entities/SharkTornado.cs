@@ -8,10 +8,13 @@ public class SharkTornado : MonoBehaviour
     [SerializeField] private float maxStepDist;
     [SerializeField] private float speed;
     [SerializeField] private float lifeTime;
+    public Vector3Int whereSharkTornadoSpawn; //Remove when have button
+    
     private Vector3 destination;
 
-    private void Start()
+    private void Awake()
     {
+        destination = transform.position;
         StartCoroutine(WaitForDestroy());
     }
 
@@ -25,10 +28,8 @@ public class SharkTornado : MonoBehaviour
     {
         if (transform.position == destination)
         {
-            destination = Random.insideUnitCircle * maxStepDist;
-            float temp = destination.y;
-            destination.y = 0;
-            destination.z = temp;
+            destination.x = transform.position.x + Random.insideUnitCircle.x * maxStepDist;
+            destination.z = transform.position.z + Random.insideUnitCircle.y * maxStepDist;
         }
         transform.position = Vector3.MoveTowards(transform.position, destination, speed * Time.deltaTime);
     }
@@ -43,8 +44,12 @@ public class SharkTornado : MonoBehaviour
         }
     }
 
-    public void SpawnGameObject()
-    {
-        Instantiate(gameObject, transform.position, Quaternion.identity);
+    public void SpawnGameObject() //Change when have button
+    
+    {   Vector3 spawnPoint = whereSharkTornadoSpawn;
+        int topZ = TilemapManager.instance.GetColumnTopCoordinate(new Vector2Int(whereSharkTornadoSpawn.x, whereSharkTornadoSpawn.z));
+        spawnPoint.y = topZ * 0.2f;
+        
+        Instantiate(gameObject, spawnPoint, Quaternion.identity);
     }
 }

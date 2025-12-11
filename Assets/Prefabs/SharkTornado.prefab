@@ -161,3 +161,4 @@ MonoBehaviour:
   maxStepDist: 5
   speed: 10
   lifeTime: 5
+  whereSharkTornadoSpawn: {x: 0, y: 0, z: 12}
