@@ -4,22 +4,24 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class FireManager : MonoBehaviour
-{
-    public static FireManager Instance;
-
-    public Vector3Int whereFireSpawn; //Remove when have button
-
-    [Header("Prefab")]
-    public GameObject firePrefab;
+{  
+    private HashSet<Vector3Int> burningTiles = new HashSet<Vector3Int>();
     
-    public HashSet<Vector3Int> burningTiles = new HashSet<Vector3Int>();
-
-
+    [SerializeField] private GameObject firePrefab;
+    [SerializeField] private Vector3Int whereFireSpawn; //Remove when have button
+    
     public List<Fire> fireList = new List<Fire>();
-
+    public static FireManager Instance;
     private void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     
     public bool TrySpawnFire(Vector3Int tile)

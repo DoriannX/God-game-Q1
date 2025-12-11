@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Fire : MonoBehaviour
 {
-    [SerializeField] private float lifeTime;
-    [SerializeField] private float spreadRate;
-    [SerializeField] private Vector3Int currentTile;
-
+    private Vector3Int currentTile;
     private int currentTopZ;
+    
+    [SerializeField] private float lifeTime;
+    [SerializeField] private float spreadRate; 
     
     private static readonly Vector3Int[] hexNeighbors = new Vector3Int[]
     {

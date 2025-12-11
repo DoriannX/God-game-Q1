@@ -5,12 +5,12 @@ using Random = UnityEngine.Random;
 
 public class SharkTornado : MonoBehaviour
 {    
+    private Vector3 destination;
+    
     [SerializeField] private float maxStepDist;
     [SerializeField] private float speed;
     [SerializeField] private float lifeTime;
-    public Vector3Int whereSharkTornadoSpawn; //Remove when have button
-    
-    private Vector3 destination;
+    [SerializeField] private Vector3Int whereSharkTornadoSpawn; //Remove when have button
 
     private void Awake()
     {
