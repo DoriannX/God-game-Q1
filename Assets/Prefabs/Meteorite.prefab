@@ -44,6 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4996df4180644a6ea28bcee9363cfe70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Meteore
+  <allowedTiles>k__BackingField:
+  - {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
+  - {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
   <sprite>k__BackingField: {fileID: 21300000, guid: 64a212c047fc891ebafbecdd678163b5, type: 3}
   minSize: 3
   maxSize: 7

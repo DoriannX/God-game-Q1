@@ -10,15 +10,13 @@ public class CameraController : MonoBehaviour
     private bool mouseClicked;
     [SerializeField] private float speed;
     [SerializeField] private float zoomSpeed;
-    [SerializeField] private float moveXLimit;
-    [SerializeField] private float moveYLimit;
 
     private void Awake()
     {
         movementComponent = GetComponent<MovementComponent>();
         zoomComponent = GetComponent<ZoomComponent>();
     }
-    
+
     private void OnEnable()
     {
         inputHandler.mouseDeltaMoved += OnMouseDeltaMoved;
@@ -26,12 +24,15 @@ public class CameraController : MonoBehaviour
         inputHandler.mouseRightClickReleased += OnMouseClickReleased;
         inputHandler.mouseMiddleClickPressed += OnMouseClickPressed;
         inputHandler.mouseMiddleClickReleased += OnMouseClickReleased;
-        //inputHandler.mouseScrollStarted += OnMouseScrollStarted;
+        inputHandler.mouseScrollStarted += OnMouseScrollStarted;
     }
 
     private void OnMouseScrollStarted(float delta)
     {
-        zoomComponent.Zoom(delta, zoomSpeed);
+        if (!inputHandler.isCtrlPressed)
+        {
+            zoomComponent.Zoom(delta, zoomSpeed);
+        }
     }
 
     private void OnMouseClickReleased()
@@ -46,7 +47,7 @@ public class CameraController : MonoBehaviour
         inputHandler.mouseRightClickReleased -= OnMouseClickReleased;
         inputHandler.mouseMiddleClickPressed -= OnMouseClickPressed;
         inputHandler.mouseMiddleClickReleased -= OnMouseClickReleased;
-        //inputHandler.mouseScrollStarted -= OnMouseScrollStarted;
+        inputHandler.mouseScrollStarted -= OnMouseScrollStarted;
     }
 
     private void OnMouseClickPressed()
@@ -60,14 +61,21 @@ public class CameraController : MonoBehaviour
         {
             return;
         }
-        if ((transform.position.x <= -moveXLimit && delta.x > 0) || (transform.position.x >= moveXLimit && delta.x < 0))
+
+
+        if (movementComponent == null)
         {
-            delta.x = 0;
+            Debug.LogError("Null reference detected: MovementComponent is not assigned.");
+            return;
         }
-        if ((transform.position.y <= -moveYLimit && delta.y > 0) || (transform.position.y >= moveYLimit && delta.y < 0))
+
+        if (zoomComponent == null)
         {
-            delta.y = 0;
+            Debug.LogError("Null reference detected: ZoomComponent is not assigned.");
+            return;
         }
-        movementComponent.Move(-delta, speed * zoomComponent.GetZoom() / 10);
+
+        Vector3 direction = new Vector3(-delta.x, 0, -delta.y);
+        movementComponent.Move(direction, speed * zoomComponent.GetZoom() / 10);
     }
 }

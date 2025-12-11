@@ -132,5 +132,13 @@ public class TilePool : MonoBehaviour
             }
         }
     }
+    
+    public GameObject GetOriginalPrefab(GameObject tile)
+    {
+        if (tile == null) return null;
+        
+        tileToOriginalPrefab.TryGetValue(tile, out GameObject prefab);
+        return prefab;
+    }
 }
 

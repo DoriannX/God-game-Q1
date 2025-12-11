@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Components
 {
@@ -65,7 +64,6 @@ namespace Components
                 {
                     continue;
                 }
-                
                 TilemapManager.instance.SpawnTileAt(neighborCoords, gameObject);
             }
             activated = false;
