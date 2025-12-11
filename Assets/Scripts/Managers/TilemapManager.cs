@@ -390,13 +390,13 @@ public class TilemapManager : MonoBehaviour
             GameObject tileAtPosition = GetTile(tilePosition);
             if (tileAtPosition != null)
             {
+                tilePosition.z += 1; // Place on top of the tile
                 // Check if trying to place a PosableObject and one already exists at this position
                 if (posablePrefab is PosableObject && placedObjects.ContainsKey(tilePosition))
                 {
                     continue; // Skip this position
                 }
 
-                tilePosition.z += 1; // Place on top of the tile
                 Vector3 spawnPosition = HexAxialToWorld(tilePosition);
                 spawnPosition.y += tileHeight / 2f; // Adjust Y position to sit on top of the tile
                 GameObject tilePrefab = tilePool.GetOriginalPrefab(tileAtPosition);
