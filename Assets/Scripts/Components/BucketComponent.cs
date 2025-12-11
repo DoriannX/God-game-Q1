@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 /// </summary>
 public class BucketComponent : MonoBehaviour
 {
-    public void Remove()
+    public void Bucket()
     {
         
         /* ORIGINAL CODE - Disabled until water system is re-implemented

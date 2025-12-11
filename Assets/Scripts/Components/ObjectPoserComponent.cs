@@ -15,7 +15,7 @@ public class ObjectPoserComponent : MonoBehaviour
         TickSystem.ticked += ResetAdd;
     }
 
-    public void Add()
+    public void Place()
     {
         if (posableObjects[objectIndex] is PosableObject posableObject)
         {
