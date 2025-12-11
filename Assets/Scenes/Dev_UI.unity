@@ -2860,17 +2860,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 824228458}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
+      - m_Target: {fileID: 523872008}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
 --- !u!114 &1065431762
 MonoBehaviour:
@@ -3803,6 +3803,18 @@ MonoBehaviour:
   - tileName: Tile2
     tileIcon: {fileID: 0}
     tilePrefab: {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
+  - tileName: Tile3
+    tileIcon: {fileID: 0}
+    tilePrefab: {fileID: 5698454079545549379, guid: de04abb3b7b3afa4da3f9e9361635014, type: 3}
+  - tileName: Tile4
+    tileIcon: {fileID: 0}
+    tilePrefab: {fileID: 5698454079545549379, guid: cb1e7a98081152946938951c2574ae39, type: 3}
+  - tileName: Tile5
+    tileIcon: {fileID: 0}
+    tilePrefab: {fileID: 5698454079545549379, guid: 0b1dcb05cf469314d9a5fc48890ad385, type: 3}
+  - tileName: Tile6
+    tileIcon: {fileID: 0}
+    tilePrefab: {fileID: 5698454079545549379, guid: 633d236946e49b44b8cc09b29ef28bd4, type: 3}
 --- !u!1 &1398907938 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3806211805035654345, guid: e6af149f1a162ac41828511c52a95409, type: 3}
