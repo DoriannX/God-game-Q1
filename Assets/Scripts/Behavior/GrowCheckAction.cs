@@ -9,7 +9,15 @@ using Unity.Properties;
 public partial class GrowCheckAction : Action {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
     protected override Status OnStart() {
-        Debug.Log("Growing");
+        
+        if (AI.Value.CheckGrown())
+        {
+            Debug.Log("DoneGrowing");
+        }
+        else
+        {
+            Debug.Log("Growing");
+        }
         return AI.Value.CheckGrown() ? Status.Failure : Status.Success;
     }
 }
