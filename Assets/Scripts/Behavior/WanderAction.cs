@@ -9,8 +9,9 @@ using Unity.Properties;
 public partial class WanderAction : Action {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
     protected override Status OnStart() {
+        Debug.Log("[Wander]");
         AI.Value.wanderComponent.Wander();
-        return Status.Running;
+        return Status.Success;
     }
 }
 
