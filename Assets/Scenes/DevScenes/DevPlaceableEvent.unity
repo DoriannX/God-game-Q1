@@ -8002,8 +8002,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbfaa96b105e3134bafbc20fbacb3ab7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireManager
-  whereFireSpawn: {x: 0, y: 0, z: 12}
   firePrefab: {fileID: 7639966695351093242, guid: 7fee34ec6e1ef7446a32a2b22e1f47f9, type: 3}
+  whereFireSpawn: {x: 0, y: 0, z: 12}
+  lifeTime: 3
+  propabilityToSpread: 50
+  propability: 0
   fireList: []
 --- !u!1 &1553780558
 GameObject:

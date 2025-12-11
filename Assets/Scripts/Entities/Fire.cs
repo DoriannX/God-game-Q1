@@ -6,7 +6,6 @@ public class Fire : MonoBehaviour
     private Vector3Int currentTile;
     private int currentTopZ;
     
-    [SerializeField] private float lifeTime;
     [SerializeField] private float spreadRate; 
     
     private static readonly Vector3Int[] hexNeighbors = new Vector3Int[]
@@ -35,7 +34,7 @@ public class Fire : MonoBehaviour
 
     private IEnumerator WaitForDestroy()
     {
-        yield return new WaitForSeconds(lifeTime);
+        yield return new WaitForSeconds(FireManager.Instance.lifeTime);
         
         FireManager.Instance.UnregisterFire(this);
 
@@ -48,6 +47,9 @@ public class Fire : MonoBehaviour
 
         foreach (var offset in hexNeighbors)
         {
+            int random = Random.Range(0, 100);
+            if (random > FireManager.Instance.propability) continue;
+            
             Vector3Int neighbor = currentTile + offset;
             
             int neighborTopZ = TilemapManager.instance.GetColumnTopCoordinate(
