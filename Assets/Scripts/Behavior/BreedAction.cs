@@ -14,5 +14,9 @@ public partial class BreedAction : Action {
         
         return Status.Running;
     }
+    
+    protected override Status OnUpdate() {
+        return AI.Value.CheckBreedFinished() ? Status.Success : Status.Running;
+    }
 }
 

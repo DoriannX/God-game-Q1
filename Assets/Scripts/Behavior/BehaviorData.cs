@@ -12,7 +12,7 @@ public class BehaviorData : MonoBehaviour {
     [field : SerializeField] public EntityIA entityIa { get; private set; }
     [field : SerializeField] public EntityGrow entityGrow { get; private set; }
     [SerializeField] private float workProbability;
-    [FormerlySerializedAs("fuckProbability")] [SerializeField] private float breedProbability;
+    [SerializeField] private float breedProbability;
 
     public bool CheckWork() => Random.Range(0f, 1f) < workProbability;
     public bool CheckBreed () => Random.Range(0f, 1f) < breedProbability;
