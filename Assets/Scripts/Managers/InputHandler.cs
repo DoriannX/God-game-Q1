@@ -62,6 +62,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseRightClickInput(InputAction.CallbackContext ctx)
     {
+        //TODO: Fix pointer over
         if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
         {
             mouseRightClickPressed?.Invoke();

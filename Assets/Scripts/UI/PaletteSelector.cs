@@ -6,19 +6,12 @@ public class PaletteSelector : MonoBehaviour
 {
     [Header("Outils Fixes")]
     [SerializeField] private Selector selector;
-    [SerializeField] private Button shovelButton;
-    [SerializeField] private Button bucketButton;
-    [SerializeField] private Button upButton;
 
     [Header("Components")]
     [SerializeField] private Painter painter;
     [SerializeField] private ObjectPoserComponent poserComponent;
     [SerializeField] private DestructionComponent destructionComponent;
     [SerializeField] private PaintComponent paintComponent;
-
-    private void Awake()
-    {
-    }
 
     public void ConnectDynamicButtons(List<Button> buttons, PainterMode mode)
     {

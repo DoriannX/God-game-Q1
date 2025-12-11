@@ -13,12 +13,11 @@ public class ToolbarManager : MonoBehaviour
 {
     [Header("Parents possibles")]
     [SerializeField] private RectTransform mainToolbarRoot;  
-    [SerializeField] private RectTransform secondaryToolbarRoot; 
 
-    [Header("Catégories")]
+    [Header("Catï¿½gories")]
     [SerializeField] private CategoryItemsConfig[] categories;
 
-    [Header("Références")]
+    [Header("Rï¿½fï¿½rences")]
     [SerializeField] private PaletteSelector paletteSelector;
 
 
@@ -30,7 +29,7 @@ public class ToolbarManager : MonoBehaviour
         
         if (currentItemsBar != null && currentCategoryId == categoryId)
         {
-            Debug.Log($"ToolbarManager: fermeture de la catégorie '{categoryId}'");
+            Debug.Log($"ToolbarManager: fermeture de la catï¿½gorie '{categoryId}'");
             Destroy(currentItemsBar);
             currentItemsBar = null;
             currentCategoryId = null;
@@ -48,7 +47,7 @@ public class ToolbarManager : MonoBehaviour
         CategoryItemsConfig config = GetConfigForCategory(categoryId);
         if (config == null)
         {
-            Debug.LogWarning($"ToolbarManager: aucune config trouvée pour la catégorie '{categoryId}'");
+            Debug.LogWarning($"ToolbarManager: aucune config trouvï¿½e pour la catï¿½gorie '{categoryId}'");
             return;
         }
 
@@ -58,7 +57,7 @@ public class ToolbarManager : MonoBehaviour
 
         if (parent == null)
         {
-            Debug.LogError("ToolbarManager: aucun parent (RectTransform) défini pour instancier la barre d'items.");
+            Debug.LogError("ToolbarManager: aucun parent (RectTransform) dï¿½fini pour instancier la barre d'items.");
             return;
         }
 
