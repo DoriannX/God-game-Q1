@@ -14,6 +14,8 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private int chunkViewRadius;
     private HashSet<Vector2Int> currentlyActiveChunks = new();
 
+    public static ChunkManager Instance { get; private set; }
+
     private void OnEnable()
     {
         if (ChunkManager.Instance == null)
