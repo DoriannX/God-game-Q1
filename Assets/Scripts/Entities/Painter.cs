@@ -40,10 +40,8 @@ public class Painter : MonoBehaviour
 
     public void SetBrushSize(float size)
     {
-        print("SetBrushSize called with size: " + size);
         if (inputHandler.isCtrlPressed)
         {
-            print("Ctrl pressed");
             brushSizeManager.ChangeBrushSize(size);
         }
     }
@@ -73,25 +71,23 @@ public class Painter : MonoBehaviour
         {
             if (currentMode == PainterMode.Shovel)
             {
-                shovelComponent.Add();
-                //poserComponent.Remove(mousePos, brushSize);
+                shovelComponent.Shovel();
             }
             else if (currentMode == PainterMode.Paint)
             {
-                //bucketComponent.Remove(mousePos, brushSize);
-                paintComponent.Add();
+                paintComponent.Paint();
             }
             else if (currentMode == PainterMode.Bucket)
             {
-                //bucketComponent.Remove(mousePos, brushSize);
+                bucketComponent.Bucket();
             }
             else if (currentMode == PainterMode.Object)
             {
-                //poserComponent.Add(mousePos, brushSize);
+                poserComponent.Place();
             }
             else if (currentMode == PainterMode.Destruction)
             {
-                //destructionComponent.Add(mousePos, brushSize);
+                destructionComponent.Destroy();
             }
         }
     }

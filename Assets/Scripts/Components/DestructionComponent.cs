@@ -13,34 +13,16 @@ public class DestructionComponent : MonoBehaviour
     private Vector2 lastHitPos;
     private bool canPlace = true;
 
-    private void Start()
-    {
-        //heightManager = HeightManager.instance;
-    }
-
     private void OnEnable()
     {
         TickSystem.ticked += ResetAdd;
     }
 
-    public void Add(Vector2 pos, float brushSize)
-    {
-        Add(pos, brushSize, destructionObjects[objectIndex]);
-    }
-
-    private void Add(Vector2 pos, float brushSize, DestructionObject destructionObject)
+    public void Destroy()
     {
         if(!canPlace) return;
-        int randomCount = Random.Range(1, (int)(brushSize * 10));
-        for (var i = 0; i < randomCount; i++)
-        {
-            Vector3 worldPos = new(pos.x, pos.y, 0);
-            var offset = new Vector3(Random.Range(-brushSize * 5, brushSize * 5), Random.Range(-brushSize * 5, brushSize * 5), 0);
-            Vector3 spawnPos = worldPos + offset;
-            DestructionObject instancedDestructionObject = Instantiate(destructionObject, spawnPos, Quaternion.identity);
-            //instancedDestructionObject.Destroy(heightManager, spawnPos);
-            canPlace = false;
-        }
+        TilemapManager.instance.SpawnDestructionAtMouse(destructionObjects[objectIndex]);
+        canPlace = false;
     }
 
     private void ResetAdd()
