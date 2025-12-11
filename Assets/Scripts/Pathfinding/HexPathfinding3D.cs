@@ -65,14 +65,16 @@ public class HexPathfinding3D : MonoBehaviour
         tilemapManager = TilemapManager.instance;
         walkableSet = new HashSet<GameObject>(walkableTiles);
         ComputeWalkableCells();
-        TilemapManager.instance.cellChanged += OnTileChanged;
+        TilemapManager.instance.tilePlaced += OnTileChanged;
+        TilemapManager.instance.tileRemoved += OnTileChanged;
     }
 
     private void OnDestroy()
     {
         if (TilemapManager.instance != null)
         {
-            TilemapManager.instance.cellChanged -= OnTileChanged;
+            TilemapManager.instance.tilePlaced -= OnTileChanged;
+            TilemapManager.instance.tileRemoved -= OnTileChanged;
         }
     }
 
@@ -174,14 +176,6 @@ public class HexPathfinding3D : MonoBehaviour
         return null;
     }
 
-    int GetNeighbors(Vector3Int pos, Vector3Int[] buffer)
-    {
-        var offsets = (pos.y & 1) == 0 ? evenRowNeighbors : oddRowNeighbors;
-        for (int i = 0; i < 6; i++)
-            buffer[i] = new Vector3Int(pos.x + offsets[i].x, pos.y + offsets[i].y, 0);
-        return 6;
-    }
-
     int GetNeighbors3D(Vector3Int pos, Vector3Int[] buffer)
     {
         var offsets = (pos.y & 1) == 0 ? evenRowNeighbors : oddRowNeighbors;
@@ -221,11 +215,6 @@ public class HexPathfinding3D : MonoBehaviour
         /*int fromH = heightManager.GetHeightIndex(fromTile);
         int toH = heightManager.GetHeightIndex(toTile);
         return Mathf.Abs(fromH - toH) <= 1;*/
-    }
-
-    float Heuristic(Vector3Int a, Vector3Int b)
-    {
-        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y);
     }
 
     float Heuristic3D(Vector3Int a, Vector3Int b)

@@ -681,4 +681,12 @@ public class TilemapManager : MonoBehaviour
     {
         return placedObjects.Remove(position);
     }
+    
+    public Vector3 GetHexCellSize()
+    {
+        float width = hexSize;
+        float height = hexSize * Mathf.Sqrt(3f);
+
+        return new Vector3(width, 0f, height);
+    }
 }
