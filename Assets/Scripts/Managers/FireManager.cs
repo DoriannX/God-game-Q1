@@ -9,8 +9,8 @@ public class FireManager : MonoBehaviour
     
     [SerializeField] private GameObject firePrefab;
     [SerializeField] private Vector3Int whereFireSpawn; //Remove when have button
-    public float lifeTime;
     [SerializeField, Range(0, 100)] private int propabilityToSpread;
+    public float lifeTime;
     [HideInInspector] public int propability;
     
     public List<Fire> fireList = new List<Fire>();

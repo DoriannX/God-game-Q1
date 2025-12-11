@@ -264,6 +264,7 @@ Transform:
   - {fileID: 279026985}
   - {fileID: 1191892457}
   - {fileID: 1938771962}
+  - {fileID: 1697901836}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &83500938 stripped
@@ -871,8 +872,8 @@ MonoBehaviour:
   brushManager: {fileID: 1107755941}
   tileSelector: {fileID: 1339345712}
   previewMaterialTemplate: {fileID: 2100000, guid: 17b6afd5f4138a5a997013c46e2df612, type: 2}
-  tilePool: {fileID: 0}
-  prefab: {fileID: 0}
+  tilePool: {fileID: 2137906315}
+  prefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
   previewColor: {r: 0, g: 1, b: 0, a: 0.5}
   hexSize: 1
   tileHeight: 0.2
@@ -3164,7 +3165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1f8db326253499fa72b7504dd20b66a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TileNeighborOcclusionCulling
-  tilemapManager: {fileID: 0}
+  tilemapManager: {fileID: 241177947}
   enableOcclusion: 1
   occludeBaseTiles: 1
   occludeHeightTiles: 1
@@ -8561,6 +8562,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1686081830}
   m_CullTransparentMesh: 1
+--- !u!4 &1697901836 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+  m_PrefabInstance: {fileID: 8731580284330272258}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1697901837 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7185208803570935540, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+  m_PrefabInstance: {fileID: 8731580284330272258}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c043eb78a240bc4eba4d713d9eb9664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EarthQuake
 --- !u!1 &1721150291
 GameObject:
   m_ObjectHideFlags: 0
@@ -8623,7 +8640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022875549017a4b34a708709e285ca57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Painter
-  brushSizeManager: {fileID: 0}
+  brushSizeManager: {fileID: 1107755941}
   inputHandler: {fileID: 1083190373}
 --- !u!114 &1721150295
 MonoBehaviour:
@@ -10012,6 +10029,7 @@ MonoBehaviour:
   - {fileID: 279026986}
   - {fileID: 1191892458}
   - {fileID: 1938771963}
+  - {fileID: 1697901837}
   ticksToAutomateWeather: 20
   state: 0
 --- !u!4 &2063243323
@@ -10586,6 +10604,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3980cc543aecd7f45b28a026bd1d0beb, type: 3}
+--- !u!1001 &8731580284330272258
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 52597578}
+    m_Modifications:
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910587922728371602, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7265036301515408857, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
+      propertyPath: m_Name
+      value: Earthquake
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2304669efb776f6498e11bc8857f013f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
