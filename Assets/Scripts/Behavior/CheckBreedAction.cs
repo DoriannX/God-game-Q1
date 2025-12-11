@@ -12,7 +12,6 @@ public partial class CheckBreedAction : Action
     [SerializeReference] public BlackboardVariable<bool> result;
 
     protected override Status OnStart() {
-        Debug.Log("CheckBreed");
         result.Value = AI.Value.CheckBreed();
         return Status.Success;
     }

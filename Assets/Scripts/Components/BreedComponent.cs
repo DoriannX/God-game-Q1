@@ -10,7 +10,11 @@ public class BreedComponent : MonoBehaviour {
     [SerializeField] private float range;
 
     private void Awake() {
-        onBreedDone += () => isBreedDone = true;
+        onBreedDone += () =>
+        {
+            Debug.Log("BreedFinish");
+            isBreedDone = true;
+        };
     }
 
     public House GetNearestHouse(Vector2 position, EntityType entityType) {
@@ -40,6 +44,7 @@ public class BreedComponent : MonoBehaviour {
     }
 
     public void GoBreed() {
+        Debug.Log("Go Breed");
         House house = GetNearestHouse(transform.position, entityIa.entityType);
         if (house == null) {
             onBreedDone?.Invoke();

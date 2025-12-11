@@ -9,20 +9,22 @@ using Unity.Properties;
 public partial class WorkAction : Action {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
     protected override Status OnStart() {
+        Debug.Log("Go Work");
         WorkTask task = AI.Value.workComponent.GetTask();
         if (task == null) {
             AI.Value.workComponent.Work();
-            return Status.Running;
+            return Status.Failure;
         }
         AI.Value.entityIa.GoTo(task.transform.position);
-        if(Vector2.Distance( AI.Value.entityIa.transform.position, AI.Value.workComponent.GetTask().transform.position) < 0.1f)
-        {
+        if(Vector2.Distance( AI.Value.entityIa.transform.position, AI.Value.workComponent.GetTask().transform.position) < 0.1f) {
             AI.Value.workComponent.Work();
         }
-        return Status.Running;
+        return Status.Failure;
     }
 
     protected override Status OnUpdate() {
+
+        
         return AI.Value.CheckWorkFinished() ? Status.Success : Status.Running;
     }
 }

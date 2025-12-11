@@ -8,7 +8,11 @@ public class WorkComponent : MonoBehaviour
     [SerializeField] private float workRange = 5f;
     private void Awake()
     {
-        onWork += () => isWorkDone = true;
+        onWork += () =>
+        {
+            Debug.Log("WorkFinish");
+            isWorkDone = true;
+        };
     }
 
     public void Work()

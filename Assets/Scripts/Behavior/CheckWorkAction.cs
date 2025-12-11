@@ -12,8 +12,6 @@ public partial class CheckWorkAction : Action
     [SerializeReference] public  BlackboardVariable<BehaviorData> AI;
 
     protected override Status OnStart() {
-
-        Debug.Log("CheckWork");
         result.Value = AI.Value.CheckWork();
         return Status.Success;
     }

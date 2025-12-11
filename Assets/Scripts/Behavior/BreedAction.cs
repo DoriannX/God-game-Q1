@@ -10,8 +10,9 @@ public partial class BreedAction : Action {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
 
     protected override Status OnStart() {
+        Debug.Log("Is Breeding");
         AI.Value.breedComponent.GoBreed();
-        return Status.Running;
+        return Status.Failure;
     }
     
     protected override Status OnUpdate() {
