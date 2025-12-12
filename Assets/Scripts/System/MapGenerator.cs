@@ -29,6 +29,8 @@ public class MapGenerator : MonoBehaviour
             for (int y = -mapHeight/2; y < mapHeight/2; y++)
             {
                 Vector3Int tilePosition = OffsetToAxial(x, y, layoutType);
+                // Lower the tile by 1 z-level so it won't be removed by tools like shovel or meteore
+                tilePosition.z = -1;
                 TilemapManager.instance.SpawnTileAt(tilePosition, TileSelector.instance.GetCurrentTile());
             }
         }
