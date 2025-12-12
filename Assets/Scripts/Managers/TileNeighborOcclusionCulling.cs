@@ -243,11 +243,6 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
         {
             UpdateColumnOcclusion(coords);
         }
-        
-        if (showDebugInfo)
-        {
-            Debug.Log($"Recalculated occlusion for {allCoords.Count} columns. Occluded: {totalOccludedTiles}, Visible: {totalVisibleTiles}");
-        }
     }
     
     /// <summary>

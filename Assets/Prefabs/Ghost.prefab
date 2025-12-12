@@ -73,7 +73,7 @@ MonoBehaviour:
   m_BlackboardVariableOverridesList:
   - rid: 8232502288690970635
   - rid: 8232502292318257450
-  m_OriginalGraph: {fileID: -2408727451260807960, guid: 0b0622df942431d44a51c2b36f71c94e, type: 2}
+  m_OriginalGraph: {fileID: 0}
   m_IsInitialised: 0
   m_IsStarted: 0
   references:
@@ -110,8 +110,6 @@ MonoBehaviour:
   <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
   <workComponent>k__BackingField: {fileID: 4077641912464904975}
   <breedComponent>k__BackingField: {fileID: 3526314780886667151}
-  <houseRetriever>k__BackingField: {fileID: 0}
-  <scareComponent>k__BackingField: {fileID: 5805087815445507371}
   <entityIa>k__BackingField: {fileID: 7957398275529141594}
   <entityGrow>k__BackingField: {fileID: 7471173993042387809}
   workProbability: 0.05
@@ -196,11 +194,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PosableObject
   <allowedTiles>k__BackingField:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 5698454079545549379, guid: de04abb3b7b3afa4da3f9e9361635014, type: 3}
+  - {fileID: 5698454079545549379, guid: 0db05d7c151252f6887257fef8c2bd09, type: 3}
+  - {fileID: 5698454079545549379, guid: 0b1dcb05cf469314d9a5fc48890ad385, type: 3}
+  - {fileID: 5698454079545549379, guid: 633d236946e49b44b8cc09b29ef28bd4, type: 3}
+  - {fileID: 5698454079545549379, guid: cb1e7a98081152946938951c2574ae39, type: 3}
+  - {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
 --- !u!114 &303491999226953158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307,7 +306,7 @@ Transform:
   m_GameObject: {fileID: 8484147219461251418}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.098, z: 0}
+  m_LocalPosition: {x: 0, y: 0.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

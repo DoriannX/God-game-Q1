@@ -399,6 +399,8 @@ public class TilemapManager : MonoBehaviour
 
                 Vector3 spawnPosition = HexAxialToWorld(tilePosition);
                 spawnPosition.y += tileHeight / 2f; // Adjust Y position to sit on top of the tile
+                
+                
                 GameObject tilePrefab = tilePool.GetOriginalPrefab(tileAtPosition);
 
                 if (tilePrefab != null && posablePrefab.allowedTiles.Contains(tilePrefab))

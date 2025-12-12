@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 public class PaletteSelector : MonoBehaviour
 {
-    [Header("Outils Fixes")]
-    [SerializeField] private Selector selector;
 
     [Header("Components")]
     [SerializeField] private Painter painter;
@@ -13,7 +11,7 @@ public class PaletteSelector : MonoBehaviour
     [SerializeField] private DestructionComponent destructionComponent;
     [SerializeField] private PaintComponent paintComponent;
 
-    public void ConnectDynamicButtons(List<Button> buttons, PainterMode mode)
+    public void ConnectDynamicButtons(Selector selector, List<Button> buttons, PainterMode mode)
     {
         for (int i = 0; i < buttons.Count; i++)
         {
@@ -23,6 +21,8 @@ public class PaletteSelector : MonoBehaviour
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(() =>
             {
+                selector.Select(btn);
+                selector.transform.parent = btn.transform.parent;
                 painter.SetMode(mode);
 
                 switch (mode)
@@ -38,11 +38,5 @@ public class PaletteSelector : MonoBehaviour
                 }
             });
         }
-    }
-
-    private void SetStaticTool(PainterMode mode, Button btn)
-    {
-        painter.SetMode(mode);
-        selector.Select(btn);
     }
 }

@@ -28,7 +28,6 @@ public abstract class WorkTask : MonoBehaviour
 
     public virtual void Work()
     {
-        Debug.Log("Im Working");
         progress += progressIncrement;
         if (progress >= 1f)
         {

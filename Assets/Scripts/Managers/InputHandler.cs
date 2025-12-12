@@ -23,10 +23,11 @@ public class InputHandler : MonoBehaviour
     
     public event Action pausePressed;
     [NonSerialized] public bool isCtrlPressed = false;
-    
+    private bool isMouseOnUI;
+
     public void HandleMouseDeltaMoveInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && !isMouseOnUI)
         {
             mouseDeltaMoved?.Invoke(ctx.ReadValue<Vector2>());
         }
@@ -38,7 +39,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseMoveInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
+        if (ctx.performed && !isMouseOnUI)
         {
             mouseMoved?.Invoke(ctx.ReadValue<Vector2>());
         }
@@ -50,7 +51,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseClickInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
+        if (ctx.performed && !isMouseOnUI)
         {
             mouseClickPressed?.Invoke();
         }
@@ -62,8 +63,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseRightClickInput(InputAction.CallbackContext ctx)
     {
-        //TODO: Fix pointer over
-        if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
+        if (ctx.performed && !isMouseOnUI)
         {
             mouseRightClickPressed?.Invoke();
         }
@@ -75,7 +75,7 @@ public class InputHandler : MonoBehaviour
     
     public void HandleMouseMiddleClickInput(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed && !EventSystem.current.IsPointerOverGameObject())
+        if (ctx.performed && !isMouseOnUI)
         {
             mouseMiddleClickPressed?.Invoke();
         }
@@ -88,7 +88,7 @@ public class InputHandler : MonoBehaviour
     public void HandleMouseScrollInput(InputAction.CallbackContext ctx)
     {
         float scrollValue = ctx.ReadValue<float>();
-        if (ctx.performed)
+        if (ctx.performed && !isMouseOnUI)
         {
             mouseScrollStarted?.Invoke(scrollValue);
         }else if (ctx.canceled)
@@ -127,5 +127,10 @@ public class InputHandler : MonoBehaviour
         {
             isCtrlPressed = false;
         }
+    }
+
+    private void Update()
+    {
+        isMouseOnUI = EventSystem.current.IsPointerOverGameObject();
     }
 }

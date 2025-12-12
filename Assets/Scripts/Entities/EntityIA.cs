@@ -23,7 +23,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         Vector3 cellSize = tilemapManager.GetHexCellSize();
         
         Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
-        if(currentCell.z > 1) {
+        if(currentCell.z >= 0) {
             currentCell.z --;
         }
         
@@ -39,7 +39,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
             /*if(waterSystem.waterTiles.Contains(candidateCell))
                 continue;*/
             
-            if(candidateCell.z > 1) {
+            if(candidateCell.z >= 0) {
                 candidateCell.z --;
             }
 

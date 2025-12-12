@@ -1,9 +1,12 @@
 using UnityEngine;
 
-public class MovementComponent : MonoBehaviour
+namespace Components
 {
-    public void Move(Vector3 direction, float speed)
+    public class MovementComponent : MonoBehaviour
     {
-        transform.position += direction * speed;
+        public void Move(Vector3 direction, float speed)
+        {
+            transform.position += direction * speed;
+        }
     }
 }

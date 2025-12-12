@@ -1,11 +1,12 @@
+using System;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
-[System.Serializable]
+[Serializable]
 public class CategoryItemsConfig
 {
     public string categoryId;               
-    public GameObject itemsBarPrefab;       
+    public GameObject itemsBar;       
     public RectTransform targetToolbarRoot; 
 }
 
@@ -19,29 +20,47 @@ public class ToolbarManager : MonoBehaviour
 
     [Header("R�f�rences")]
     [SerializeField] private PaletteSelector paletteSelector;
+    
+    [Header("Outils Fixes")]
+    [SerializeField] private Selector selector;
 
 
     private GameObject currentItemsBar;
     private string currentCategoryId;
 
-    public void OpenCategory(string categoryId)
+
+    private void Start()
     {
-        
-        if (currentItemsBar != null && currentCategoryId == categoryId)
+        foreach (var itemsConfig in categories)
         {
-            Debug.Log($"ToolbarManager: fermeture de la cat�gorie '{categoryId}'");
-            Destroy(currentItemsBar);
-            currentItemsBar = null;
-            currentCategoryId = null;
-            return;
+            var content = itemsConfig.itemsBar.GetComponent<ItemsBarContent>();
+
+            if (content != null && paletteSelector != null)
+            {
+                paletteSelector.ConnectDynamicButtons(selector,  content.buttons, content.mode);
+            }
         }
 
-        
+        Button button = categories[0].itemsBar.GetComponent<ItemsBarContent>().buttons[0];
+        selector.Select(button);
+        selector.transform.parent = button.transform.parent;
+    }
+
+    public void OpenCategory(string categoryId)
+    {
+        // Close current items bar if one is open
         if (currentItemsBar != null)
         {
-
-            Destroy(currentItemsBar);
+            bool isSameCategory = currentCategoryId == categoryId;
+            currentItemsBar.SetActive(false);
             currentItemsBar = null;
+            currentCategoryId = null;
+            
+            // If clicking the same category, just close and return
+            if (isSameCategory)
+            {
+                return;
+            }
         }
 
         CategoryItemsConfig config = GetConfigForCategory(categoryId);
@@ -60,20 +79,10 @@ public class ToolbarManager : MonoBehaviour
             Debug.LogError("ToolbarManager: aucun parent (RectTransform) d�fini pour instancier la barre d'items.");
             return;
         }
-
         
-        GameObject barInstance = Instantiate(config.itemsBarPrefab, parent);
-        barInstance.transform.localScale = Vector3.one; 
-
-        currentItemsBar = barInstance;
+        currentItemsBar = config.itemsBar;
+        currentItemsBar.SetActive(true);
         currentCategoryId = categoryId;
-
-        var content = barInstance.GetComponent<ItemsBarContent>();
-
-        if (content != null && paletteSelector != null)
-        {
-            paletteSelector.ConnectDynamicButtons(content.buttons, content.mode);
-        }
     }
 
     private CategoryItemsConfig GetConfigForCategory(string categoryId)

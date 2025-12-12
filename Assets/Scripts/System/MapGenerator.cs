@@ -22,7 +22,6 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        Debug.Log($"Generating map of size {mapWidth}x{mapHeight} using {layoutType} layout");
         
         for (int x = -mapWidth/2; x < mapWidth/2; x++)
         {
@@ -34,8 +33,6 @@ public class MapGenerator : MonoBehaviour
                 TilemapManager.instance.SpawnTileAt(tilePosition, TileSelector.instance.GetCurrentTile());
             }
         }
-        
-        Debug.Log("Map generation complete!");
     }
     
     private Vector3Int OffsetToAxial(int x, int y, GridLayout layout)
@@ -98,7 +95,5 @@ public class MapGenerator : MonoBehaviour
         {
             TilemapManager.instance.RemoveTileAt(position);
         }
-        
-        Debug.Log("Map cleared!");
     }
 }
