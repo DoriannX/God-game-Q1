@@ -15,11 +15,9 @@ public class GrowComponent : MonoBehaviour, ISaveable
     private SpriteRenderer spriteRenderer;
     public event Action onFullyGrown;
     
-    private void Awake()
-    {
+    private void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (growthStages.Length > 0)
-        {
+        if (growthStages.Length > 0) {
             spriteRenderer.sprite = growthStages[0];
         }
     }

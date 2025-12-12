@@ -430,6 +430,7 @@ public class TileHeightManager : MonoBehaviour
         // Instancier le prefab spécifique (pas de pool car différentes tiles)
         GameObject newTile = Instantiate(tilePrefab, spawnPosition, Quaternion.identity);
         newTile.name = $"Tile_{tilePrefab.name}_({hexCoords.x}, {hexCoords.y})_H{column.Count}";
+        Debug.Log(hexCoords);
         
 
         // Ajouter la tile à la colonne

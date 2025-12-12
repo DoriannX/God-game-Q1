@@ -11,7 +11,7 @@ public class ScareState : State
         this.ghostIa = ghostIa;
     }
 
-    public override void OnLogic()
+    /*public override void OnLogic()
     {
         base.OnLogic();
         Vector2 direction = scareComponent.GetScareDirection();
@@ -19,5 +19,5 @@ public class ScareState : State
         {
             ghostIa.GoBy(direction);
         }
-    }
+    }*/
 }

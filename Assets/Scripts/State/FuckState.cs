@@ -15,17 +15,17 @@ public class FuckState : State
     public override void OnLogic()
     {
         base.OnLogic();
-        House house = houseRetriever.GetNearestHouse(ghostIA.transform.position);
+        /*House house = houseRetriever.GetNearestHouse(ghostIA.transform.position);
         if (house == null)
         {
             onFuckFinished?.Invoke();
             return;
         }
-        house.onFuckFinished += () => onFuckFinished?.Invoke();
+        house.onBreedFinished += () => onFuckFinished?.Invoke();
         ghostIA.GoTo(house.transform.position);
         if (Vector2.Distance(ghostIA.transform.position, house.transform.position) < 0.1f)
         {
             house.Enter(ghostIA);
-        }
+        }*/
     }
 }
