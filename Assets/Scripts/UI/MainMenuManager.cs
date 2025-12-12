@@ -15,7 +15,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button quitButton;
 
     // Noms de scènes — utilisez exactement les noms présents dans vos Build Settings.
-    private const string SampleSceneName = "SampleScene";
+    private const string SampleSceneName = "Doriann2";
     private const string OptionsSceneName = "Options";
     private const string CreditsSceneName = "Credits";
     private const string MainMenuSceneName = "mainMenu";
