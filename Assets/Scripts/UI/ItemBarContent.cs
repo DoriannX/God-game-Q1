@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ItemsBarContent : MonoBehaviour
 {
-    public List<TilemapButton> buttons { get; private set; }
+    public List<TilemapButton> buttons { get; private set; } = new();
 
     public void Init()
     {

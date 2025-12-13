@@ -218,6 +218,13 @@ public class TilemapManager : MonoBehaviour
             case true when placedObjects.ContainsKey(hexCoordinates):
             {
                 var newPosition = hexCoordinates + new Vector3Int(0, 0, 1);
+                if(!placedObjects[newPosition].allowedTiles.Contains(tileSelector.GetCurrentTile()))
+                {
+                    // If the placed object can't be placed on the current tile, destroy it
+                    Destroy(placedObjects[hexCoordinates].gameObject);
+                    placedObjects.Remove(hexCoordinates);
+                    break;
+                }
                 placedObjects[newPosition] = placedObjects[hexCoordinates];
                 placedObjects.Remove(hexCoordinates);
                 placedObjects[newPosition].transform.position = HexAxialToWorld(newPosition);
@@ -567,6 +574,7 @@ public class TilemapManager : MonoBehaviour
 
         foreach (var hexCoordinate in brushArea)
         {
+            
             int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
             Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate);
 
@@ -634,6 +642,24 @@ public class TilemapManager : MonoBehaviour
     {
         if (!tiles.TryGetValue(hexCoordinates, out var tileToRemove))
             return;
+        
+        // Check if there's a placed object on top of the tile and lower it by one
+        Vector3Int objectPosition = hexCoordinates + new Vector3Int(0, 0, 1);
+        if (placedObjects.Remove(objectPosition, out var placedObject))
+        {
+            GameObject tilePrefab = tilePool.GetOriginalPrefab(tiles[hexCoordinates - new Vector3Int(0, 0, 1)]);
+            if(!placedObject.allowedTiles.Contains(tilePrefab))
+            {
+                // If the placed object can be placed on the current tile, destroy it
+                Destroy(placedObject.gameObject);
+            }
+            else
+            {
+                Vector3Int newPosition = objectPosition + new Vector3Int(0, 0, -1);
+                placedObjects[newPosition] = placedObject;
+                placedObject.transform.position = HexAxialToWorld(newPosition);
+            }
+        }
 
         if (tileToRemove != null)
         {
