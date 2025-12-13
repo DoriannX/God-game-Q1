@@ -610,7 +610,6 @@ public class TilemapManager : MonoBehaviour
     /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
     public void  RemoveAllWaterAt(Vector3Int hexCoordinates)
     {
-        print("Removing all water at: " + hexCoordinates);
         int topCoordinate = GetColumnTopCoordinate(new Vector2Int(hexCoordinates.x, hexCoordinates.y));
 
         for (int z = topCoordinate; z >= 0; z--)
