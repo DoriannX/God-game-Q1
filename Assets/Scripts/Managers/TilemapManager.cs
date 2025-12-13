@@ -272,7 +272,7 @@ public class TilemapManager : MonoBehaviour
 
         if (!columnTopCoordinate.TryAdd(columnKey, 1))
         {
-            columnTopCoordinate[columnKey] = hexCoordinates.z;
+            columnTopCoordinate[columnKey] = columnTopCoordinate[columnKey] < hexCoordinates.z ? hexCoordinates.z : columnTopCoordinate[columnKey] ;
         }
 
         columnModified?.Invoke(hexCoordinates);
@@ -608,8 +608,9 @@ public class TilemapManager : MonoBehaviour
     ///  Removes all water tiles at the specified hexagonal coordinates.
     /// </summary>
     /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
-    public void RemoveAllWaterAt(Vector3Int hexCoordinates)
+    public void  RemoveAllWaterAt(Vector3Int hexCoordinates)
     {
+        print("Removing all water at: " + hexCoordinates);
         int topCoordinate = GetColumnTopCoordinate(new Vector2Int(hexCoordinates.x, hexCoordinates.y));
 
         for (int z = topCoordinate; z >= 0; z--)
