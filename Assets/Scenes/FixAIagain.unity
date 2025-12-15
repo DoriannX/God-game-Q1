@@ -3838,28 +3838,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1325180379}
-  - component: {fileID: 1325180378}
+  - component: {fileID: 1325180380}
   m_Layer: 0
-  m_Name: GhostManager
+  m_Name: EntityManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1325180378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1325180377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 119c9b046e3a3365890a6287978ece0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  ghostPrefab: {fileID: 2450070678407865498, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
-  maxGhosts: 100
 --- !u!4 &1325180379
 Transform:
   m_ObjectHideFlags: 0
@@ -3875,6 +3861,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1729402428}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1325180380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325180377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b50695be26394ca2b6e33a5fbb0b8494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityManager
+  maxEntityPerType: 100
+  entityPrefabs:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 2450070678407865498, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+  entitiesParent:
+    _serializedList: []
 --- !u!224 &1326566979 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4079901697997798569, guid: eefa3df86f8932a4aa9690d29834d83d, type: 3}
@@ -5710,7 +5715,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPoserComponent
   <posableObjects>k__BackingField:
-  - {fileID: 1683318007217553828, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+  - {fileID: 7408342672037405645, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
   - {fileID: 6904997964516619320, guid: 4ab1299eca6126b2f8b4dd6e2e7dd35f, type: 3}
   - {fileID: 4829490742024007249, guid: 8251180a4c75728bab1f7018464aad11, type: 3}
   maxObject: 100

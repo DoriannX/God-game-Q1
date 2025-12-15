@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class PosableEntity : Posable
 {
-    private EntityIA entityIa;
+    public EntityType entityType;
 
     private void Awake()
     {
-        entityIa = GetComponent<EntityIA>();
+        entityType = GetComponent<EntityIA>().entityType;
     }
 }
 

@@ -386,10 +386,8 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     /// <param name="posablePrefab">The posable prefab to spawn</param>
     /// <param name="storeInDictionary">Whether to store the spawned posable in the placedObjects dictionary</param>
-    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary)
-    {
+    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary) {
         var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
-        Debug.Log(posablePrefab.gameObject.name);
 
         foreach (var hexCoordinate in brushArea)
         {
@@ -416,6 +414,7 @@ public class TilemapManager : MonoBehaviour
                     if (posablePrefab is PosableEntity posableEntity)
                     {
                         // Call SpawnPosableEntity before instantiation
+                        Debug.Log(posablePrefab.gameObject.name);
                         SpawnPosableEntity(posableEntity, spawnPosition, tilePosition);
                     }
                     else
@@ -444,6 +443,8 @@ public class TilemapManager : MonoBehaviour
     private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3 spawnPosition, Vector3Int tilePosition)
     {
         Debug.Log("Spawning entity at " + spawnPosition);
+        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType, spawnPosition);
+        spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
         // Add custom instantiation logic for the entity here
     }
 
