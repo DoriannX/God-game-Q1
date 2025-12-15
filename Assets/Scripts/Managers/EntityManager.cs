@@ -10,7 +10,7 @@ public class EntityManager : MonoBehaviour {
     
     [SerializeField] SerializedDictionary<EntityType, GameObject> entityPrefabs;
     Dictionary<EntityType, HashSet<EntityIA>> entities = new();
-    [SerializeField] SerializedDictionary<EntityType, GameObject> entitiesParent;
+    Dictionary<EntityType, GameObject> entitiesParent;
     
     public event Action<EntityType, int> onEntityChanged;
     
@@ -72,6 +72,4 @@ public class EntityManager : MonoBehaviour {
         Destroy(house.gameObject);
         onEntityChanged?.Invoke(entity.entityType, entities[entity.entityType].Count);*/
     }
-    
-    
 }
