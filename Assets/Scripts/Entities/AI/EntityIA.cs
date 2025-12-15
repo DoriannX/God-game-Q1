@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SaveLoadSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public abstract class EntityIA : MonoBehaviour, ISaveable {
     public virtual EntityType entityType { get; protected set; } = EntityType.Ghost;
@@ -13,21 +15,28 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
     private bool usePathFinding;
     private int currentHeight;
     
+    TilemapManager tilemapManager;
+
+    private void Start() {
+        tilemapManager = TilemapManager.instance;
+    }
+
     public void GoByRandom() {
         const int maxAttempts = 12;
         Vector3 origin = transform.position;
-        
         // Cache frequently accessed instances
-        var tilemapManager = TilemapManager.instance;
-        var waterSystem = WaterSystem.instance;
         Vector3 cellSize = tilemapManager.GetHexCellSize();
         
         Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
-        if(currentCell.z >= 0) {
+
+        
+        if(currentCell.z > 1) {
             currentCell.z --;
         }
+        Debug.Log(currentCell);
         
         if(tilemapManager.GetTile(currentCell) == null) {
+            Debug.Log("No tile");
             return;
         }
         
@@ -39,7 +48,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
             /*if(waterSystem.waterTiles.Contains(candidateCell))
                 continue;*/
             
-            if(candidateCell.z >= 0) {
+            if(candidateCell.z > 1) {
                 candidateCell.z --;
             }
 
