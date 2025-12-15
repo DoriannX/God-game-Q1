@@ -17,11 +17,11 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
     private int currentHeight;
     
     TilemapManager tilemapManager;
-    protected EntityAIManager entityManager;
+    protected EntityManager entityManager;
 
     private void Start() {
         tilemapManager = TilemapManager.instance;
-        entityManager = EntityAIManager.instance;
+        entityManager = EntityManager.instance;
     }
 
     public void GoByRandom() {
@@ -31,8 +31,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         Vector3 cellSize = tilemapManager.GetHexCellSize();
         
         Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
-        Debug.Log("Current cell: " + currentCell);
-        
+
         if(currentCell.z > 1) {
             currentCell.z --;
         }

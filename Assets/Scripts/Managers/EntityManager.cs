@@ -3,37 +3,46 @@ using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
-public class EntityAIManager : MonoBehaviour {
-    public static EntityAIManager instance { get; private set; }
+public class EntityManager : MonoBehaviour {
+    public static EntityManager instance { get; private set; }
     
     [SerializeField] private int maxEntityPerType = 100;
     
-    SerializedDictionary<EntityType, GameObject> entityPrefabs;
+    [SerializeField] SerializedDictionary<EntityType, GameObject> entityPrefabs;
     Dictionary<EntityType, HashSet<EntityIA>> entities = new();
+    [SerializeField] SerializedDictionary<EntityType, GameObject> entitiesParent;
+    
     public event Action<EntityType, int> onEntityChanged;
     
     private void Awake() {
         if (instance == null) {
             instance = this;
         }
-        else
-        {
+        else {
             Destroy(gameObject);
         }
     }
 
     public GameObject SpawnEntity(EntityType entityType, Vector3 position) {
         if (!entities.ContainsKey(entityType)) {
+            // Create a new parent GameObject for this entity type as a child of this Manager
+            GameObject newParent = new GameObject(entityType.ToString());
+            newParent.transform.SetParent(transform);
+            entitiesParent[entityType] = newParent;
             entities[entityType] = new HashSet<EntityIA>();
         }
+        
         if (!entities.TryGetValue(entityType, out HashSet<EntityIA> entitySet)) {
             return null;
         }
+        
         if (entitySet.Count >= maxEntityPerType) {
             Debug.LogWarning("Max entities of type " + entityType + " reached");
             return null;
         }
-        GameObject entity = Instantiate(entityPrefabs[entityType], position, Quaternion.identity);
+        
+        // Instantiate entity as a child of its parent
+        GameObject entity = Instantiate(entityPrefabs[entityType], position, Quaternion.identity, entitiesParent[entityType].transform);
         entitySet.Add(entity.GetComponent<EntityIA>());
         onEntityChanged?.Invoke(entityType, entitySet.Count);
         return entity;

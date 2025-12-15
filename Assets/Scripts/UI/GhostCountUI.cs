@@ -8,7 +8,7 @@ public class GhostCountUI : MonoBehaviour
     private void Start()
     {
         UpdateUI(EntityType.Ghost, 0);
-        EntityAIManager.instance.onEntityChanged += UpdateUI;
+        EntityManager.instance.onEntityChanged += UpdateUI;
     }
 
     private void UpdateUI(EntityType entityType, int count)
