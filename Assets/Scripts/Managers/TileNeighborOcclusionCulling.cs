@@ -127,9 +127,13 @@ public class TileNeighborOcclusionCulling : MonoBehaviour
             return; // No tiles in this column
         
         // Check each tile in the column
-        for (int tileHeight = 0; tileHeight < topCoordinate; tileHeight++)
+        for (int tileHeight = 0; tileHeight <= topCoordinate; tileHeight++)
         {
-            bool shouldOcclude = ShouldOccludeTile(hexCoords, tileHeight, topCoordinate);
+            bool shouldOcclude = false;
+            if (tileHeight != topCoordinate)
+            {
+                shouldOcclude = ShouldOccludeTile(hexCoords, tileHeight, topCoordinate);
+            }
             ApplyOcclusion(hexCoords, tileHeight, shouldOcclude);
         }
     }
