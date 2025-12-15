@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using SaveLoadSystem;
 using UnityEngine;
 
@@ -98,7 +99,7 @@ public class House : WorkTask, ISaveable
         int babiesCount = minBabies + (int)((maxBabies - minBabies) * progress);
         for (var i = 0; i < babiesCount; i++)
         {
-            GhostManager.instance.SpawnGhost(TilemapManager.instance.HexAxialToWorld(
+            EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
                 TilemapManager.instance.WorldToHexAxial(transform.position)));
         }
 
@@ -170,7 +171,7 @@ public class House : WorkTask, ISaveable
         isFucking = data.isFucking;
         foreach (var ghostData in data.fuckingGhosts)
         {
-            GhostIa ghost = GhostManager.instance.SpawnGhost(TilemapManager.instance.HexAxialToWorld(
+            GhostIa ghost = EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
                 TilemapManager.instance.WorldToHexAxial(ghostData.position.ToVector2()))).GetComponent<GhostIa>();
             ghost.LoadState(ghostData);
             ghost.gameObject.SetActive(false);

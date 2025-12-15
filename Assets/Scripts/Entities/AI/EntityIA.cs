@@ -17,9 +17,11 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
     private int currentHeight;
     
     TilemapManager tilemapManager;
+    protected EntityManager entityManager;
 
     private void Start() {
         tilemapManager = TilemapManager.instance;
+        entityManager = EntityManager.instance;
     }
 
     public void GoByRandom() {
@@ -30,14 +32,12 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         
         Vector3Int currentCell = tilemapManager.WorldToHexAxial(origin);
 
-        
         if(currentCell.z > 1) {
             currentCell.z --;
         }
-        Debug.Log(currentCell);
         
         if(tilemapManager.GetTile(currentCell) == null) {
-            Debug.Log("No tile");
+            Debug.Log("No tile found at " + currentCell);
             return;
         }
         

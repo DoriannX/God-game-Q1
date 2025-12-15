@@ -386,8 +386,7 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     /// <param name="posablePrefab">The posable prefab to spawn</param>
     /// <param name="storeInDictionary">Whether to store the spawned posable in the placedObjects dictionary</param>
-    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary)
-    {
+    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary) {
         var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
 
         foreach (var hexCoordinate in brushArea)
@@ -412,18 +411,41 @@ public class TilemapManager : MonoBehaviour
 
                 if (tilePrefab != null && posablePrefab.allowedTiles.Contains(tilePrefab))
                 {
-                    Posable newPosable = Instantiate(posablePrefab, spawnPosition, Quaternion.identity);
-                    string typeName = storeInDictionary ? "Object" : "Entity";
-                    newPosable.name =
-                        $"{typeName}_({currentHexCoordinates.x}, {currentHexCoordinates.y}, {currentHexCoordinates.z})";
-
-                    if (storeInDictionary && newPosable is PosableObject posableObject)
+                    if (posablePrefab is PosableEntity posableEntity)
                     {
-                        placedObjects[tilePosition] = posableObject;
+                        // Call SpawnPosableEntity before instantiation
+                        Debug.Log(posablePrefab.gameObject.name);
+                        SpawnPosableEntity(posableEntity, spawnPosition, tilePosition);
+                    }
+                    else
+                    {
+                        Posable newPosable = Instantiate(posablePrefab, spawnPosition, Quaternion.identity);
+                        string typeName = storeInDictionary ? "Object" : "Entity";
+                        newPosable.name =
+                            $"{typeName}_({currentHexCoordinates.x}, {currentHexCoordinates.y}, {currentHexCoordinates.z})";
+
+                        if (storeInDictionary && newPosable is PosableObject posableObject)
+                        {
+                            placedObjects[tilePosition] = posableObject;
+                        }
                     }
                 }
             }
         }
+    }
+
+    /// <summary>
+    ///  Called before a PosableEntity is instantiated to perform custom instantiation logic.
+    /// </summary>
+    /// <param name="entityPrefab">The entity prefab to spawn</param>
+    /// <param name="spawnPosition">The world position where the entity should be spawned</param>
+    /// <param name="tilePosition">The tile position in hex coordinates</param>
+    private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3 spawnPosition, Vector3Int tilePosition)
+    {
+        Debug.Log("Spawning entity at " + spawnPosition);
+        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType, spawnPosition);
+        spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
+        // Add custom instantiation logic for the entity here
     }
 
     /// <summary>
