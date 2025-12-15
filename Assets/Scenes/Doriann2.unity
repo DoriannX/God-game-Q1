@@ -928,7 +928,7 @@ MonoBehaviour:
   tileSelector: {fileID: 1339345712}
   previewMaterialTemplate: {fileID: 2100000, guid: 17b6afd5f4138a5a997013c46e2df612, type: 2}
   tilePool: {fileID: 2137906315}
-  prefab: {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
+  prefab: {fileID: 5698454079545549379, guid: 37be42130b2559e4688065f8d24a06f9, type: 3}
   previewColor: {r: 0, g: 1, b: 0, a: 0.5}
   hexSize: 1
   tileHeight: 0.2
