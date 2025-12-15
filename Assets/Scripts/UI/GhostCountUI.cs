@@ -7,11 +7,11 @@ public class GhostCountUI : MonoBehaviour
 
     private void Start()
     {
-        UpdateUI(0);
-        GhostManager.instance.onGhostsChanged += UpdateUI;
+        UpdateUI(EntityType.Ghost, 0);
+        EntityAIManager.instance.onEntityChanged += UpdateUI;
     }
 
-    private void UpdateUI(int count)
+    private void UpdateUI(EntityType entityType, int count)
     {
         ghostCountText.text = count.ToString();
     }
