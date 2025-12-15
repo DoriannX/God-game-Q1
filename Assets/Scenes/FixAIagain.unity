@@ -3839,6 +3839,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1325180379}
   - component: {fileID: 1325180380}
+  - component: {fileID: 1325180381}
   m_Layer: 0
   m_Name: EntityManager
   m_TagString: Untagged
@@ -3878,8 +3879,20 @@ MonoBehaviour:
     _serializedList:
     - Key: 0
       Value: {fileID: 2450070678407865498, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
-  entitiesParent:
-    _serializedList: []
+--- !u!114 &1325180381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325180377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe27e79aedff4745b107f9688e914e0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityAIOptimizer
+  tickInterval: 0.15
+  numberOfGroups: 3
 --- !u!224 &1326566979 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4079901697997798569, guid: eefa3df86f8932a4aa9690d29834d83d, type: 3}
@@ -5938,7 +5951,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7ff87167ec8b609ac8b1e3bf5459bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ghostCountText: {fileID: 538884624}
+  entityCountText: {fileID: 538884624}
+  entity: 0
 --- !u!114 &1747353454
 MonoBehaviour:
   m_ObjectHideFlags: 0

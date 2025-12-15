@@ -4,11 +4,11 @@ using UnityHFSM;
 public class ScareState : State
 {
     private ScareComponent scareComponent;
-    private GhostIa ghostIa;
-    public ScareState(ScareComponent scareComponent, GhostIa ghostIa)
+    private GhostAI ghostAI;
+    public ScareState(ScareComponent scareComponent, GhostAI ghostAI)
     {
         this.scareComponent = scareComponent;
-        this.ghostIa = ghostIa;
+        this.ghostAI = ghostAI;
     }
 
     /*public override void OnLogic()

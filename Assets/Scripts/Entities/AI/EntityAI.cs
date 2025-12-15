@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using Components;
 
-public abstract class EntityIA : MonoBehaviour, ISaveable {
+public abstract class EntityAI : MonoBehaviour, ISaveable {
     public virtual EntityType entityType { get; protected set; } = EntityType.Ghost;
     
     public Vector3 targetPosition { get; protected set; }
