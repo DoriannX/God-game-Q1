@@ -53,7 +53,7 @@ public class GhostIa : EntityIA
         else {
             currentPath = null;
         }
-        GhostManager.instance.RegisterGhost(this);
+        entityManager.RegisterEntity(this);
     }
 
 }
