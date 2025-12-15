@@ -14,11 +14,11 @@ public class House : WorkTask, ISaveable
         public float fuckProgress;
         public int ticksAlone;
         public bool isFucking;
-        public List<GhostIa.GhostData> fuckingGhosts;
+        public List<GhostAI.GhostData> fuckingGhosts;
         
     }
 
-    public HashSet<EntityIA> fuckingGhosts = new();
+    public HashSet<EntityAI> fuckingGhosts = new();
     private GrowComponent growComponent;
     private float fuckProgress = 0;
     [SerializeField] private float fuckIncrement = 0.1f;
@@ -54,10 +54,10 @@ public class House : WorkTask, ISaveable
         
     }
 
-    public void Enter(EntityIA entityIa)
+    public void Enter(EntityAI entityAI)
     {
-        fuckingGhosts.Add(entityIa);
-        entityIa.gameObject.SetActive(false);
+        fuckingGhosts.Add(entityAI);
+        entityAI.gameObject.SetActive(false);
         if (fuckingGhosts.Count == 2)
             StartFucking();
     }
@@ -107,13 +107,13 @@ public class House : WorkTask, ISaveable
         isFucking = false;
 
         animator.Play("Idle");
-        foreach (EntityIA ghost in fuckingGhosts.ToList())
+        foreach (EntityAI ghost in fuckingGhosts.ToList())
         {
             Exit(ghost);
         }
     }
 
-    private void Exit(EntityIA entity)
+    private void Exit(EntityAI entity)
     {
         fuckingGhosts.Remove(entity);
         entity.gameObject.SetActive(true);
@@ -147,10 +147,10 @@ public class House : WorkTask, ISaveable
 
     public object SaveState()
     {
-        List<GhostIa.GhostData> ghostsData = new List<GhostIa.GhostData>();
+        List<GhostAI.GhostData> ghostsData = new List<GhostAI.GhostData>();
         foreach (var ghost in fuckingGhosts)
         {
-            ghostsData.Add((GhostIa.GhostData)ghost.SaveState());
+            ghostsData.Add((GhostAI.GhostData)ghost.SaveState());
             
         }
         HouseData data = new HouseData
@@ -171,8 +171,8 @@ public class House : WorkTask, ISaveable
         isFucking = data.isFucking;
         foreach (var ghostData in data.fuckingGhosts)
         {
-            GhostIa ghost = EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
-                TilemapManager.instance.WorldToHexAxial(ghostData.position.ToVector2()))).GetComponent<GhostIa>();
+            GhostAI ghost = EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
+                TilemapManager.instance.WorldToHexAxial(ghostData.position.ToVector2()))).GetComponent<GhostAI>();
             ghost.LoadState(ghostData);
             ghost.gameObject.SetActive(false);
             fuckingGhosts.Add(ghost);

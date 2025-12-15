@@ -3,12 +3,12 @@ using UnityHFSM;
 
 public class WorkState : State
 {
-    private GhostIa ghostIA;
+    private GhostAI ghostAI;
     private WorkComponent workComponent;
-    public WorkState(GhostIa ghostIA, WorkComponent workComponent)
+    public WorkState(GhostAI ghostAI, WorkComponent workComponent)
     {
         this.workComponent = workComponent;
-        this.ghostIA = ghostIA;
+        this.ghostAI = ghostAI;
     }
 
     /*public override void OnLogic()

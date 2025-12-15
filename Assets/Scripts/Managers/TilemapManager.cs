@@ -443,7 +443,6 @@ public class TilemapManager : MonoBehaviour
     /// <param name="tilePosition">The tile position in hex coordinates</param>
     private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3 spawnPosition, Vector3Int tilePosition)
     {
-        Debug.Log("Spawning entity at " + spawnPosition);
         GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType, spawnPosition);
         spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
         // Add custom instantiation logic for the entity here
