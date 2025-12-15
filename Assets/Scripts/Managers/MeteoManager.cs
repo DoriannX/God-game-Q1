@@ -20,8 +20,8 @@ public enum MeteoState
     Sandstorm
 }
 
-[RequireComponent(typeof(SaveableEntity))]
-public class MeteoManager : MonoBehaviour, ISaveable
+//[RequireComponent(typeof(SaveableEntity))]
+public class MeteoManager : MonoBehaviour/*, ISaveable*/
 {
 
     [EventRef]
@@ -63,7 +63,7 @@ public class MeteoManager : MonoBehaviour, ISaveable
         }
         rainInstance = RuntimeManager.CreateInstance(rainEventPath);
     }
-    
+
     public void SetWeather(MeteoState newState)
     {
         setManually = true;
@@ -87,7 +87,7 @@ public class MeteoManager : MonoBehaviour, ISaveable
     {
         TickSystem.ticked += OnTicked;
     }
-    
+
     private void StartWeather(MeteoState newState)
     {
         foreach (MeteoEvent meteoEvent in meteoComponents)
@@ -102,7 +102,7 @@ public class MeteoManager : MonoBehaviour, ISaveable
             }
         }
     }
-    
+
     private void StopWeather()
     {
         if (activeMeteoEvent == null)
@@ -117,7 +117,7 @@ public class MeteoManager : MonoBehaviour, ISaveable
         state = MeteoState.Sunny;
         weatherChanged?.Invoke(false);
     }
-    
+
     private void OnTicked()
     {
         if (setManually)
@@ -147,13 +147,13 @@ public class MeteoManager : MonoBehaviour, ISaveable
             }
         }
     }
-    
+
     private void OnDisable()
     {
         TickSystem.ticked -= OnTicked;
     }
 
-    public bool NeedsToBeSaved()
+    /*public bool NeedsToBeSaved()
     {
         return true;
     }
@@ -191,7 +191,7 @@ public class MeteoManager : MonoBehaviour, ISaveable
 
     public void GotAddedAsChild(GameObject obj, GameObject hisParent)
     {
-    }
+    }*/
     private void OnDestroy()
     {
         rainInstance.release(); // libère l’instance proprement [web:72]

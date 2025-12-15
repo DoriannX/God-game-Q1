@@ -1,5 +1,8 @@
 using System;
+using UnityEditor.Build.Content;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseManager : MonoBehaviour
@@ -26,5 +29,10 @@ public class PauseManager : MonoBehaviour
         isPaused = !isPaused;
         Time.timeScale = isPaused ? 0f : 1f;
         onPauseToggled?.Invoke(isPaused);
+        
+    }   
+    public void Menu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }
