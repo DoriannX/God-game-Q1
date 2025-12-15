@@ -1248,7 +1248,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7ff87167ec8b609ac8b1e3bf5459bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ghostCountText: {fileID: 1466306308}
+  entityCountText: {fileID: 0}
+  entity: 0
 --- !u!1 &289649673
 GameObject:
   m_ObjectHideFlags: 0
@@ -1905,6 +1906,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8213672ae419034d0a465186808432b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  <waterFlowPrefab>k__BackingField: {fileID: 6609912500445995595, guid: bcaf1f88a83233f10a63d4f27b174e65, type: 3}
+  <maxFlowDistance>k__BackingField: 5
 --- !u!4 &394630592
 Transform:
   m_ObjectHideFlags: 0
@@ -7537,8 +7540,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 119c9b046e3a3365890a6287978ece0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ghostPrefab: {fileID: 2450070678407865498, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
-  maxGhosts: 100
 --- !u!4 &1325180379
 Transform:
   m_ObjectHideFlags: 0
@@ -10944,7 +10945,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7ff87167ec8b609ac8b1e3bf5459bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  ghostCountText: {fileID: 538884624}
+  entityCountText: {fileID: 538884624}
+  entity: 0
 --- !u!114 &1747353454
 MonoBehaviour:
   m_ObjectHideFlags: 0

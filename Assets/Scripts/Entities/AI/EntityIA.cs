@@ -47,7 +47,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
             
             Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
             GameObject candidateTile = tilemapManager.GetTile(candidateCell);
-            if (candidateTile != null && candidateTile.GetComponent<WaterComponent>() != null)
+            if (candidateTile != null && candidateTile.GetComponent<WaterSource>() != null)
                 continue;
             
             if(candidateCell.z > 1) {

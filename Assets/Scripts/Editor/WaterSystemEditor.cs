@@ -16,14 +16,14 @@ public class WaterSystemEditor : Editor
         
         GUI.enabled = false;
         
-        if (waterSystem.WaterBodies != null)
+        if (waterSystem.waterSources != null)
         {
-            EditorGUILayout.LabelField("Count:", waterSystem.WaterBodies.Count.ToString());
+            EditorGUILayout.LabelField("Count:", waterSystem.waterSources.Count.ToString());
             
             int index = 0;
-            foreach (WaterComponent water in waterSystem.WaterBodies)
+            foreach (WaterSource water in waterSystem.waterSources)
             {
-                EditorGUILayout.ObjectField($"Element {index}", water, typeof(WaterComponent), true);
+                EditorGUILayout.ObjectField($"Element {index}", water, typeof(WaterSource), true);
                 index++;
             }
         }

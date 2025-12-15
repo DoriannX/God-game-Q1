@@ -6,9 +6,10 @@ using UnityEngine;
 public class WaterSystem : MonoBehaviour
 {
     public static WaterSystem instance { get; private set;}
-    private HashSet<WaterComponent> waterBodies = new();
-    
-    public HashSet<WaterComponent> WaterBodies => waterBodies;
+    public HashSet<WaterSource> waterSources { get; private set; } = new();
+    public HashSet<GameObject> waterFlows { get; private set; } = new();
+    [field: SerializeField] public GameObject waterFlowPrefab { get; private set; }
+    [field: SerializeField] public float maxFlowDistance { get; private set; }
 
     private void Awake()
     {
@@ -24,20 +25,20 @@ public class WaterSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        WaterComponent.waterSpawned += OnWaterSpawned;
-        WaterComponent.waterRemoved += OnWaterRemoved;
+        WaterSource.waterSpawned += OnWaterSpawned;
+        WaterSource.waterRemoved += OnWaterRemoved;
         TilemapManager.instance.tileRemoved += EnableNeighbors;
         TickSystem.ticked += OnTicked;
     }
 
-    private void OnWaterRemoved(WaterComponent water)
+    private void OnWaterRemoved(WaterSource waterSource)
     {
-        waterBodies.Remove(water);
+        waterSources.Remove(waterSource);
     }
 
     private void OnTicked()
     {
-        foreach (WaterComponent water in waterBodies.ToList())
+        foreach (WaterSource water in waterSources.ToList())
         {
             water.Expand();
         }
@@ -45,14 +46,14 @@ public class WaterSystem : MonoBehaviour
 
     private void OnDisable()
     {
-        WaterComponent.waterSpawned -= OnWaterSpawned;
-        WaterComponent.waterRemoved -= OnWaterRemoved;
+        WaterSource.waterSpawned -= OnWaterSpawned;
+        WaterSource.waterRemoved -= OnWaterRemoved;
         TickSystem.ticked -= OnTicked;
     }
     
-    private void OnWaterSpawned(WaterComponent water)
+    private void OnWaterSpawned(WaterSource waterSource)
     {
-        waterBodies.Add(water);
+        waterSources.Add(waterSource);
     }
     
     public void EnableNeighbors(Vector3Int coordinate)
@@ -61,14 +62,14 @@ public class WaterSystem : MonoBehaviour
         GameObject underTile = TilemapManager.instance.GetTile(downCoords);
         if (downCoords.z > 0 && underTile == null)
         {
-            WaterComponent underWater = underTile?.GetComponent<WaterComponent>();
+            WaterSource underWater = underTile?.GetComponent<WaterSource>();
             if (underWater != null)
             {
                 underWater.Toggle(true);
             }
         }
 
-        foreach (Vector3Int offset in WaterComponent.horizontalOffsets)
+        foreach (Vector3Int offset in WaterSource.horizontalOffsets)
         {
             Vector3Int neighborCoords = coordinate + offset;
 
@@ -82,7 +83,7 @@ public class WaterSystem : MonoBehaviour
             {
                 continue;
             }
-            WaterComponent neighborWater = neighborTile?.GetComponent<WaterComponent>();
+            WaterSource neighborWater = neighborTile?.GetComponent<WaterSource>();
             if (neighborWater == null)
             {
                 continue;

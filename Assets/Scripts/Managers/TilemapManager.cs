@@ -166,7 +166,7 @@ public class TilemapManager : MonoBehaviour
     {
         if (!prefabHasWaterSystem.TryGetValue(prefab, out bool hasWaterSystem))
         {
-            hasWaterSystem = prefab.GetComponent<WaterComponent>() != null;
+            hasWaterSystem = prefab.GetComponent<WaterSource>() != null || prefab.GetComponent<WaterFlow>() != null;
             prefabHasWaterSystem[prefab] = hasWaterSystem;
         }
 
@@ -204,11 +204,11 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
     /// <param name="tileData"> The tile data associated with the tile </param>
-    public void SpawnTileAt(Vector3Int hexCoordinates, GameObject prefab)
+    public GameObject SpawnTileAt(Vector3Int hexCoordinates, GameObject prefab)
     {
         if (hexCoordinates.z >= maxHeight) // Prevents the tile from exceeding the maximum height
         {
-            return;
+            return null;
         }
 
         bool isWaterPrefab = PrefabHasWaterSystem(prefab);
@@ -260,7 +260,7 @@ public class TilemapManager : MonoBehaviour
         if (newTile == null)
         {
             Debug.LogError("Failed to get tile from pool!");
-            return;
+            return null;
         }
 
         newTile.transform.position = spawnPosition;
@@ -285,6 +285,7 @@ public class TilemapManager : MonoBehaviour
         columnModified?.Invoke(hexCoordinates);
 
         tilePlaced?.Invoke(hexCoordinates);
+        return newTile;
     }
 
     /// <summary>
