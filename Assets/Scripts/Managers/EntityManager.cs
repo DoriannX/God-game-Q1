@@ -6,13 +6,13 @@ using UnityEngine;
 
 public class EntityManager : MonoBehaviour {
     public static EntityManager instance { get; private set; }
-    EntityAIOptimizer entityOptimizer;
+    private EntityAIOptimizer entityOptimizer;
     
     [SerializeField] private int maxEntityPerType = 100;
     
-    [SerializeField] SerializedDictionary<EntityType, GameObject> entityPrefabs;
-    Dictionary<EntityType, HashSet<EntityAI>> entities = new();
-    Dictionary<EntityType, GameObject> entitiesParent = new();
+    [SerializeField] private SerializedDictionary<EntityType, GameObject> entityPrefabs;
+    private Dictionary<EntityType, HashSet<EntityAI>> entities = new();
+    private Dictionary<EntityType, GameObject> entitiesParent = new();
     
     public event Action<EntityType, int> onEntityChanged;
     

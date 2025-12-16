@@ -13,7 +13,6 @@ public class BreedComponent : MonoBehaviour {
     private void Awake() {
         onBreedDone += () =>
         {
-            Debug.Log("BreedFinish");
             isBreedDone = true;
         };
     }
@@ -45,7 +44,6 @@ public class BreedComponent : MonoBehaviour {
     }
 
     public void GoBreed() {
-        Debug.Log("Go Breed");
         House house = GetNearestHouse(transform.position, entityAI.entityType);
         if (house == null) {
             onBreedDone?.Invoke();

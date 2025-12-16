@@ -8,8 +8,7 @@ using Unity.Properties;
 [NodeDescription(name: "Work", story: "[AI] go working", category: "Action", id: "15790155747800ad5ee970caaa9f8431")]
 public partial class WorkAction : Action {
     [SerializeReference] public BlackboardVariable<BehaviorData> AI;
-    protected override Status OnStart() {
-        Debug.Log("Go Work");
+    protected override Status OnStart() {   
         WorkTask task = AI.Value.workComponent.GetTask();
         if (task == null) {
             AI.Value.workComponent.Work();
