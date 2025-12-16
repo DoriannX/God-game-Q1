@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WanderComponent : MonoBehaviour
 {
-    [SerializeField] private EntityAI entityAI;
+    [SerializeField] private EntityIA entityAI;
     private bool canWander = true;
 
     public void Wander() {

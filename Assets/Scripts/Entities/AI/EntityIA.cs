@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using Components;
 
-public abstract class EntityAI : MonoBehaviour, ISaveable {
+public abstract class EntityIA : MonoBehaviour, ISaveable {
     public virtual EntityType entityType { get; protected set; } = EntityType.Ghost;
     
     public Vector3 targetPosition { get; protected set; }
@@ -36,8 +36,8 @@ public abstract class EntityAI : MonoBehaviour, ISaveable {
             currentCell.z --;
         }
         
-        
         if(tilemapManager.GetTile(currentCell) == null) {
+            Debug.Log("No tile found at " + currentCell);
             return;
         }
         
@@ -53,7 +53,7 @@ public abstract class EntityAI : MonoBehaviour, ISaveable {
             if(candidateCell.z > 1) {
                 candidateCell.z --;
             }
-            
+
             if (tilemapManager.GetTile(candidateCell) == null || candidateCell == currentCell) {
                 continue;
             }
@@ -77,11 +77,20 @@ public abstract class EntityAI : MonoBehaviour, ISaveable {
         targetPosition = origin;
         currentPath = null;
     }
-    
     public void GoTo(Vector3 position) {
         usePathFinding = true;
         targetPosition = position;
         ComputePath();
+    }
+    
+    public void GoBy(Vector3 direction) {
+
+        /*targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
+        targetPosition = transform.position +
+                         Vector3.Scale(direction.normalized, TilemapManager.instance.GetHexCellSize());
+
+        usePathFinding = true;
+        ComputePath();*/
     }
     
     private void OnEnable() {
@@ -109,7 +118,7 @@ public abstract class EntityAI : MonoBehaviour, ISaveable {
     }
     
     public bool isMoving =>
-        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath is { Count: > 1 };
+        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath != null && currentPath.Count > 1;
 
     protected void ComputePath() {
         Vector3Int currentCell = TilemapManager.instance.WorldToHexAxial(transform.position);

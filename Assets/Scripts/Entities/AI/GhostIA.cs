@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SaveLoadSystem;
 using UnityEngine;
 
-public class GhostAI : EntityAI
+public class GhostIa : EntityIA
 {
     public override EntityType entityType { get; protected set; } = EntityType.Ghost ;
     
