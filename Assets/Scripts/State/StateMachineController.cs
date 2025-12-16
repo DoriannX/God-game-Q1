@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityHFSM;
 using Random = UnityEngine.Random;
 
@@ -10,7 +11,7 @@ public class StateMachineController : MonoBehaviour
     [SerializeField] private HouseRetriever houseRetriever;
     [SerializeField] private GrowComponent growComponent;
     [SerializeField] private ScareComponent scareComponent;
-    [SerializeField] private GhostIa ghostIA;
+    [FormerlySerializedAs("ghostIA")] [SerializeField] private GhostAI ghostAI;
     [SerializeField] private float workProbability = 0.1f;
     [SerializeField] private float fuckProbability = 0.05f;
     private StateMachine stateMachine;
@@ -30,7 +31,7 @@ public class StateMachineController : MonoBehaviour
         growComponent.onFullyGrown += SetupStateMachine;
         stateMachine = new StateMachine();
         State wanderState = new WanderState(wanderComponent);
-        State scareState = new ScareState(scareComponent, ghostIA);
+        State scareState = new ScareState(scareComponent, ghostAI);
         stateMachine.AddTriggerTransitionFromAny("OnScare", "Scare");
         stateMachine.AddState("Scare", scareState);
         scareComponent.onScare += () =>
@@ -43,8 +44,8 @@ public class StateMachineController : MonoBehaviour
     }   
     private void SetupStateMachine()
     {
-        State workState = new WorkState( ghostIA, workComponent);
-        State fuckState = new FuckState(ghostIA, houseRetriever);
+        State workState = new WorkState( ghostAI, workComponent);
+        State fuckState = new FuckState(ghostAI, houseRetriever);
         ((FuckState) fuckState).onFuckFinished += () => stateMachine.Trigger("OnFuckFinished");
         workComponent.onWork += () => stateMachine.Trigger("OnWork");
         stateMachine.AddState("Work", workState);
