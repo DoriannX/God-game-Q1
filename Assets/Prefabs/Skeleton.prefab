@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 8695087590091800227}
   - component: {fileID: 2381022741083699884}
   - component: {fileID: 3884330384959931589}
+  - component: {fileID: 6939316281950597390}
   - component: {fileID: 3234770281780568274}
-  - component: {fileID: 7957398275529141594}
   - component: {fileID: 7471173993042387809}
   - component: {fileID: 4077641912464904975}
   - component: {fileID: 3526314780886667151}
@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 6701740305892963349}
   - component: {fileID: 4552284087110041515}
   m_Layer: 0
-  m_Name: Ghost
+  m_Name: Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,10 +109,23 @@ MonoBehaviour:
   <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
   <workComponent>k__BackingField: {fileID: 4077641912464904975}
   <breedComponent>k__BackingField: {fileID: 3526314780886667151}
-  <EntityAI>k__BackingField: {fileID: 7957398275529141594}
+  <EntityAI>k__BackingField: {fileID: 6939316281950597390}
   <entityGrow>k__BackingField: {fileID: 7471173993042387809}
   workProbability: 0.05
   breedProbability: 0.01
+--- !u!114 &6939316281950597390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450070678407865498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34544f6daf364ae5ad4fcd716d103f19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkeletonAI
+  entityMovement: {fileID: 8695087590091800227}
 --- !u!114 &3234770281780568274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,20 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c01bf5be8b4db18f868eebd31ebd0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderComponent
-  entityAI: {fileID: 7957398275529141594}
---- !u!114 &7957398275529141594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfcbb4388d9e832c1a6289626295ec9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  entityMovement: {fileID: 8695087590091800227}
+  entityAI: {fileID: 6939316281950597390}
 --- !u!114 &7471173993042387809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 818ed45c439d4939b0341081132e7010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreedComponent
-  entityAI: {fileID: 7957398275529141594}
+  entityAI: {fileID: 6939316281950597390}
   range: 10
 --- !u!114 &7408342672037405645
 MonoBehaviour:
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SaveLoadSystem.SaveableEntity
   m_ID: 
   m_childID: 
-  m_prefabID: Ghost
+  m_prefabID: Skeleton
   m_saveTransform: 1
 --- !u!58 &4552284087110041515
 CircleCollider2D:
@@ -275,7 +275,6 @@ GameObject:
   - component: {fileID: 332541754424651605}
   - component: {fileID: 2424349180154339363}
   - component: {fileID: 2022015165024604261}
-  - component: {fileID: 3057750871050936803}
   - component: {fileID: 3552608091273977343}
   m_Layer: 0
   m_Name: Sprite
@@ -347,7 +346,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_Sprite: {fileID: -1483407423975865499, guid: 0bb009a68ed17d380afb9c2b162f7017, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -373,20 +372,6 @@ MonoBehaviour:
   growthStages:
   - {fileID: 21300000, guid: d1d3a0156971a3d26834d4a1065bc94e, type: 3}
   - {fileID: -1483407423975865499, guid: 0bb009a68ed17d380afb9c2b162f7017, type: 3}
---- !u!114 &3057750871050936803
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8484147219461251418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1548a80bf9743d08a56a2efa301e5c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GhostAnimation
-  floatAmplitude: 0.01
-  floatFrequency: 10
 --- !u!114 &3552608091273977343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -401,5 +386,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SaveLoadSystem.SaveableEntity
   m_ID: 
   m_childID: 
-  m_prefabID: Sprite_Ghost
+  m_prefabID: Sprite_Skeleton
   m_saveTransform: 1

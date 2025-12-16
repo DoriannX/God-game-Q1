@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PosableEntity : Posable
 {
-    public EntityType entityType;
+    [HideInInspector] public EntityType entityType;
 
     private void Awake()
     {
