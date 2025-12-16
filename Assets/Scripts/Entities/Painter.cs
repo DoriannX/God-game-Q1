@@ -87,6 +87,7 @@ public class Painter : MonoBehaviour
             }
             else if (currentMode == PainterMode.Destruction)
             {
+                print ("Destruction mode active");
                 destructionComponent.Destroy();
             }
         }
