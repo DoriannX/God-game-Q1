@@ -737,6 +737,6 @@ public class TilemapManager : MonoBehaviour
         float width = hexSize;
         float height = hexSize * Mathf.Sqrt(3f);
 
-        return new Vector3(width, 0f, height);
+        return new Vector3(height, 0f, width);
     }
 }

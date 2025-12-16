@@ -42,27 +42,34 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         }
         
         for (int i = 0; i < maxAttempts; i++) {
-            Vector3 dir = Random.insideUnitCircle.normalized;
+            Vector3 randomVector= Random.insideUnitCircle.normalized;
+            Vector3 dir = new(randomVector.x, 0, randomVector.y);
             Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
             
             Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
             GameObject candidateTile = tilemapManager.GetTile(candidateCell);
             if (candidateTile != null && candidateTile.GetComponent<WaterComponent>() != null)
+            {
                 continue;
+            }
             
             if(candidateCell.z > 1) {
                 candidateCell.z --;
             }
 
-            if (tilemapManager.GetTile(candidateCell) == null || candidateCell == currentCell) {
+            if (tilemapManager.GetTile(candidateCell) == null || candidateCell == currentCell) 
+            {
                 continue;
             }
 
-            if (tilemapManager.GetTile(candidateCell + Vector3Int.forward) != null) {
-                if (tilemapManager.GetTile(candidateCell + Vector3Int.forward * 2) == null) {
+            if (tilemapManager.GetTile(candidateCell + Vector3Int.forward) != null) 
+            {
+                if (tilemapManager.GetTile(candidateCell + Vector3Int.forward * 2) == null) 
+                {
                     candidateCell += Vector3Int.forward;
                 }
-                else {
+                else 
+                {
                     continue;
                 }
             }
