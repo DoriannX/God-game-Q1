@@ -14,15 +14,15 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button quitButton;
 
-    // Noms de scènes — utilisez exactement les noms présents dans vos Build Settings.
-    private const string SampleSceneName = "SampleScene";
+    // Noms de scï¿½nes ï¿½ utilisez exactement les noms prï¿½sents dans vos Build Settings.
+    private const string SampleSceneName = "Doriann2";
     private const string OptionsSceneName = "Options";
     private const string CreditsSceneName = "Credits";
     private const string MainMenuSceneName = "mainMenu";
 
     private void Awake()
     {
-        // Ajoute les listeners de manière sûre (évite les NRE si un champ n'est pas assigné)
+        // Ajoute les listeners de maniï¿½re sï¿½re (ï¿½vite les NRE si un champ n'est pas assignï¿½)
         SafeAddListener(newGameButton, LoadGame, nameof(newGameButton));
         SafeAddListener(OptionsButton, Options, nameof(OptionsButton));
         SafeAddListener(creditsButton, Credits, nameof(creditsButton));
@@ -40,12 +40,12 @@ public class MainMenuManager : MonoBehaviour
             else
             {
                 continueButton.interactable = false;
-                Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(saveLoadManager)} non assigné : {nameof(continueButton)} désactivé.");
+                Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(saveLoadManager)} non assignï¿½ : {nameof(continueButton)} dï¿½sactivï¿½.");
             }
         }
         else
         {
-            Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(continueButton)} non assigné.");
+            Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(continueButton)} non assignï¿½.");
         }
 
         if (quitButton != null)
@@ -60,7 +60,7 @@ public class MainMenuManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(quitButton)} non assigné.");
+            Debug.LogWarning($"[{nameof(MainMenuManager)}] {nameof(quitButton)} non assignï¿½.");
         }
     }
 
@@ -68,7 +68,7 @@ public class MainMenuManager : MonoBehaviour
     {
         if (btn == null)
         {
-            Debug.LogWarning($"[{nameof(MainMenuManager)}] {fieldName} non assigné.");
+            Debug.LogWarning($"[{nameof(MainMenuManager)}] {fieldName} non assignï¿½.");
             return;
         }
 
