@@ -46,6 +46,7 @@ public class ZoomComponent : MonoBehaviour
 
             // Apply the new position
             transform.position = newPosition;
+            ChunkManager.Instance.UpdateVisibleChunks();
         }
     }
 
