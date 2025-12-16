@@ -218,6 +218,14 @@ public class TilemapManager : MonoBehaviour
             case true when placedObjects.ContainsKey(hexCoordinates):
             {
                 var newPosition = hexCoordinates + new Vector3Int(0, 0, 1);
+                
+                if(placedObjects.ContainsKey(newPosition) && !placedObjects[newPosition].allowedTiles.Contains(tileSelector.GetCurrentTile()))
+                {
+                    // If the placed object can't be placed on the current tile, destroy it
+                    Destroy(placedObjects[hexCoordinates].gameObject);
+                    placedObjects.Remove(hexCoordinates);
+                    break;
+                }
                 placedObjects[newPosition] = placedObjects[hexCoordinates];
                 placedObjects.Remove(hexCoordinates);
                 placedObjects[newPosition].transform.position = HexAxialToWorld(newPosition);
@@ -272,7 +280,7 @@ public class TilemapManager : MonoBehaviour
 
         if (!columnTopCoordinate.TryAdd(columnKey, 1))
         {
-            columnTopCoordinate[columnKey] = hexCoordinates.z;
+            columnTopCoordinate[columnKey] = columnTopCoordinate[columnKey] < hexCoordinates.z ? hexCoordinates.z : columnTopCoordinate[columnKey] ;
         }
 
         columnModified?.Invoke(hexCoordinates);
@@ -379,8 +387,7 @@ public class TilemapManager : MonoBehaviour
     /// </summary>
     /// <param name="posablePrefab">The posable prefab to spawn</param>
     /// <param name="storeInDictionary">Whether to store the spawned posable in the placedObjects dictionary</param>
-    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary)
-    {
+    private void SpawnPosableAtMouse(Posable posablePrefab, bool storeInDictionary) {
         var brushArea = BrushSizeManager.instance.GetBrushArea(currentHexCoordinates);
 
         foreach (var hexCoordinate in brushArea)
@@ -405,18 +412,41 @@ public class TilemapManager : MonoBehaviour
 
                 if (tilePrefab != null && posablePrefab.allowedTiles.Contains(tilePrefab))
                 {
-                    Posable newPosable = Instantiate(posablePrefab, spawnPosition, Quaternion.identity);
-                    string typeName = storeInDictionary ? "Object" : "Entity";
-                    newPosable.name =
-                        $"{typeName}_({currentHexCoordinates.x}, {currentHexCoordinates.y}, {currentHexCoordinates.z})";
-
-                    if (storeInDictionary && newPosable is PosableObject posableObject)
+                    if (posablePrefab is PosableEntity posableEntity)
                     {
-                        placedObjects[tilePosition] = posableObject;
+                        // Call SpawnPosableEntity before instantiation
+                        Debug.Log(posablePrefab.gameObject.name);
+                        SpawnPosableEntity(posableEntity, spawnPosition, tilePosition);
+                    }
+                    else
+                    {
+                        Posable newPosable = Instantiate(posablePrefab, spawnPosition, Quaternion.identity);
+                        string typeName = storeInDictionary ? "Object" : "Entity";
+                        newPosable.name =
+                            $"{typeName}_({currentHexCoordinates.x}, {currentHexCoordinates.y}, {currentHexCoordinates.z})";
+
+                        if (storeInDictionary && newPosable is PosableObject posableObject)
+                        {
+                            placedObjects[tilePosition] = posableObject;
+                        }
                     }
                 }
             }
         }
+    }
+
+    /// <summary>
+    ///  Called before a PosableEntity is instantiated to perform custom instantiation logic.
+    /// </summary>
+    /// <param name="entityPrefab">The entity prefab to spawn</param>
+    /// <param name="spawnPosition">The world position where the entity should be spawned</param>
+    /// <param name="tilePosition">The tile position in hex coordinates</param>
+    private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3 spawnPosition, Vector3Int tilePosition)
+    {
+        Debug.Log("Spawning entity at " + spawnPosition);
+        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType, spawnPosition);
+        spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
+        // Add custom instantiation logic for the entity here
     }
 
     /// <summary>
@@ -567,6 +597,7 @@ public class TilemapManager : MonoBehaviour
 
         foreach (var hexCoordinate in brushArea)
         {
+            
             int topCoordinate = GetColumnTopCoordinate(hexCoordinate);
             Vector3Int tilePosition = new Vector3Int(hexCoordinate.x, hexCoordinate.y, topCoordinate);
 
@@ -608,7 +639,7 @@ public class TilemapManager : MonoBehaviour
     ///  Removes all water tiles at the specified hexagonal coordinates.
     /// </summary>
     /// <param name="hexCoordinates"> The coordinates in the hexagonal tilemap space </param>
-    public void RemoveAllWaterAt(Vector3Int hexCoordinates)
+    public void  RemoveAllWaterAt(Vector3Int hexCoordinates)
     {
         int topCoordinate = GetColumnTopCoordinate(new Vector2Int(hexCoordinates.x, hexCoordinates.y));
 
@@ -634,6 +665,23 @@ public class TilemapManager : MonoBehaviour
     {
         if (!tiles.TryGetValue(hexCoordinates, out var tileToRemove))
             return;
+        
+        // Check if there's a placed object on top of the tile and lower it by one
+        Vector3Int objectPosition = hexCoordinates + new Vector3Int(0, 0, 1);
+        if (placedObjects.Remove(objectPosition, out var placedObject))
+        {
+            if(hexCoordinates.z == 1)
+            {
+                // If the placed object can be placed on the current tile, destroy it
+                Destroy(placedObject.gameObject);
+            }
+            else
+            {
+                Vector3Int newPosition = objectPosition + new Vector3Int(0, 0, -1);
+                placedObjects[newPosition] = placedObject;
+                placedObject.transform.position = HexAxialToWorld(newPosition);
+            }
+        }
 
         if (tileToRemove != null)
         {

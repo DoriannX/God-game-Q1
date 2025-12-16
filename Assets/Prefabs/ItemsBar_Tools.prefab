@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1599640830865337594}
   - component: {fileID: 6323866667041749063}
   m_Layer: 5
-  m_Name: ItemsBtn_01
+  m_Name: ItemsBtn_bucket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,10 +36,10 @@ RectTransform:
   - {fileID: 8485646301211385120}
   m_Father: {fileID: 4079901697997798569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 80, y: -50}
+  m_SizeDelta: {x: 40, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4242946097319062985
 CanvasRenderer:
@@ -218,10 +218,10 @@ RectTransform:
   - {fileID: 1780176224155325520}
   m_Father: {fileID: 4079901697997798569}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -50}
+  m_SizeDelta: {x: 40, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1217092718350307547
 CanvasRenderer:
@@ -379,14 +379,13 @@ GameObject:
   - component: {fileID: 1247357154900399138}
   - component: {fileID: 1221704122459781153}
   - component: {fileID: 1628266623103336800}
-  - component: {fileID: 2375221612957799140}
   m_Layer: 5
   m_Name: ItemsBar_Tools
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4079901697997798569
 RectTransform:
   m_ObjectHideFlags: 0
@@ -394,7 +393,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8719417885492594473}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -487,20 +486,6 @@ MonoBehaviour:
   mode: 2
   buttons:
   - {fileID: 6100167076663632267}
---- !u!114 &2375221612957799140
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8719417885492594473}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 857c3fbb8d3685d49b9469ac6c9d629a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ItemsBarContent
-  mode: 3
-  buttons:
   - {fileID: 4682248365675345575}
 --- !u!1001 &1834665808306981615
 PrefabInstance:

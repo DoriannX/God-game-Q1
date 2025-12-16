@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
 public class CategoryButtonUI : MonoBehaviour
 {
     [SerializeField] private string categoryId; 
@@ -21,3 +22,4 @@ public class CategoryButtonUI : MonoBehaviour
         toolbarManager.OpenCategory(categoryId);
     }
 }
+*/  

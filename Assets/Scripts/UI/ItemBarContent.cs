@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ItemsBarContent : MonoBehaviour
 {
-    public PainterMode mode;
+    public List<TilemapButton> buttons { get; private set; } = new();
 
-    public List<Button> buttons;
+    public void Init()
+    {
+        GetComponentsInChildren(true, buttons);
+    }
 }
