@@ -10,7 +10,7 @@ public class EntityManager : MonoBehaviour {
     
     [SerializeField] SerializedDictionary<EntityType, GameObject> entityPrefabs;
     Dictionary<EntityType, HashSet<EntityIA>> entities = new();
-    Dictionary<EntityType, GameObject> entitiesParent;
+    Dictionary<EntityType, GameObject> entitiesParent = new();
     
     public event Action<EntityType, int> onEntityChanged;
     
