@@ -20,7 +20,7 @@ public class TilemapManager : MonoBehaviour
     private float lastRightClickTime;
 
     public Dictionary<Vector3Int, GameObject> tiles { get; } = new();
-    private Dictionary<Vector2Int, int> columnTopCoordinate = new();
+    public Dictionary<Vector2Int, int> columnTopCoordinate { get; } = new();
     private Dictionary<Vector3Int, PosableObject> placedObjects = new();
     private Dictionary<GameObject, bool> prefabHasWaterSystem = new();
     private HashSet<Vector3Int> waterTilePositions = new(); // Tracks positions with water tiles for O(1) lookups
