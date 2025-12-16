@@ -13,11 +13,12 @@ public class House : WorkTask {
     [SerializeField] private int tickToExitAlone = 5;
     [SerializeField] private int minBabies = 1;
     [SerializeField] private int maxBabies = 3;
-    private EntityType breedEntity;
+    public EntityType breedEntity;
     private Animator animator;
     private int ticksAlone;
     private bool isBreeding;
     public bool isFull => breedingEntities.Count >= 2;
+    public bool isEmpty => breedingEntities.Count == 0;
     public event Action onBreedFinished;
 
 
@@ -37,13 +38,14 @@ public class House : WorkTask {
 
     protected override void OnComplete() { }
 
-    public void Enter(EntityAI entityAI) {
+    public void Enter(EntityAI entityAI, Action onBreedFailed = null) {
         if (breedingEntities.Count == 0) {
             breedEntity = entityAI.entityType;
         }
         else {
             if (breedEntity != entityAI.entityType) {
-                Exit(entityAI);
+                onBreedFailed?.Invoke();
+                return;
             }
         }
         breedingEntities.Add(entityAI);
@@ -94,7 +96,7 @@ public class House : WorkTask {
         }
     }
 
-    private void Exit(EntityAI entity, bool forceExit = false) {
+    private void Exit(EntityAI entity) {
         
         breedingEntities.Remove(entity);
         entity.gameObject.SetActive(true);
