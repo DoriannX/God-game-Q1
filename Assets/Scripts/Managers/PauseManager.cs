@@ -1,6 +1,4 @@
 using System;
-using UnityEditor.Build.Content;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
