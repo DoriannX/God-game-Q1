@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EntityCountUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI entityCountText;
+    [SerializeField] private TMP_Text entityCountText;
     [SerializeField] private EntityType entity;
 
     private void Start() {

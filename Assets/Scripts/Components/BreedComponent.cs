@@ -1,11 +1,10 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class BreedComponent : MonoBehaviour {
     public bool isBreedDone { get; private set; }
     public event Action onBreedDone;
-    [FormerlySerializedAs("entityIa")] [SerializeField] private EntityAI entityAI;
+    [SerializeField] private EntityIA entityIa;
         
     private readonly Collider2D[] colliders = new Collider2D[100];
     [SerializeField] private float range;
@@ -13,6 +12,7 @@ public class BreedComponent : MonoBehaviour {
     private void Awake() {
         onBreedDone += () =>
         {
+            Debug.Log("BreedFinish");
             isBreedDone = true;
         };
     }
@@ -44,15 +44,16 @@ public class BreedComponent : MonoBehaviour {
     }
 
     public void GoBreed() {
-        House house = GetNearestHouse(transform.position, entityAI.entityType);
+        Debug.Log("Go Breed");
+        House house = GetNearestHouse(transform.position, entityIa.entityType);
         if (house == null) {
             onBreedDone?.Invoke();
             return;
         }
         house.onBreedFinished += () => onBreedDone?.Invoke();
-        entityAI.GoTo(house.transform.position);
-        if (Vector2.Distance(entityAI.transform.position, house.transform.position) < 0.1f) {
-            house.Enter(entityAI);
+        entityIa.GoTo(house.transform.position);
+        if (Vector2.Distance(entityIa.transform.position, house.transform.position) < 0.1f) {
+            house.Enter(entityIa);
         }
     }
 }

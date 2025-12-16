@@ -416,7 +416,7 @@ public class TilemapManager : MonoBehaviour
                     {
                         // Call SpawnPosableEntity before instantiation
                         Debug.Log(posablePrefab.gameObject.name);
-                        SpawnPosableEntity(posableEntity, tilePosition);
+                        SpawnPosableEntity(posableEntity, spawnPosition, tilePosition);
                     }
                     else
                     {
@@ -439,11 +439,14 @@ public class TilemapManager : MonoBehaviour
     ///  Called before a PosableEntity is instantiated to perform custom instantiation logic.
     /// </summary>
     /// <param name="entityPrefab">The entity prefab to spawn</param>
+    /// <param name="spawnPosition">The world position where the entity should be spawned</param>
     /// <param name="tilePosition">The tile position in hex coordinates</param>
-    private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3Int tilePosition)
+    private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3 spawnPosition, Vector3Int tilePosition)
     {
-        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType,HexAxialToWorld(tilePosition));
+        Debug.Log("Spawning entity at " + spawnPosition);
+        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType, spawnPosition);
         spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
+        // Add custom instantiation logic for the entity here
     }
 
     /// <summary>

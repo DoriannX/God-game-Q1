@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
-using Unity.Behavior;
 using UnityEngine;
 
 public class EntityManager : MonoBehaviour {
     public static EntityManager instance { get; private set; }
-    private EntityAIOptimizer entityOptimizer;
     
     [SerializeField] private int maxEntityPerType = 100;
     
-    [SerializeField] private SerializedDictionary<EntityType, GameObject> entityPrefabs;
-    private Dictionary<EntityType, HashSet<EntityAI>> entities = new();
-    private Dictionary<EntityType, GameObject> entitiesParent = new();
+    [SerializeField] SerializedDictionary<EntityType, GameObject> entityPrefabs;
+    Dictionary<EntityType, HashSet<EntityIA>> entities = new();
+    Dictionary<EntityType, GameObject> entitiesParent;
     
     public event Action<EntityType, int> onEntityChanged;
     
@@ -25,20 +23,16 @@ public class EntityManager : MonoBehaviour {
         }
     }
 
-    private void Start() {
-        entityOptimizer = GetComponent<EntityAIOptimizer>();
-    }
-
     public GameObject SpawnEntity(EntityType entityType, Vector3 position) {
         if (!entities.ContainsKey(entityType)) {
             // Create a new parent GameObject for this entity type as a child of this Manager
             GameObject newParent = new GameObject(entityType.ToString());
             newParent.transform.SetParent(transform);
             entitiesParent[entityType] = newParent;
-            entities[entityType] = new HashSet<EntityAI>();
+            entities[entityType] = new HashSet<EntityIA>();
         }
         
-        if (!entities.TryGetValue(entityType, out HashSet<EntityAI> entitySet)) {
+        if (!entities.TryGetValue(entityType, out HashSet<EntityIA> entitySet)) {
             return null;
         }
         
@@ -49,25 +43,23 @@ public class EntityManager : MonoBehaviour {
         
         // Instantiate entity as a child of its parent
         GameObject entity = Instantiate(entityPrefabs[entityType], position, Quaternion.identity, entitiesParent[entityType].transform);
-        entitySet.Add(entity.GetComponent<EntityAI>());
+        entitySet.Add(entity.GetComponent<EntityIA>());
         onEntityChanged?.Invoke(entityType, entitySet.Count);
-        entityOptimizer.RegisterAgent(entity.GetComponent<BehaviorGraphAgent>());
         return entity;
     }
 
-    public void RemoveEntity(EntityAI entity) {
-        if (!entities.TryGetValue(entity.entityType, out HashSet<EntityAI> entitySet)) {
+    public void RemoveEntity(EntityIA entity) {
+        if (!entities.TryGetValue(entity.entityType, out HashSet<EntityIA> entitySet)) {
             return;
         }
         entitySet.Remove(entity);
         Destroy(entity.gameObject);
         onEntityChanged?.Invoke(entity.entityType, entitySet.Count);
-        entityOptimizer.UnregisterAgent(entity.GetComponent<BehaviorGraphAgent>());
     }
     
-    public void RegisterEntity(EntityAI entity) {
+    public void RegisterEntity(EntityIA entity) {
         if (!entities.ContainsKey(entity.entityType)) {
-            entities[entity.entityType] = new HashSet<EntityAI>();
+            entities[entity.entityType] = new HashSet<EntityIA>();
         }
         entities[entity.entityType].Add(entity);
         onEntityChanged?.Invoke(entity.entityType, entities[entity.entityType].Count);
