@@ -31,7 +31,7 @@ public class Tornado : MeteoEvent
         House houseHit = collision.gameObject.GetComponent<House>();
         if (houseHit != null)
         {
-            GhostManager.instance.UnregisterGhostInHouse(houseHit);
+            EntityManager.instance.RemoveEntitiesInHouse(houseHit);
             Destroy(houseHit.gameObject);
         }
     }
