@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ChunkManager : MonoBehaviour
 {
@@ -9,16 +11,16 @@ public class ChunkManager : MonoBehaviour
     [SerializeField] private int changeValueMaxFromFov;
     [SerializeField] private Camera mainCamera;
 
-    private Dictionary<Vector2Int, Chunk> logicalChunks = new();
+    public Dictionary<Vector2Int, Chunk> logicalChunks = new();
 
     [SerializeField] private int chunkViewRadius;
-    private HashSet<Vector2Int> currentlyActiveChunks = new();
+    public HashSet<Vector2Int> currentlyActiveChunks = new HashSet<Vector2Int>();
 
-    public static ChunkManager Instance { get; private set; }
+    public static ChunkManager Instance;
 
-    private void OnEnable()
+    private void Awake()
     {
-        if (ChunkManager.Instance == null)
+        if (Instance == null)
         {
             Instance = this;
         }
@@ -26,26 +28,13 @@ public class ChunkManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        TilemapManager.instance.tilePlaced += OnTilePlaced;
-        TilemapManager.instance.tileRemoved += OnTileRemoved;
-    }
-
-    private void OnTileRemoved(Vector3Int coord)
-    {
-        RemoveGameObjectFromChunk(TilemapManager.instance.HexAxialToWorld(coord),
-            TilemapManager.instance.GetTile(coord));
-    }
-
-    private void OnTilePlaced(Vector3Int coord)
-    {
-        AddGameObjectToChunk(TilemapManager.instance.HexAxialToWorld(coord), TilemapManager.instance.GetTile(coord));
     }
 
     [Serializable]
     public class Chunk
     {
         public Vector2Int index;
-        public List<GameObject> gameObjectsInChunk = new();
+        public List<GameObject> gameObjectsInChunk = new List<GameObject>();
         public Bounds bounds;
     }
 
@@ -55,16 +44,6 @@ public class ChunkManager : MonoBehaviour
         int cy = Mathf.FloorToInt(worldPos.z / chunkSize.z);
 
         return new Vector2Int(cx, cy);
-    }
-
-    private void RemoveGameObjectFromChunk(Vector3 worldPos, GameObject gameObjectToRemove)
-    {
-        Vector2Int chunkIndex = GetChunkIndexFromWorld(worldPos);
-
-        if (logicalChunks.TryGetValue(chunkIndex, out Chunk chunk))
-        {
-            chunk.gameObjectsInChunk.Remove(gameObjectToRemove);
-        }
     }
 
     public void AddGameObjectToChunk(Vector3 worldPos, GameObject gameObjectToAdd)
@@ -129,6 +108,7 @@ public class ChunkManager : MonoBehaviour
     }
 
 
+
     private void SetChunkActive(Chunk chunk, bool active)
     {
         foreach (GameObject tile in chunk.gameObjectsInChunk)
@@ -137,6 +117,46 @@ public class ChunkManager : MonoBehaviour
                 tile.SetActive(active);
         }
     }
+
+    public IEnumerator RemoveOneHeightForChunk(Vector2Int chunkIndex, float timeBetweenTileDestroy)
+    {
+        if (!logicalChunks.TryGetValue(chunkIndex, out Chunk chunk))
+        {
+            yield break;
+        }
+            
+
+        List<GameObject> tiles = new List<GameObject>(chunk.gameObjectsInChunk);
+
+        List<GameObject> tilesToRemove = new List<GameObject>();
+
+        foreach (GameObject tile in tiles)
+        {
+            if (tile == null)
+            {
+                continue;
+            }
+
+            Vector3Int coord = TilemapManager.instance.WorldToHexAxial(tile.transform.position);
+
+            int topZ = TilemapManager.instance.GetColumnTopCoordinate(new Vector2Int(coord.x, coord.y));
+
+            if (coord.z == topZ)
+            {
+                tilesToRemove.Add(tile);
+            }
+        }
+
+        foreach (GameObject tile in tilesToRemove)
+        {
+            Vector3Int coord = TilemapManager.instance.WorldToHexAxial(tile.transform.position);
+
+            TilemapManager.instance.RemoveTileAt(coord);
+            chunk.gameObjectsInChunk.Remove(tile);
+            yield return new WaitForSeconds(timeBetweenTileDestroy);
+        }
+    }
+
 
     private void Update()
     {
