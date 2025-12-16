@@ -48,6 +48,11 @@ public class ChunkManager : MonoBehaviour
 
     public void AddGameObjectToChunk(Vector3 worldPos, GameObject gameObjectToAdd)
     {
+        Vector3Int tilePosition = TilemapManager.instance.WorldToHexAxial(worldPos);
+        if (tilePosition.z < 0)
+        {
+            return;
+        }
         Vector2Int chunkIndex = GetChunkIndexFromWorld(worldPos);
 
         if (!logicalChunks.TryGetValue(chunkIndex, out Chunk chunk))
