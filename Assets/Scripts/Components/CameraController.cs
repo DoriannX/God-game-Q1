@@ -80,6 +80,7 @@ namespace Components
 
             Vector3 direction = new Vector3(-delta.x, 0, -delta.y);
             movementComponent.Move(direction, speed * zoomComponent.GetZoom() / 10);
+            ChunkManager.Instance.UpdateVisibleChunks();
         }
     }
 }
