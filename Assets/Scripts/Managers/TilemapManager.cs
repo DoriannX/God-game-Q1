@@ -269,6 +269,7 @@ public class TilemapManager : MonoBehaviour
         newTile.name = $"Tile_({hexCoordinates.x}, {hexCoordinates.y}, {hexCoordinates.z})";
 
         tiles.Add(hexCoordinates, newTile);
+        ChunkManager.Instance.AddGameObjectToChunk(newTile.transform.position, newTile);
 
         // Track water tile positions for efficient water-on-water checks
         if (isWaterPrefab)
