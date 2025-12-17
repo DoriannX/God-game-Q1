@@ -15,8 +15,8 @@ public partial class WorkAction : Action {
             AI.Value.workComponent.Work();
             return Status.Failure;
         }
-        AI.Value.entityIa.GoTo(task.transform.position);
-        if(Vector2.Distance( AI.Value.entityIa.transform.position, AI.Value.workComponent.GetTask().transform.position) < 0.1f) {
+        AI.Value.EntityAI.GoTo(task.transform.position);
+        if(Vector2.Distance( AI.Value.EntityAI.transform.position, AI.Value.workComponent.GetTask().transform.position) < 0.1f) {
             AI.Value.workComponent.Work();
         }
         return Status.Failure;

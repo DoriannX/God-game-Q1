@@ -80,9 +80,9 @@ public class Meteore : DestructionObject
     /// </summary>
     private void HandlePosableDestruction(Posable posable)
     {
-        if (posable.GetComponent<GhostIa>() != null)
+        if (posable.GetComponent<GhostAI>() != null)
         {
-            EntityManager.instance.RemoveEntity(posable.gameObject.GetComponent<GhostIa>());
+            EntityManager.instance.RemoveEntity(posable.gameObject.GetComponent<GhostAI>());
         }
         else if (posable.GetComponent<House>() != null)
         {
