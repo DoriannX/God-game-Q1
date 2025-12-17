@@ -8948,7 +8948,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3523306087877896568, guid: 7dd82ac6e9ee1ce469d89ad21f0c238f, type: 3}
       propertyPath: chance
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3523306087877896568, guid: 7dd82ac6e9ee1ce469d89ad21f0c238f, type: 3}
       propertyPath: mainCamera
