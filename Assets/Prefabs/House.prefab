@@ -227,7 +227,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 926223728100586299}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9ec7685b3e06c2c49c6b5b5638b2f32, type: 3}
+  m_Script: {fileID: 11500000, guid: 799b247047ce48268dcd5e4b9e63daa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrowComponent
   growthRate: 0.1

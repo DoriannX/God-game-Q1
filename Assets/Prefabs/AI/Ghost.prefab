@@ -136,7 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfcbb4388d9e832c1a6289626295ec9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  entityMovement: {fileID: 8695087590091800227}
 --- !u!114 &7471173993042387809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a8c42a8b4014f8f82d0e400eed6eb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityGrow
-  growComponent: {fileID: 2022015165024604261}
+  growComponent: {fileID: 0}
   isFullyGrown: 0
 --- !u!114 &4077641912464904975
 MonoBehaviour:
@@ -336,13 +335,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8484147219461251418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9ec7685b3e06c2c49c6b5b5638b2f32, type: 3}
+  m_Script: {fileID: 11500000, guid: 799b247047ce48268dcd5e4b9e63daa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GrowComponent
   growthRate: 0.02
   growthStages:
   - {fileID: 21300000, guid: d1d3a0156971a3d26834d4a1065bc94e, type: 3}
-  - {fileID: -1483407423975865499, guid: 0bb009a68ed17d380afb9c2b162f7017, type: 3}
+  - {fileID: 0}
 --- !u!114 &3057750871050936803
 MonoBehaviour:
   m_ObjectHideFlags: 0

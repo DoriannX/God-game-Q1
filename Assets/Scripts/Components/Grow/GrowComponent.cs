@@ -9,5 +9,10 @@ public abstract class GrowComponent : MonoBehaviour {
     
     public abstract void Grow();
     
-    protected void DoneGrowing() => onFullyGrown?.Invoke();
+    protected void DoneGrowing() {
+        {
+            Debug.Log(gameObject.name + " done");
+            onFullyGrown?.Invoke();
+        }
+    }
 }

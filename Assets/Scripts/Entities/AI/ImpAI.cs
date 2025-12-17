@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DevilAI : EntityAI
+public class ImpAI : EntityAI
 {
     public override EntityType GetEntityType() {
         return EntityType.Devil;

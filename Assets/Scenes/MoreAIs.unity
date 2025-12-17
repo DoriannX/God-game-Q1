@@ -2161,7 +2161,7 @@ MonoBehaviour:
   entityPrefabs:
     _serializedList:
     - Key: 0
-      Value: {fileID: 2450070678407865498, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+      Value: {fileID: 2450070678407865498, guid: 02193e40a0670a14d890277f30b54c26, type: 3}
 --- !u!1 &564960282
 GameObject:
   m_ObjectHideFlags: 0
@@ -6430,7 +6430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPoserComponent
   <posableObjects>k__BackingField:
-  - {fileID: 7408342672037405645, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+  - {fileID: 7408342672037405645, guid: 02193e40a0670a14d890277f30b54c26, type: 3}
   - {fileID: 6904997964516619320, guid: 4ab1299eca6126b2f8b4dd6e2e7dd35f, type: 3}
   - {fileID: 4829490742024007249, guid: 8251180a4c75728bab1f7018464aad11, type: 3}
   maxObject: 100
