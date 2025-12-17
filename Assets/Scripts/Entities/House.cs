@@ -108,10 +108,6 @@ public class House : WorkTask {
     }
 
     private void OnDestroy() {
-        foreach (var ghost in breedingEntities) {
-            if (ghost == null)
-                return;
-            EntityManager.instance.RemoveEntity(ghost);
-        }
+        EntityManager.instance.RemoveEntitiesInHouse(this);
     }
 }

@@ -66,10 +66,8 @@ public class EntityManager : MonoBehaviour {
     }
 
     public void RemoveEntitiesInHouse(House house) {
-        /*for (int numberOfEntityInHouse = 0; numberOfEntityInHouse < house.fuckingEntities.Count; numberOfEntityInHouse++) {
-            entities.Remove(house.fuckingEntities.ElementAt(numberOfEntityInHouse).entityType);
+        foreach (EntityAI entity in house.breedingEntities) {
+            RemoveEntity(entity);
         }
-        Destroy(house.gameObject);
-        onEntityChanged?.Invoke(entity.entityType, entities[entity.entityType].Count);*/
     }
 }
