@@ -42,7 +42,7 @@ public abstract class EntityAI : MonoBehaviour {
         for (int i = 0; i < maxAttempts; i++) {
             Vector3 randomVector= Random.insideUnitCircle.normalized;
             Vector3 dir = new(randomVector.x, 0, randomVector.y);
-            Debug.Log(cellSize);
+
             Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
             
             Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
@@ -114,7 +114,7 @@ public abstract class EntityAI : MonoBehaviour {
     }
     
     public bool isMoving =>
-        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath != null && currentPath.Count > 1;
+        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath is { Count: > 1 };
 
     protected void ComputePath() {
         Vector3Int currentCell = TilemapManager.instance.WorldToHexAxial(transform.position);
