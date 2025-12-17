@@ -6,7 +6,7 @@ public class ObjectGrowComponent : GrowComponent {
     [SerializeField] private List<Sprite> growthStages;
     private SpriteRenderer spriteRenderer;
 
-    private void Start() {
+    private void Awake() {
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (growthStages.Count > 0) {
             spriteRenderer.sprite = growthStages[0];
