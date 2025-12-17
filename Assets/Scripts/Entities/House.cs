@@ -83,7 +83,7 @@ public class House : WorkTask {
 
         int babiesCount = minBabies + (int)((maxBabies - minBabies) * progress);
         for (int i = 0; i < babiesCount; i++) {
-            EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
+            EntityManager.instance.SpawnEntity(breedEntity,TilemapManager.instance.HexAxialToWorld(
                 TilemapManager.instance.WorldToHexAxial(transform.position)));
         }
 

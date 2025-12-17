@@ -17,7 +17,9 @@ public class ObjectGrowComponent : GrowComponent {
     public override void Grow() {
         growthProgressPercent += growthRate;
         int stageIndex = Mathf.Min((int)(growthProgressPercent * growthStages.Count), growthStages.Count - 1);
-        spriteRenderer.sprite = growthStages[stageIndex];
+        if (spriteRenderer) {
+            spriteRenderer.sprite = growthStages[stageIndex];
+        }
 
         if (growthProgressPercent >= 1f) {
             DoneGrowing();

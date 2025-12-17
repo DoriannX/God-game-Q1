@@ -11,7 +11,6 @@ public abstract class GrowComponent : MonoBehaviour {
     
     protected void DoneGrowing() {
         {
-            Debug.Log(gameObject.name + " done");
             onFullyGrown?.Invoke();
         }
     }
