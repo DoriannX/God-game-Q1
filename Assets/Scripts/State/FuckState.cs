@@ -4,13 +4,13 @@ using UnityHFSM;
 
 public class FuckState : State
 {
-    private GhostIa ghostIA;
+    private GhostAI ghostAI;
     private HouseRetriever houseRetriever;
     public event Action onFuckFinished;
-    public FuckState(GhostIa ghostIA, HouseRetriever houseRetriever)
+    public FuckState(GhostAI ghostAI, HouseRetriever houseRetriever)
     {
         this.houseRetriever = houseRetriever;
-        this.ghostIA = ghostIA;
+        this.ghostAI = ghostAI;
     }
     public override void OnLogic()
     {
