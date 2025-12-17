@@ -463,8 +463,8 @@ MonoBehaviour:
   switchSettingsMigration: 1
   HasSourceProject: 1
   HasPlatforms: 1
-  sourceProjectPath: ../../Fmod/Save Fmod/Examples/Examples.fspro
-  sourceBankPath: ../../Fmod/Save Fmod/Examples/Build
+  sourceProjectPath: Assets/SFX/Sound/Examples/Examples.fspro
+  sourceBankPath: Assets/SFX/Sound/Examples/Build
   sourceBankPathUnformatted: 
   BankRefreshCooldown: 5
   ShowBankRefreshWindow: 1
