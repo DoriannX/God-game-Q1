@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class GhostAI : EntityAI
+public class DevilAI : EntityAI
 {
-    public override EntityType entityType { get; protected set; } = EntityType.Ghost ;
+    public override EntityType entityType { get; protected set; } = EntityType.Devil ;
     public void ForceRepath() => ComputePath();
     
     private void OnDrawGizmos() {
