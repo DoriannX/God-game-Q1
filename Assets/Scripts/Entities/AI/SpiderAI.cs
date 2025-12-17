@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class SpiderAI : EntityAI
 {
-    public override EntityType entityType { get; protected set; } = EntityType.Spider ;
+    public override EntityType GetEntityType() {
+        return EntityType.Spider;
+    }
     public void ForceRepath() => ComputePath();
     
     private void OnDrawGizmos() {

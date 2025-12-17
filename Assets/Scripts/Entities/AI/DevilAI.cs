@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class DevilAI : EntityAI
 {
-    public override EntityType entityType { get; protected set; } = EntityType.Devil ;
+    public override EntityType GetEntityType() {
+        return EntityType.Devil;
+    }
     public void ForceRepath() => ComputePath();
     
     private void OnDrawGizmos() {

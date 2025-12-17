@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class SkeletonAI : EntityAI
 {
-    public override EntityType entityType { get; protected set; } = EntityType.Skeleton ;
+    public override EntityType GetEntityType() {
+        return EntityType.Skeleton;
+    }
     public void ForceRepath() => ComputePath();
     
     private void OnDrawGizmos() {

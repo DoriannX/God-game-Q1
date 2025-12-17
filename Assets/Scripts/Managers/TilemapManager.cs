@@ -444,7 +444,9 @@ public class TilemapManager : MonoBehaviour
     private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3Int tilePosition)
     {
         GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType,HexAxialToWorld(tilePosition));
-        spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
+        if (spawnedEntity != null) {
+            spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
+        }
         // Add custom instantiation logic for the entity here
     }
 

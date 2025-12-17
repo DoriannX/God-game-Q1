@@ -49,20 +49,20 @@ public class EntityManager : MonoBehaviour {
     }
 
     public void RemoveEntity(EntityAI entity) {
-        if (!entities.TryGetValue(entity.entityType, out HashSet<EntityAI> entitySet)) {
+        if (!entities.TryGetValue(entity.GetEntityType(), out HashSet<EntityAI> entitySet)) {
             return;
         }
         entitySet.Remove(entity);
         Destroy(entity.gameObject);
-        onEntityChanged?.Invoke(entity.entityType, entitySet.Count);
+        onEntityChanged?.Invoke(entity.GetEntityType(), entitySet.Count);
     }
     
     public void RegisterEntity(EntityAI entity) {
-        if (!entities.ContainsKey(entity.entityType)) {
-            entities[entity.entityType] = new HashSet<EntityAI>();
+        if (!entities.ContainsKey(entity.GetEntityType())) {
+            entities[entity.GetEntityType()] = new HashSet<EntityAI>();
         }
-        entities[entity.entityType].Add(entity);
-        onEntityChanged?.Invoke(entity.entityType, entities[entity.entityType].Count);
+        entities[entity.GetEntityType()].Add(entity);
+        onEntityChanged?.Invoke(entity.GetEntityType(), entities[entity.GetEntityType()].Count);
     }
 
     public void RemoveEntitiesInHouse(House house) {

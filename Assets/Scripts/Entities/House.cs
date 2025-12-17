@@ -40,10 +40,10 @@ public class House : WorkTask {
 
     public void Enter(EntityAI entityAI, Action onBreedFailed = null) {
         if (breedingEntities.Count == 0) {
-            breedEntity = entityAI.entityType;
+            breedEntity = entityAI.GetEntityType();
         }
         else {
-            if (breedEntity != entityAI.entityType) {
+            if (breedEntity != entityAI.GetEntityType()) {
                 onBreedFailed?.Invoke();
                 return;
             }

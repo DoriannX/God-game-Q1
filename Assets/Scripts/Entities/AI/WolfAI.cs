@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class WolfAI : EntityAI
 {
-    public override EntityType entityType { get; protected set; } = EntityType.Wolf ;
+    public override EntityType GetEntityType() {
+        return EntityType.Wolf;
+    }
     public void ForceRepath() => ComputePath();
     
     private void OnDrawGizmos() {
