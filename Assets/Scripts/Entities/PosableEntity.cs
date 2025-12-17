@@ -6,7 +6,7 @@ public class PosableEntity : Posable
 
     private void Awake()
     {
-        entityType = GetComponent<EntityAI>().entityType;
+        entityType = GetComponent<EntityAI>().GetEntityType();
     }
 }
 

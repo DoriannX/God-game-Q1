@@ -30,8 +30,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4432211622722948107}
   m_Father: {fileID: 0}
@@ -49,11 +49,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::House
   <progressIncrement>k__BackingField: 0.1
-  fuckIncrement: 0.1
-  ghostPrefab: {fileID: 7957398275529141594, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+  breedIncrement: 0.1
   tickToExitAlone: 5
   minBabies: 1
   maxBabies: 3
+  breedEntity: 0
 --- !u!114 &-5617122581320332499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,11 +67,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PosableObject
   <allowedTiles>k__BackingField:
-  - {fileID: 11400000, guid: 15449109637cf65989beeb5b9083fa06, type: 2}
-  - {fileID: 11400000, guid: f6e692ce24b171c64bd7106a705bc257, type: 2}
-  - {fileID: 11400000, guid: ef9700dbac50929da94a5b3ad1f989a6, type: 2}
-  - {fileID: 11400000, guid: 99c23d6bcb10ff11dad51e50fcd5049f, type: 2}
-  - {fileID: 11400000, guid: 1222419e178dcbdaa9594a8e6f1b1729, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!58 &-1689461643195537253
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -153,7 +153,7 @@ Transform:
   m_GameObject: {fileID: 926223728100586299}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.269, z: 0}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
