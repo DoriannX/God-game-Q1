@@ -18,8 +18,6 @@ GameObject:
   - component: {fileID: 4077641912464904975}
   - component: {fileID: 3526314780886667151}
   - component: {fileID: 7408342672037405645}
-  - component: {fileID: 5805087815445507371}
-  - component: {fileID: 6701740305892963349}
   - component: {fileID: 4552284087110041515}
   m_Layer: 0
   m_Name: Ghost
@@ -109,7 +107,7 @@ MonoBehaviour:
   <wanderComponent>k__BackingField: {fileID: 3234770281780568274}
   <workComponent>k__BackingField: {fileID: 4077641912464904975}
   <breedComponent>k__BackingField: {fileID: 3526314780886667151}
-  <entityIa>k__BackingField: {fileID: 7957398275529141594}
+  <EntityAI>k__BackingField: {fileID: 7957398275529141594}
   <entityGrow>k__BackingField: {fileID: 7471173993042387809}
   workProbability: 0.05
   breedProbability: 0.01
@@ -178,7 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 818ed45c439d4939b0341081132e7010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BreedComponent
-  entityIa: {fileID: 7957398275529141594}
+  entityAI: {fileID: 7957398275529141594}
   range: 10
 --- !u!114 &7408342672037405645
 MonoBehaviour:
@@ -200,34 +198,6 @@ MonoBehaviour:
   - {fileID: 5698454079545549379, guid: 633d236946e49b44b8cc09b29ef28bd4, type: 3}
   - {fileID: 5698454079545549379, guid: cb1e7a98081152946938951c2574ae39, type: 3}
   entityType: 0
---- !u!114 &5805087815445507371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51f21de9c1b79a6ffa94737036e59770, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScareComponent
---- !u!114 &6701740305892963349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2450070678407865498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 309f5c2845053874aaf028be2f5c7630, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SaveLoadSystem.SaveableEntity
-  m_ID: 
-  m_childID: 
-  m_prefabID: Ghost
-  m_saveTransform: 1
 --- !u!58 &4552284087110041515
 CircleCollider2D:
   m_ObjectHideFlags: 0

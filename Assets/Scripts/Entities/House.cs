@@ -1,195 +1,117 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using SaveLoadSystem;
 using UnityEngine;
 
 [RequireComponent(typeof(SaveableEntity))]
-public class House : WorkTask, ISaveable
-{
-    [Serializable]
-    private struct HouseData
-    {
-        public float fuckProgress;
-        public int ticksAlone;
-        public bool isFucking;
-        public List<GhostIa.GhostData> fuckingGhosts;
-        
-    }
-
-    public HashSet<EntityIA> fuckingGhosts = new();
+public class House : WorkTask {
+    public HashSet<EntityAI> breedingEntities = new();
     private GrowComponent growComponent;
-    private float fuckProgress = 0;
-    [SerializeField] private float fuckIncrement = 0.1f;
+    private float breedProgress = 0;
+    [SerializeField] private float breedIncrement = 0.1f;
     [SerializeField] private int tickToExitAlone = 5;
     [SerializeField] private int minBabies = 1;
     [SerializeField] private int maxBabies = 3;
+    public EntityType breedEntity;
     private Animator animator;
-    private int ticksAlone = 0;
-    private bool isFucking = false;
-    public bool isFull => fuckingGhosts.Count >= 2;
+    private int ticksAlone;
+    private bool isBreeding;
+    public bool isFull => breedingEntities.Count >= 2;
+    public bool isEmpty => breedingEntities.Count == 0;
     public event Action onBreedFinished;
 
 
-    private void Awake()
-    {
+    private void Awake() {
         growComponent = GetComponentInChildren<GrowComponent>();
         animator = GetComponentInChildren<Animator>();
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         TickSystem.ticked += OnTicked;
     }
 
-    public override void Work()
-    {
+    public override void Work() {
         base.Work();
         growComponent.Grow();
     }
 
-    protected override void OnComplete()
-    {
-        
+    protected override void OnComplete() { }
+
+    public void Enter(EntityAI entityAI, Action onBreedFailed = null) {
+        if (breedingEntities.Count == 0) {
+            breedEntity = entityAI.entityType;
+        }
+        else {
+            if (breedEntity != entityAI.entityType) {
+                onBreedFailed?.Invoke();
+                return;
+            }
+        }
+        breedingEntities.Add(entityAI);
+        entityAI.gameObject.SetActive(false);
+        if (breedingEntities.Count == 2)
+            StartBreeding();
     }
 
-    public void Enter(EntityIA entityIa)
-    {
-        fuckingGhosts.Add(entityIa);
-        entityIa.gameObject.SetActive(false);
-        if (fuckingGhosts.Count == 2)
-            StartFucking();
-    }
-
-    private void StartFucking()
-    {
-        if (fuckingGhosts.Count < 2) return;
+    private void StartBreeding() {
+        if (breedingEntities.Count < 2) return;
         animator.Play("HouseSexAnimation");
-        isFucking = true;
+        isBreeding = true;
     }
 
-    private void OnTicked()
-    {
-        if (fuckingGhosts.Count == 1)
-        {
+    private void OnTicked() {
+        if (breedingEntities.Count == 1) {
             ticksAlone++;
-            if (ticksAlone >= tickToExitAlone)
-            {
-                Exit(fuckingGhosts.First());
+            if (ticksAlone >= tickToExitAlone) {
+                Exit(breedingEntities.First());
                 ticksAlone = 0;
             }
         }
-        else
-        {
+        else {
             ticksAlone = 0;
         }
 
-        if (!isFucking)
-        {
+        if (!isBreeding) {
             return;
         }
 
-        fuckProgress += fuckIncrement;
-        if (fuckProgress < 1f)
-        {
+        breedProgress += breedIncrement;
+        if (breedProgress < 1f) {
             return;
         }
 
         int babiesCount = minBabies + (int)((maxBabies - minBabies) * progress);
-        for (var i = 0; i < babiesCount; i++)
-        {
+        for (int i = 0; i < babiesCount; i++) {
             EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
                 TilemapManager.instance.WorldToHexAxial(transform.position)));
         }
 
-        fuckProgress = 0f;
-        isFucking = false;
+        breedProgress = 0f;
+        isBreeding = false;
 
         animator.Play("Idle");
-        foreach (EntityIA ghost in fuckingGhosts.ToList())
-        {
+        foreach (EntityAI ghost in breedingEntities.ToList()) {
             Exit(ghost);
         }
     }
 
-    private void Exit(EntityIA entity)
-    {
-        fuckingGhosts.Remove(entity);
+    private void Exit(EntityAI entity) {
+        
+        breedingEntities.Remove(entity);
         entity.gameObject.SetActive(true);
         onBreedFinished?.Invoke();
     }
     
-    private void OnDisable()
-    {
+    private void OnDisable() {
         TickSystem.ticked -= OnTicked;
     }
 
-    private void OnDestroy()
-    {
-        foreach (var ghost in fuckingGhosts)
-        {
+    private void OnDestroy() {
+        foreach (var ghost in breedingEntities) {
             if (ghost == null)
                 return;
-            Destroy(ghost.gameObject);
+            EntityManager.instance.RemoveEntity(ghost);
         }
-    }
-
-    public bool NeedsToBeSaved()
-    {
-        return true;
-    }
-
-    public bool NeedsReinstantiation()
-    {
-        return true;
-    }
-
-    public object SaveState()
-    {
-        List<GhostIa.GhostData> ghostsData = new List<GhostIa.GhostData>();
-        foreach (var ghost in fuckingGhosts)
-        {
-            ghostsData.Add((GhostIa.GhostData)ghost.SaveState());
-            
-        }
-        HouseData data = new HouseData
-        {
-            fuckProgress = fuckProgress,
-            ticksAlone = ticksAlone,
-            isFucking = isFucking,
-            fuckingGhosts = ghostsData
-        };
-        return data;
-    }
-
-    public void LoadState(object state)
-    {
-        HouseData data = (HouseData)state;
-        fuckProgress = data.fuckProgress;
-        ticksAlone = data.ticksAlone;
-        isFucking = data.isFucking;
-        foreach (var ghostData in data.fuckingGhosts)
-        {
-            GhostIa ghost = EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
-                TilemapManager.instance.WorldToHexAxial(ghostData.position.ToVector2()))).GetComponent<GhostIa>();
-            ghost.LoadState(ghostData);
-            ghost.gameObject.SetActive(false);
-            fuckingGhosts.Add(ghost);
-        }
-    }
-
-    public void PostInstantiation(object state)
-    {
-        HouseData data = (HouseData)state;
-        if (data.isFucking && fuckingGhosts.Count == 2)
-        {
-            StartFucking();
-        }
-    }
-
-    public void GotAddedAsChild(GameObject obj, GameObject hisParent)
-    {
-        
     }
 }

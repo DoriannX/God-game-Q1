@@ -9,7 +9,7 @@ public class EntityManager : MonoBehaviour {
     [SerializeField] private int maxEntityPerType = 100;
     
     [SerializeField] SerializedDictionary<EntityType, GameObject> entityPrefabs;
-    Dictionary<EntityType, HashSet<EntityIA>> entities = new();
+    Dictionary<EntityType, HashSet<EntityAI>> entities = new();
     Dictionary<EntityType, GameObject> entitiesParent = new();
     
     public event Action<EntityType, int> onEntityChanged;
@@ -29,10 +29,10 @@ public class EntityManager : MonoBehaviour {
             GameObject newParent = new GameObject(entityType.ToString());
             newParent.transform.SetParent(transform);
             entitiesParent[entityType] = newParent;
-            entities[entityType] = new HashSet<EntityIA>();
+            entities[entityType] = new HashSet<EntityAI>();
         }
         
-        if (!entities.TryGetValue(entityType, out HashSet<EntityIA> entitySet)) {
+        if (!entities.TryGetValue(entityType, out HashSet<EntityAI> entitySet)) {
             return null;
         }
         
@@ -43,13 +43,13 @@ public class EntityManager : MonoBehaviour {
         
         // Instantiate entity as a child of its parent
         GameObject entity = Instantiate(entityPrefabs[entityType], position, Quaternion.identity, entitiesParent[entityType].transform);
-        entitySet.Add(entity.GetComponent<EntityIA>());
+        entitySet.Add(entity.GetComponent<EntityAI>());
         onEntityChanged?.Invoke(entityType, entitySet.Count);
         return entity;
     }
 
-    public void RemoveEntity(EntityIA entity) {
-        if (!entities.TryGetValue(entity.entityType, out HashSet<EntityIA> entitySet)) {
+    public void RemoveEntity(EntityAI entity) {
+        if (!entities.TryGetValue(entity.entityType, out HashSet<EntityAI> entitySet)) {
             return;
         }
         entitySet.Remove(entity);
@@ -57,9 +57,9 @@ public class EntityManager : MonoBehaviour {
         onEntityChanged?.Invoke(entity.entityType, entitySet.Count);
     }
     
-    public void RegisterEntity(EntityIA entity) {
+    public void RegisterEntity(EntityAI entity) {
         if (!entities.ContainsKey(entity.entityType)) {
-            entities[entity.entityType] = new HashSet<EntityIA>();
+            entities[entity.entityType] = new HashSet<EntityAI>();
         }
         entities[entity.entityType].Add(entity);
         onEntityChanged?.Invoke(entity.entityType, entities[entity.entityType].Count);
