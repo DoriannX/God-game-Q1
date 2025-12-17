@@ -3429,7 +3429,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0.39577717, y: -0, z: -0, w: 0.9183466}
-  m_LocalPosition: {x: 0, y: 23.13, z: -11.2}
+  m_LocalPosition: {x: 0.5, y: 23.13, z: -23}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3474,8 +3474,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e4493afeeb358022b86476be0f8ff29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  minZ: 5
-  maxZ: 50
+  minY: 5
+  maxY: 50
   zoomPlaneDistance: 0
 --- !u!114 &519420036
 MonoBehaviour:
@@ -3490,10 +3490,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Components.CameraBoundsComponent
   enableBounds: 1
-  minX: -90
+  minX: -150
   maxX: 90
-  minZ: -100
-  maxZ: -10
+  minZ: -95
+  maxZ: 90
 --- !u!1001 &533605867
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3548,6 +3548,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5520605117869745961, guid: ed92edea750647b49ba000653d8f3367, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7070630536947616857, guid: ed92edea750647b49ba000653d8f3367, type: 3}
+      propertyPath: chance
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7070630536947616857, guid: ed92edea750647b49ba000653d8f3367, type: 3}
