@@ -1,0 +1,14 @@
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="UnityHFSM.csproj" />
+  <Project Path="TheBlackCat.TrailEffect2D.TrailEffect2D.Editor.csproj" />
+  <Project Path="Assembly-CSharp-firstpass.csproj" />
+  <Project Path="FMODUnityResonanceEditor.csproj" />
+  <Project Path="FMODUnityEditor.csproj" />
+  <Project Path="FMODUnity.csproj" />
+  <Project Path="FMODUnityHaptics.csproj" />
+  <Project Path="TheBlackCat.TrailEffect2D.TrailEffect2D.csproj" />
+  <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
+  <Project Path="FMODUnityResonance.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+</Solution>
