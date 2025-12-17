@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(SaveableEntity))]
 public class House : WorkTask {
     public HashSet<EntityAI> breedingEntities = new();
-    private GrowComponent growComponent;
+    private ObjectGrowComponent growComponent;
     private float breedProgress = 0;
     [SerializeField] private float breedIncrement = 0.1f;
     [SerializeField] private int tickToExitAlone = 5;
@@ -23,7 +23,7 @@ public class House : WorkTask {
 
 
     private void Awake() {
-        growComponent = GetComponentInChildren<GrowComponent>();
+        growComponent = GetComponentInChildren<ObjectGrowComponent>();
         animator = GetComponentInChildren<Animator>();
     }
 
