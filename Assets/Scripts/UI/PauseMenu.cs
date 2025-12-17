@@ -19,7 +19,7 @@ public class PauseMenu : MonoBehaviour
     }
 
     [SerializeField] private List<Button> buttons;
-    [SerializeField] private Button saveButton;
+
     [SerializeField] private Button saveQuitButton;
 
     private List<float> initialWidths = new List<float>();
@@ -33,11 +33,11 @@ public class PauseMenu : MonoBehaviour
         }
 
         pauseManager.onPauseToggled += Toggle;
-        saveButton.onClick.AddListener(() =>
-        {
-            SaveLoadSystem.SaveLoadSystem.SaveNew();
-            saveUI.Display();
-        });
+        //saveButton.onClick.AddListener(() =>
+        //{
+          //  SaveLoadSystem.SaveLoadSystem.SaveNew();
+            //saveUI.Display();
+        //});
         saveQuitButton.onClick.AddListener(() =>
         {
             SaveLoadSystem.SaveLoadSystem.SaveNew(() => { StartCoroutine(QuitWithUnscaledDelay(0.1f)); });
