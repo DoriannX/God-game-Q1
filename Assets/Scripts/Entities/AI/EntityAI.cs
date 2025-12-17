@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using SaveLoadSystem;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using Components;
 
-public abstract class EntityIA : MonoBehaviour, ISaveable {
+public abstract class EntityAI : MonoBehaviour {
     public virtual EntityType entityType { get; protected set; } = EntityType.Ghost;
     
     public Vector3 targetPosition { get; protected set; }
@@ -42,27 +40,35 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         }
         
         for (int i = 0; i < maxAttempts; i++) {
-            Vector3 dir = Random.insideUnitCircle.normalized;
+            Vector3 randomVector= Random.insideUnitCircle.normalized;
+            Vector3 dir = new(randomVector.x, 0, randomVector.y);
+
             Vector3 candidate = origin + Vector3.Scale(dir, cellSize);
             
             Vector3Int candidateCell = tilemapManager.WorldToHexAxial(candidate);
             GameObject candidateTile = tilemapManager.GetTile(candidateCell);
             if (candidateTile != null && candidateTile.GetComponent<WaterComponent>() != null)
+            {
                 continue;
+            }
             
             if(candidateCell.z > 1) {
                 candidateCell.z --;
             }
 
-            if (tilemapManager.GetTile(candidateCell) == null || candidateCell == currentCell) {
+            if (tilemapManager.GetTile(candidateCell) == null || candidateCell == currentCell) 
+            {
                 continue;
             }
 
-            if (tilemapManager.GetTile(candidateCell + Vector3Int.forward) != null) {
-                if (tilemapManager.GetTile(candidateCell + Vector3Int.forward * 2) == null) {
+            if (tilemapManager.GetTile(candidateCell + Vector3Int.forward) != null) 
+            {
+                if (tilemapManager.GetTile(candidateCell + Vector3Int.forward * 2) == null) 
+                {
                     candidateCell += Vector3Int.forward;
                 }
-                else {
+                else 
+                {
                     continue;
                 }
             }
@@ -81,16 +87,6 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         usePathFinding = true;
         targetPosition = position;
         ComputePath();
-    }
-    
-    public void GoBy(Vector3 direction) {
-
-        /*targetPosition = (Vector2)transform.position + direction.normalized * TilemapManager.instance.cellSize;
-        targetPosition = transform.position +
-                         Vector3.Scale(direction.normalized, TilemapManager.instance.GetHexCellSize());
-
-        usePathFinding = true;
-        ComputePath();*/
     }
     
     private void OnEnable() {
@@ -118,7 +114,7 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
     }
     
     public bool isMoving =>
-        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath != null && currentPath.Count > 1;
+        Vector2.Distance(transform.position, targetPosition) > 0.01f && currentPath is { Count: > 1 };
 
     protected void ComputePath() {
         Vector3Int currentCell = TilemapManager.instance.WorldToHexAxial(transform.position);
@@ -126,20 +122,4 @@ public abstract class EntityIA : MonoBehaviour, ISaveable {
         
         currentPath = HexPathfinding3D.instance.FindPath(transform.position, targetPosition, currentCell.z, targetCell.z);
     }
-    
-    public bool NeedsToBeSaved() {
-        return true;
-    }
-
-    public bool NeedsReinstantiation() {
-        return true;
-    }
-
-    public abstract object SaveState();
-
-    public abstract void LoadState(object state);
-
-    public virtual void PostInstantiation(object state){}
-
-    public virtual void GotAddedAsChild(GameObject obj, GameObject hisParent){}
 }

@@ -20,7 +20,7 @@ public class TilemapManager : MonoBehaviour
     private float lastRightClickTime;
 
     public Dictionary<Vector3Int, GameObject> tiles { get; } = new();
-    private Dictionary<Vector2Int, int> columnTopCoordinate = new();
+    public Dictionary<Vector2Int, int> columnTopCoordinate { get; } = new();
     private Dictionary<Vector3Int, PosableObject> placedObjects = new();
     private Dictionary<GameObject, bool> prefabHasWaterSystem = new();
     private HashSet<Vector3Int> waterTilePositions = new(); // Tracks positions with water tiles for O(1) lookups
@@ -269,6 +269,7 @@ public class TilemapManager : MonoBehaviour
         newTile.name = $"Tile_({hexCoordinates.x}, {hexCoordinates.y}, {hexCoordinates.z})";
 
         tiles.Add(hexCoordinates, newTile);
+        ChunkManager.Instance.AddGameObjectToChunk(newTile.transform.position, newTile);
 
         // Track water tile positions for efficient water-on-water checks
         if (isWaterPrefab)
@@ -416,7 +417,7 @@ public class TilemapManager : MonoBehaviour
                     {
                         // Call SpawnPosableEntity before instantiation
                         Debug.Log(posablePrefab.gameObject.name);
-                        SpawnPosableEntity(posableEntity, spawnPosition, tilePosition);
+                        SpawnPosableEntity(posableEntity, tilePosition);
                     }
                     else
                     {
@@ -439,12 +440,10 @@ public class TilemapManager : MonoBehaviour
     ///  Called before a PosableEntity is instantiated to perform custom instantiation logic.
     /// </summary>
     /// <param name="entityPrefab">The entity prefab to spawn</param>
-    /// <param name="spawnPosition">The world position where the entity should be spawned</param>
     /// <param name="tilePosition">The tile position in hex coordinates</param>
-    private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3 spawnPosition, Vector3Int tilePosition)
+    private void SpawnPosableEntity(PosableEntity entityPrefab, Vector3Int tilePosition)
     {
-        Debug.Log("Spawning entity at " + spawnPosition);
-        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType, spawnPosition);
+        GameObject spawnedEntity = EntityManager.instance.SpawnEntity(entityPrefab.entityType,HexAxialToWorld(tilePosition));
         spawnedEntity.name = $"{entityPrefab.entityType}_{tilePosition}";
         // Add custom instantiation logic for the entity here
     }
@@ -737,6 +736,6 @@ public class TilemapManager : MonoBehaviour
         float width = hexSize;
         float height = hexSize * Mathf.Sqrt(3f);
 
-        return new Vector3(width, 0f, height);
+        return new Vector3(height, 0f, width);
     }
 }

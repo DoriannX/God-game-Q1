@@ -29,8 +29,11 @@ public class MapGenerator : MonoBehaviour
             {
                 Vector3Int tilePosition = OffsetToAxial(x, y, layoutType);
                 // Lower the tile by 1 z-level so it won't be removed by tools like shovel or meteore
-                tilePosition.z = -1;
+                //tilePosition.z = -1;
+                Vector2Int columnKey = new Vector2Int(x, y);
                 TilemapManager.instance.SpawnTileAt(tilePosition, TileSelector.instance.GetCurrentTile());
+                TilemapManager.instance.tiles.Remove( tilePosition); // Remove the tile added by SpawnTileAt to avoid duplicates
+                TilemapManager.instance.columnTopCoordinate[columnKey] = 0;
             }
         }
     }

@@ -24427,6 +24427,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5520605117869745961}
   - component: {fileID: 1395192248}
+  - component: {fileID: 2940162504115491002}
   m_Layer: 0
   m_Name: Rain
   m_TagString: Untagged
@@ -24476,6 +24477,22 @@ MonoBehaviour:
   windPart: {fileID: 5520605116980315705}
   lightningPart: {fileID: 5520605117208042691}
   fogPart: {fileID: 5520605117174259814}
+--- !u!114 &2940162504115491002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5520605117869745959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3751d987631e32d48b96cec909efc776, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Rain
+  state: 2
+  chance: 50
+  controller: {fileID: 1395192248}
+  rainChangeChance: 0.594
 --- !u!1001 &7975966459800184290
 PrefabInstance:
   m_ObjectHideFlags: 0
