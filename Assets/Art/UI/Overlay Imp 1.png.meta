@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e2ae6aff32a425c4f9b1d4d50eb3aeea
+guid: bfe5cd10ea6a9774e89d7ab9b0e834c5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2384438738221660480
-    second: Overlay Skeleton_0
+      213: -5398238707137485444
+    second: Overlay Imp 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Overlay Skeleton_0
+      name: Overlay Imp 1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
+        x: 41
+        y: 21
+        width: 39
+        height: 84
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 049f16c266a371120800000000000000
-      internalID: 2384438738221660480
+      spriteID: c756e483f7a9515b0800000000000000
+      internalID: -5398238707137485444
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Overlay Skeleton_0: 2384438738221660480
+      Overlay Imp 1_0: -5398238707137485444
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
