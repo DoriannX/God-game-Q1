@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a8c42a8b4014f8f82d0e400eed6eb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityGrow
-  growComponent: {fileID: 0}
+  growComponent: {fileID: 2022015165024604261}
   isFullyGrown: 0
 --- !u!114 &4077641912464904975
 MonoBehaviour:
@@ -196,7 +196,6 @@ MonoBehaviour:
   - {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
   - {fileID: 5698454079545549379, guid: 633d236946e49b44b8cc09b29ef28bd4, type: 3}
   - {fileID: 5698454079545549379, guid: cb1e7a98081152946938951c2574ae39, type: 3}
-  entityType: 0
 --- !u!58 &4552284087110041515
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -341,7 +340,7 @@ MonoBehaviour:
   growthRate: 0.02
   growthStages:
   - {fileID: 21300000, guid: d1d3a0156971a3d26834d4a1065bc94e, type: 3}
-  - {fileID: 0}
+  - {fileID: -1483407423975865499, guid: 0bb009a68ed17d380afb9c2b162f7017, type: 3}
 --- !u!114 &3057750871050936803
 MonoBehaviour:
   m_ObjectHideFlags: 0
