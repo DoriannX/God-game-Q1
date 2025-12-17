@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c01bf5be8b4db18f868eebd31ebd0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WanderComponent
-  entityAI: {fileID: 0}
+  entityAI: {fileID: 2465555916036711037}
 --- !u!114 &7471173993042387809
 MonoBehaviour:
   m_ObjectHideFlags: 0

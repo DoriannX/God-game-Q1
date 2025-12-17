@@ -8947,6 +8947,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 52597578}
     m_Modifications:
     - target: {fileID: 3523306087877896568, guid: 7dd82ac6e9ee1ce469d89ad21f0c238f, type: 3}
+      propertyPath: chance
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3523306087877896568, guid: 7dd82ac6e9ee1ce469d89ad21f0c238f, type: 3}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 519420031}
@@ -9527,9 +9531,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPoserComponent
   <posableObjects>k__BackingField:
   - {fileID: 7408342672037405645, guid: bb423238770dce92b8bf836efcf60d84, type: 3}
+  - {fileID: 7408342672037405645, guid: 02193e40a0670a14d890277f30b54c26, type: 3}
+  - {fileID: 7408342672037405645, guid: 752b2051bf9f2154e9239b6966c0ec38, type: 3}
+  - {fileID: 7408342672037405645, guid: 03adf71e0331a9b49bac3d7a082dfdb3, type: 3}
+  - {fileID: 7408342672037405645, guid: b343b9113b7210a4a8f00fb425621f7e, type: 3}
   - {fileID: 6904997964516619320, guid: 4ab1299eca6126b2f8b4dd6e2e7dd35f, type: 3}
   - {fileID: 4829490742024007249, guid: 8251180a4c75728bab1f7018464aad11, type: 3}
-  - {fileID: 0}
   maxObject: 100
 --- !u!114 &1721150298
 MonoBehaviour:
