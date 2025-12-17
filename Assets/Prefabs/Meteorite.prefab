@@ -47,6 +47,11 @@ MonoBehaviour:
   <allowedTiles>k__BackingField:
   - {fileID: 5698454079545549379, guid: c27d05486e87e50fabfc2fcc94faca93, type: 3}
   - {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
+  - {fileID: 5698454079545549379, guid: de04abb3b7b3afa4da3f9e9361635014, type: 3}
+  - {fileID: 5698454079545549379, guid: 0b1dcb05cf469314d9a5fc48890ad385, type: 3}
+  - {fileID: 5698454079545549379, guid: 0db05d7c151252f6887257fef8c2bd09, type: 3}
+  - {fileID: 5698454079545549379, guid: 9f6d77755f776bfef8c58f315729298c, type: 3}
+  - {fileID: 6609912500445995595, guid: e1a695d75c90e1917915165a5dde30c5, type: 3}
   <sprite>k__BackingField: {fileID: 21300000, guid: 64a212c047fc891ebafbecdd678163b5, type: 3}
   minSize: 3
   maxSize: 7
