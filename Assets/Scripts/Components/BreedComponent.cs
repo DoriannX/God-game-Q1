@@ -1,20 +1,20 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class BreedComponent : MonoBehaviour {
     public bool isBreedDone { get; private set; }
+    public bool isBreedFailed { get; private set; }
     public event Action onBreedDone;
-    [SerializeField] private EntityIA entityIa;
+    public event Action onBreedFailed;
+    [SerializeField] private EntityAI entityAI;
         
     private readonly Collider2D[] colliders = new Collider2D[100];
     [SerializeField] private float range;
 
     private void Awake() {
-        onBreedDone += () =>
-        {
-            Debug.Log("BreedFinish");
-            isBreedDone = true;
-        };
+        onBreedDone += () => { isBreedDone = true; };
+        onBreedFailed += () => { isBreedFailed = true; };
     }
 
     public House GetNearestHouse(Vector2 position, EntityType entityType) {
@@ -25,12 +25,12 @@ public class BreedComponent : MonoBehaviour {
         
         int count = Physics2D.OverlapCircle(position, range, filter, colliders);
         for (int i = 0; i < count; i++) {
-            var house = colliders[i].GetComponent<House>();
+            House house = colliders[i].GetComponent<House>();
             if (house == null) {
                 continue;
             }
 
-            if (house.isFull) {
+            if (house.isFull || (house.breedEntity != entityType && !house.isEmpty)) {
                 continue;
             }
             float distance = Vector2.Distance(position, house.transform.position);
@@ -44,16 +44,15 @@ public class BreedComponent : MonoBehaviour {
     }
 
     public void GoBreed() {
-        Debug.Log("Go Breed");
-        House house = GetNearestHouse(transform.position, entityIa.entityType);
+        House house = GetNearestHouse(transform.position, entityAI.entityType);
         if (house == null) {
-            onBreedDone?.Invoke();
+            onBreedFailed?.Invoke();
             return;
         }
         house.onBreedFinished += () => onBreedDone?.Invoke();
-        entityIa.GoTo(house.transform.position);
-        if (Vector2.Distance(entityIa.transform.position, house.transform.position) < 0.1f) {
-            house.Enter(entityIa);
+        entityAI.GoTo(house.transform.position);
+        if (Vector2.Distance(entityAI.transform.position, house.transform.position) < 0.1f) {
+            house.Enter(entityAI, onBreedFailed);
         }
     }
 }
