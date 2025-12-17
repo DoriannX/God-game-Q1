@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(SaveableEntity))]
 public class House : WorkTask {
     public HashSet<EntityAI> breedingEntities = new();
-    private GrowComponent growComponent;
+    private ObjectGrowComponent growComponent;
     private float breedProgress = 0;
     [SerializeField] private float breedIncrement = 0.1f;
     [SerializeField] private int tickToExitAlone = 5;
@@ -23,7 +23,7 @@ public class House : WorkTask {
 
 
     private void Awake() {
-        growComponent = GetComponentInChildren<GrowComponent>();
+        growComponent = GetComponentInChildren<ObjectGrowComponent>();
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -83,7 +83,7 @@ public class House : WorkTask {
 
         int babiesCount = minBabies + (int)((maxBabies - minBabies) * progress);
         for (int i = 0; i < babiesCount; i++) {
-            EntityManager.instance.SpawnEntity(EntityType.Ghost,TilemapManager.instance.HexAxialToWorld(
+            EntityManager.instance.SpawnEntity(breedEntity,TilemapManager.instance.HexAxialToWorld(
                 TilemapManager.instance.WorldToHexAxial(transform.position)));
         }
 

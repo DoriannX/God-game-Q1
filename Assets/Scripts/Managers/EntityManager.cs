@@ -25,6 +25,7 @@ public class EntityManager : MonoBehaviour {
 
     public GameObject SpawnEntity(EntityType entityType, Vector3 position) {
         if (!entities.ContainsKey(entityType)) {
+             Debug.Log("Spawning new entity type: " + entityType);
             // Create a new parent GameObject for this entity type as a child of this Manager
             GameObject newParent = new GameObject(entityType.ToString());
             newParent.transform.SetParent(transform);

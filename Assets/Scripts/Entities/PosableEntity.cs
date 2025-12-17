@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class PosableEntity : Posable
 {
-    [HideInInspector] public EntityType entityType;
-
-    private void Awake()
-    {
-        entityType = GetComponent<EntityAI>().GetEntityType();
-    }
+    public EntityType GetEntityType()  => GetComponent<EntityAI>().GetEntityType();
 }
 
