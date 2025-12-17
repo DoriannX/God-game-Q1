@@ -2160,7 +2160,7 @@ MonoBehaviour:
   maxEntityPerType: 100
   entityPrefabs:
     _serializedList:
-    - Key: 0
+    - Key: 2
       Value: {fileID: 2450070678407865498, guid: 02193e40a0670a14d890277f30b54c26, type: 3}
 --- !u!1 &564960282
 GameObject:
