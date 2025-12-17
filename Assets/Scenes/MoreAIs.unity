@@ -995,7 +995,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 95.55
+  m_fontSize: 100
   m_fontSizeBase: 34.56
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1918,7 +1918,6 @@ MonoBehaviour:
   - {fileID: 811301967}
   - {fileID: 461447857}
   - {fileID: 2074768354}
-  saveButton: {fileID: 461447857}
   saveQuitButton: {fileID: 2074768354}
 --- !u!114 &523872011
 MonoBehaviour:
@@ -4903,7 +4902,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 93.1
+  m_fontSize: 98.4
   m_fontSizeBase: 34.56
   m_fontWeight: 400
   m_enableAutoSizing: 1
