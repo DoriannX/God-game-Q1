@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/DevScenes/DevFixShovel.unity.meta
 guid: 2c2f0ca29927301479edd09f6f12ef1b
+========
+guid: 690548ab08cfd9c4fb3c6feff1b21b67
+>>>>>>>> origin/Mob_in_UI:Assets/_Recovery/0.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
