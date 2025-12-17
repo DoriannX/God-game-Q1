@@ -4,11 +4,11 @@ using Random = UnityEngine.Random;
 using Components;
 
 public abstract class EntityAI : MonoBehaviour {
-    public virtual EntityType entityType { get; protected set; } = EntityType.Ghost;
+    public abstract EntityType GetEntityType();
     
     public Vector3 targetPosition { get; protected set; }
     
-    [SerializeField] private EntityMovement entityMovement;
+    private EntityMovement entityMovement;
     
     protected List<Vector3> currentPath;
     private bool usePathFinding;
@@ -20,6 +20,7 @@ public abstract class EntityAI : MonoBehaviour {
     private void Start() {
         tilemapManager = TilemapManager.instance;
         entityManager = EntityManager.instance;
+        entityMovement = GetComponent<EntityMovement>();
     }
 
     public void GoByRandom() {

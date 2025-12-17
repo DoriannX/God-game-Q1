@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class GhostAI : EntityAI
+public class SpiderAI : EntityAI
 {
     public override EntityType GetEntityType() {
-        return EntityType.Ghost;
+        return EntityType.Spider;
     }
     public void ForceRepath() => ComputePath();
     

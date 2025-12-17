@@ -44,7 +44,7 @@ public class BreedComponent : MonoBehaviour {
     }
 
     public void GoBreed() {
-        House house = GetNearestHouse(transform.position, entityAI.entityType);
+        House house = GetNearestHouse(transform.position, entityAI.GetEntityType());
         if (house == null) {
             onBreedFailed?.Invoke();
             return;
