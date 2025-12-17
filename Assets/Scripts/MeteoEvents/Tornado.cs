@@ -10,17 +10,21 @@ public class Tornado : MeteoEvent
     private void OnEnable()
     {
         //TickSystem.ticked += OnTicked;
+
         PlaceAtCameraCenter();
+        destination = transform.position;
     }
 
     private void Update()
     {
         if (transform.position == destination)
         {
-            destination = Random.insideUnitCircle * maxStepDist;
-            float temp = destination.y;
-            destination.y = 0;
-            destination.z = temp;
+            destination.x = transform.position.x + Random.insideUnitCircle.x * maxStepDist;
+            destination.z = transform.position.z + Random.insideUnitCircle.y * maxStepDist;
+            Vector3Int destinationPoint = TilemapManager.instance.WorldToHexAxial(destination);
+            int topZ = TilemapManager.instance.GetColumnTopCoordinate(new Vector2Int(destinationPoint.x, destinationPoint.y));
+            destination = TilemapManager.instance.HexAxialToWorld(destinationPoint);
+            destination.y = topZ * 0.2f + 0.8f;
         }
         transform.position = Vector3.MoveTowards(transform.position, destination, speed * Time.deltaTime);
     }
