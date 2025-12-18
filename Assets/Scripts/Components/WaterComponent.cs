@@ -34,7 +34,7 @@ namespace Components
             activated = state;
         }
 
-        public void Expand() // Remove TilemapManager.instance.tiles.Remove( tilePosition); of MapGenerator if we want the limit but the meteore destroy the ground
+        public void Expand()
         {
             if (!activated)
                 return;
@@ -61,13 +61,6 @@ namespace Components
                 }
                 
                 if (TilemapManager.instance.GetTile(neighborCoords) != null)
-                {
-                    continue;
-                }
-                Vector3Int test = neighborCoords;
-                int topZ = TilemapManager.instance.GetColumnTopCoordinate(new Vector2Int(neighborCoords.x, neighborCoords.y));
-                test.z = 0;
-                if (TilemapManager.instance.GetTile(test) == null)
                 {
                     continue;
                 }
