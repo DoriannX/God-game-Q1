@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
@@ -23,6 +24,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private Button saveQuitButton;
 
     private List<float> initialWidths = new List<float>();
+    private const string mainMenuName = "MainMenu";
 
     private void Awake()
     {
@@ -59,10 +61,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Quit()
     {
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        SceneManager.LoadScene(mainMenuName);
     }
 
     public void Select(int button)
