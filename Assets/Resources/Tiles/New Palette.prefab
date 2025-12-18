@@ -225,7 +225,7 @@ Tilemap:
   - m_RefCount: 7
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   - m_RefCount: 1
-    m_Data: {r: 0.99833417, g: 0.4477949, b: 0.4698191, a: 1}
+    m_Data: {r: 0.8147791, g: 0.5306749, b: 0.6224358, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
