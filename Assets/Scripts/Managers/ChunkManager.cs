@@ -7,8 +7,8 @@ using UnityEngine.Serialization;
 public class ChunkManager : MonoBehaviour
 {
     [SerializeField] private Vector3 chunkSize;
-    [SerializeField] private int minValueOfCameraPositionZoom;
-    [SerializeField] private int maxValueOfCameraPositionZoom;
+    [SerializeField] private int changeValueMinFromFov;
+    [SerializeField] private int changeValueMaxFromFov;
     [SerializeField] private Camera mainCamera;
 
     public Dictionary<Vector2Int, Chunk> logicalChunks = new();
@@ -77,8 +77,8 @@ public class ChunkManager : MonoBehaviour
 
     private void UpdateVisibleChunks()
     {
-        if (mainCamera.transform.position.y >= maxValueOfCameraPositionZoom) chunkViewRadius = 3;
-        else if (mainCamera.transform.position.y <= minValueOfCameraPositionZoom) chunkViewRadius = 1;
+        if (mainCamera.fieldOfView >= changeValueMaxFromFov) chunkViewRadius = 3; //Change if the zoom is not with FOV
+        else if (mainCamera.fieldOfView <= changeValueMinFromFov) chunkViewRadius = 1;
         else chunkViewRadius = 2;
 
         Vector2Int cameraChunk = GetChunkIndexFromWorld(mainCamera.transform.position);

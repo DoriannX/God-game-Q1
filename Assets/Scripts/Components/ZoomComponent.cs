@@ -3,8 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class ZoomComponent : MonoBehaviour
 {
-    [SerializeField] private float minY = 5f;
-    [SerializeField] private float maxY = 50f;
+    [SerializeField] private float minZ = 5f;
+    [SerializeField] private float maxZ = 50f;
 
     [SerializeField]
     private float zoomPlaneDistance = 0f; // Distance of the zoom plane from camera (use 0 for ground plane at y=0)
@@ -39,7 +39,7 @@ public class ZoomComponent : MonoBehaviour
             // Move camera along the zoom direction
             Vector3 newPosition = transform.position + zoomDirection * zoomAmount;
 
-            if (newPosition.y < minY || newPosition.y > maxY)
+            if (newPosition.y < minZ || newPosition.y > maxZ)
             {
                 return;
             }

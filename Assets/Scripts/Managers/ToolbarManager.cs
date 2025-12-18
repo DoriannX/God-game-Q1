@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using Image = UnityEngine.UI.Image;
 
 
 public class ToolbarManager : MonoBehaviour
@@ -13,9 +14,6 @@ public class ToolbarManager : MonoBehaviour
     [SerializeField] private ObjectPoserComponent poserComponent;
     [SerializeField] private DestructionComponent destructionComponent;
     [SerializeField] private PaintComponent paintComponent;
-    [SerializeField] private List<Image> tabImages;
-    [SerializeField] private Sprite tabSelectedImage;
-    [SerializeField] private Sprite tabDeselectedImage;
     private List<ItemsBarContent> itemsBarContents = new();
     private ItemsBarContent currentItemsBarContent;
 
@@ -92,27 +90,7 @@ public class ToolbarManager : MonoBehaviour
                 return;
             }
         }
-
-        switch (itemBarIndex)
-        {
-            case 0:
-                tabImages[0].sprite = tabSelectedImage;
-                tabImages[1].sprite = tabDeselectedImage;
-                tabImages[2].sprite = tabDeselectedImage;
-                break;
-                
-            case 1:
-                tabImages[0].sprite = tabDeselectedImage;
-                tabImages[1].sprite = tabSelectedImage;
-                tabImages[2].sprite = tabDeselectedImage;
-                break;
-            
-            case 2:
-                tabImages[0].sprite = tabDeselectedImage;
-                tabImages[1].sprite = tabDeselectedImage;
-                tabImages[2].sprite = tabSelectedImage;
-                break;
-        }
+        
         currentItemsBarContent = itemsBarContents[itemBarIndex];
         currentItemsBarContent.gameObject.SetActive(true);
     }
