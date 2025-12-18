@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 46d935f173fb56d46ae5848fcb63e5b3
+guid: c1241f8eac9b4784fa90d44c04184c4d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2883441836021009937
-    second: Menu-d'accueil_0
+      213: 3585335055980135261
+    second: Menu d'accueil 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Menu-d'accueil_0
+      name: Menu d'accueil 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 11e488e921b040820800000000000000
-      internalID: 2883441836021009937
+      spriteID: d53837ccc3ba1c130800000000000000
+      internalID: 3585335055980135261
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Menu-d'accueil_0: 2883441836021009937
+      Menu d'accueil 1_0: 3585335055980135261
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
