@@ -31,7 +31,7 @@ public class Tsunami : MeteoEvent
         }
         spawnPoint += hypothenusVector;
         float temp = spawnPoint.y;
-        spawnPoint.y = spawnPoint.z;
+        spawnPoint.y = spawnPoint.z+1;
         spawnPoint.z = temp;
         direction = transform.position - spawnPoint;
         transform.position = spawnPoint;
